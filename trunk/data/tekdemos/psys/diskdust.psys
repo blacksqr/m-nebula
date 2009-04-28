@@ -1,0 +1,93 @@
+# ---
+# $parser:ntclserver$ $class:n3dnode$ $ver:Fri Jan 19 14:25:43 2001$
+#   19-Jan-01   floh    manually added speed interpolator
+# ---
+##.setminlod 0.000000
+.txyz 0.000000 0.000000 0.000000
+.rxyz 0.000000 0.000000 0.000000
+.sxyz 1.000000 1.000000 1.000000
+
+new nspriterender sr
+    sel sr
+
+    new npointemitter pe
+        sel pe
+        ##.setminlod 0.000000
+        .setreptype "loop"
+        .setchannel "time"
+        .setscale 1.000000
+        .settimes 0.000000 0.200000 0.400000
+        .setlifetime 2.000000
+        .setfreq 1000.000000
+        .setspeed 5.000000
+        .setaccel 0.000000 0.000000 0.000000
+        .setinnercone 90.000000
+        .setoutercone 90.000000
+        
+        new nipol ip_speed
+            sel ip_speed
+            .connect setspeed
+            .addkey1f 0 2
+            .addkey1f 2 10
+            .addkey1f 4 2
+        sel ..
+    sel ..
+    ##.setminlod 0.000000
+    .setreptype "loop"
+    .setchannel "time"
+    .setscale 1.000000
+    .setstretch false
+    .setspin 0.000000
+    .setspinaccel 0.000000
+    .setemitter "pe"
+    .beginkeys 6
+    .setkey 0 0.000000 0.000000 0.000000 0.483333 1.000000 1.000000
+    .setkey 1 0.666667 0.000000 0.550000 0.258333 1.000000 1.000000
+    .setkey 2 1.125000 0.000000 0.991667 0.308333 0.441667 1.000000
+    .setkey 3 0.416667 0.000000 0.316667 0.525000 1.000000 1.000000
+    .setkey 4 1.500000 0.000000 1.000000 0.608333 0.383333 1.000000
+    .setkey 5 2.416667 0.000000 0.000000 0.000000 0.000000 1.000000
+    .endkeys
+sel ..
+
+new nshadernode shd
+    sel shd
+ #   #.setminlod 0.000000
+    .setrenderpri 0
+    .setnumstages 1
+    .setcolorop 0 "mul tex prev"
+    .setalphaop 0 "nop"
+    .setconst 0 0.000000 0.000000 0.000000 0.000000
+    .begintunit 0
+    .setaddress "wrap" "wrap"
+    .setminmagfilter "linear_mipmap_nearest" "linear"
+    .settexcoordsrc "uv0"
+    .setenabletransform false
+    .txyz 0.000000 0.000000 0.000000
+    .rxyz 0.000000 0.000000 0.000000
+    .sxyz 1.000000 1.000000 1.000000
+    .endtunit
+    .setdiffuse 0.000000 0.000000 0.000000 0.000000
+    .setemissive 0.000000 0.000000 0.000000 0.000000
+    .setambient 0.000000 0.000000 0.000000 0.000000
+    .setlightenable false
+    .setalphaenable true
+    .setzwriteenable false
+    .setfogenable false
+    .setalphablend "one" "one"
+    .setzfunc "lessequal"
+    .setcullmode "ccw"
+    .setcolormaterial "material"
+sel ..
+
+new ntexarraynode tex
+    sel tex
+ #   #.setminlod 0.000000
+    .settexture 0 "../bmp/glow.bmp" "none"
+    .setgenmipmaps 0 true
+    .setgenmipmaps 1 true
+    .setgenmipmaps 2 true
+    .setgenmipmaps 3 true
+sel ..
+# ---
+# EOF

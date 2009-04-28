@@ -1,0 +1,276 @@
+/*
+NEBULA Overview
+===============
+13-Feb-99	floh	created
+13-Aug-99   floh    minor updates
+*/
+/**
+
+@mainpage Core Nebula Device
+
+@section NebulaIntro Intro
+
+Nebula is a set of C++ classes, originally written by Radon Labs for
+their computer game "Project Nomads".  It was built to enable them to
+reuse major parts of the code for other projects, and built directly
+on what they learned while working on their previous project, "Urban
+Assault".
+
+The main goals of Nebula are:
+
+  - To hide platform specifics from the majority of the Nebula code
+    and all of the client app's code.
+
+  - To manage the 'game database': 3d hierarchies, textures, materials,
+    lights, sounds, animations, states... and their relationships. 
+
+  - To be the basic toolset for all team members working directly
+    on the game project.
+
+
+Nebula tries to reach those goals through the
+following fundamental principles and philosophies:
+
+  - Runtime linked C++ classes: C++ classes live in DLLs, which are
+    loaded on demand when the first object of a class is created.
+
+  - Portability: Platform specifics that go beyond basic
+    ANSI-C/Posix-Layer-1 are hidden from higher level code by wrapper
+    classes. Nebula currently compiles and runs under
+    Win32 (Win95/98, Win NT) and Linux.   It is in the midst of being
+    ported to Mac OS X.
+
+  - Using Standard APIs: If possible, Nebula tries to build on
+    "open" API standards that are not controlled by a single company.
+    Crossplatform standards are preferred over proprietary APIs to
+    simplify porting work.
+
+  - Hierarchical Object Name Space: Nebula objects live in a hierarchical tree
+    of named nodes similar to a file system hierarchy. An object name can be
+    converted into a C++ pointer and a C++ pointer can be converted into a
+    name at any time. Having named objects around is very convenient when
+    referencing objects through the script interface, or in their persistent
+    state. Runtime efficiency doesn't suffer from this, since normally,
+    references by name are resolved into references by pointer only once at
+    load/initialization time. During an objects lifetime, references to
+    other objects are normally kept as cached C++ pointers.
+
+  - Scripting: Scripting in Nebula means sending script commands directly
+    to C++ objects. Nebula objects come with 2 interfaces: their
+    C++ interface for runtime efficiency, and a script interface
+    for flexibility. The script interface is as close
+    to the C++ interface as possible to minimize work on the dispatcher
+    code (around 3..6 lines of codes per script command). Internally,
+    script commands are handed around in language independent binary
+    packets, which are translated by a script server object into and from
+    a specific script syntax. Nebula is currently using Tcl as it's
+    script frontend, but switching to other scripting languages
+    or some sort of bytecode is just a matter of writing new script server
+    classes. Script commands can be sent from within the same process,
+    from another process on the same machine, or from other
+    machines using sockets.  Externally supported script servers exist
+    for Lua, Python and Ruby.
+
+  - Object Persistence: Nebula objects survive on disk as ascii
+    scripts that contain exactly the sequence of script commands
+    that would put a default object of that class into an exact clone
+    of the object which created the script. Since the object persistency
+    mechanism reuses the script interface there is no conceptual difference
+    between a "Nebula script" and a "Nebula data file".  A binary
+    "script server" also allows objects to be saved out in a compact,
+    efficient binary representation that can be loaded quickly.
+
+For information on compiling The Nebula Device, see @ref compiling.
+
+There are also a number of modules for the Nebula Device that other
+developers have contributed. See @ref NebulaContribModules for further
+information about that.
+
+@section NebulaIntroKernel The Kernel
+
+The Nebula kernel lives in the nkernel shared library and is the first
+Nebula object created by an application that wants to use Nebula. The kernel
+implements:
+
+  - An object system with:
+     - nRoot, the super class for all Nebula higher level classes
+     - A dynamic class package loader.
+     - The hierarchical object name space.
+     - Object creation.
+     - See @ref NebulaObjectSystem for further information.
+  - Data structures and Utilities:
+     - a memory manager for optimizing small block allocations
+     - inline classes for doubly linked lists, hash lists... (See
+       @ref NebulaDataTypes)
+  - Portability aids:
+     - a sockets based ipc implementation
+     - wrapper classes for a simple multithreading model
+       (threads, mutexes, events) (See @ref ThreadServices)
+     - File I/O systems, including virtualized file access.
+       (See @ref FileServices)
+
+See @ref NebulaKernelModule for further information.
+
+@subsection NebulaIntroKernelRoot The nRoot Class
+
+The nRoot class is the superclass of all higher level Nebula C++ classes.
+It defines the following basic mechanisms:
+
+  - linkage into the hierarchical name space
+  - a reference tracking mechanism that implements safe
+    pointers to other C++ objects
+  - runtime type information, objects can be asked whether they
+    belong to or are inherited from a specific class 
+  - object persistency, objects can save their current state into
+    a command stream and can restore their state from such a
+    command stream (the command stream can go into a file,
+    directly to another object, or over a network, this depends on
+    the fileserver object that handles the stream)
+  - a scripting interface in form of a single Dispatch() method
+    that receives incoming commands and translates them into a
+    native C++ method call, care has been taken to minimize the
+    required number of lines per supported script command (ca. 3..6) 
+
+
+@section NebulaIntroServers Server Objects
+
+Server objects live under a single, well known name and
+provide specific services to other Nebula objects. Client
+objects do a one-time name lookup and are then free to
+talk directly to the C++ interface of the servers. 
+
+Currently existing server objects include:
+
+   - @ref NebulaIntroServersGraphics
+   - @ref NebulaIntroServersTime
+   - @ref NebulaIntroServersScript
+   - @ref NebulaIntroServersFile
+   - @ref NebulaIntroServersInput
+   - @ref NebulaIntroServersConsole
+   - @ref NebulaIntroServersSceneGraph
+   - @ref NebulaIntroServersChannel
+   - @ref NebulaIntroServersAudio
+   - @ref NebulaIntroServersShadow
+   - @ref NebulaIntroServersParticle
+   - @ref NebulaIntroServersCollide
+
+@subsection NebulaIntroServersGraphics gfx
+
+The graphics server wraps around existing 3d API's (currently OpenGL and
+D3D) and manages the render target. It offers a thin general API that is
+optimized for rendering vertex buffers, not single primitives. Low level
+work like transformation, clipping, lighting, texture management is left
+to the 3d API to leave room for hardware acceleration. The gfx server
+has not been designed with software rasterization or rendering single
+primitives in mind. 
+
+@subsection NebulaIntroServersTime time
+
+The time server (nTimeServer) provides a single realtime source to
+decouple simulation speed from the frame rate. It also offers "mini"
+high-resolution timer objects (nProfiler) that can be used by client code
+for profiling and local time measurement reasons.
+
+See @ref TimeServices for further details.
+
+@subsection NebulaIntroServersScript script
+
+The script server connects the internal language-independent scripting
+mechanism to a specific scripting language. It translates commands
+emitted from objects into script statements, and back into commands that
+are understood by an object's Dispatch() method. The script server also
+implements an ipc port to allow external applications (running in
+another process or another machine) to talk to local objects.
+
+The script server is also used by the file server to translate
+persistency command streams into and back from command scripts.
+
+Currently, there are two official script servers in the Core Nebula
+CVS repository, one for TCL/Tk and one for Python.  Both provide
+a full interpreter, with variables, control flow, math expressions
+and platform independent GUIs.  The TCL/Tk script server requires
+TCL/Tk 8.4.x, while the Python script server server works with Python
+2.1 or 2.2.
+
+See @ref ScriptServices for further details.
+
+@subsection NebulaIntroServersFile file
+
+The file server connects the persistency mechanism to the file system.
+It opens the file handles which objects will use to save to or load
+from. It will also select the right script server when a persistent
+object is loaded (the information which script server accepts the
+commands in a persistent object file is encoded in the file itself).
+
+See nFileServer and nFileServer2 for further details.
+
+@subsection NebulaIntroServersInput input
+
+The input server is the central collection point for input events.
+Basically anyone can feed input events into or read them
+back from the global list of input events. The input server
+also maps low level input events to high level 'app events', or
+can bind the execution of script statements to input events.
+
+@subsection NebulaIntroServersConsole console
+
+The console server is built around the gfx, input and script
+server and implements an ingame console. It reads keyboard
+data from the input server, sends command lines to the script
+server for evaluation and renders text through the gfx server.
+It's basically a command line shell layered over a realtime
+3d view.
+
+The console is one of the most powerful features of Nebula.
+It's like working in a conventional console ('bash' for instance),
+but instead of inspecting and manipulating files one will inspect
+and manipulate living C++ objects directly by invoking script
+commands on them. Objects can be created, deleted, copied around,
+made persistent, or restored from persistency. Since the console
+is also a complete Tcl shell, one can run Tcl scripts at any time,
+or create Tk frontends which in turn can be used to query and
+manipulate the state of Nebula objects through a GUI.
+
+Finally, the console can talk to other Nebula applications in
+a telnet like fashion. Even Nebula apps on some other machines
+can be remote controlled through a console.
+
+See @ref misc_console_server for further details.
+
+@subsection NebulaIntroServersSceneGraph Scene Graph
+
+The scenegraph server is a high level 'rendering device' that
+collects objects for rendering and does some optimizations before
+actually rendering them through the gfx server. This includes
+for example sorting the nodes for minimized texture and render
+state switches, or hinting the gfx server whether the vertex
+buffer of a particular scene graph node needs clipping.
+
+@subsection NebulaIntroServersChannel channel
+
+[TODO]
+
+@subsection NebulaIntroServersAudio audio
+
+See @ref NebulaAudioModule.
+
+@subsection NebulaIntroServersShadow shadow
+
+[TODO]
+
+@subsection NebulaIntroServersParticle particle
+
+[TODO]
+
+@subsection NebulaIntroServersCollide collide
+
+See @ref NebulaCollideModule and @ref NebulaOpcodeModule.
+
+@section NebulaIntroNOH The Scene Graph And Visual Object Hierarchies
+
+[TODO]
+
+@section NebulaIntroAnimation The Animation System
+
+[TODO]
+*/

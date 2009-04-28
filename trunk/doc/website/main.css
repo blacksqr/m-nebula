@@ -1,0 +1,6 @@
+a:link{color:#0066CC}
+a:visited{color:#003399}
+a:hover{background: #FFFF99;color:#0066CC}
+body,td{background:#FFFFFF;color:#000000;}
+p.nb{background:#FFEAE8;border:#999999 dashed;border-width:1px 0px;color:#000000;font-style:italic;padding-bottom:2pt;padding-top:2pt;padding-left:1ex;  font-size : smaller; }
+pre.code{background:#FFFFCC;border:1px #CCCCCC solid;color:#000000;margin-left:2em;margin-right:2em;padding-left:1ex;  padding-top : 2pt;  padding-bottom : 2pt;  }

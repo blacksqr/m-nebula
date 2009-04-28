@@ -1,0 +1,25 @@
+-- setup some default lights
+
+sel( '/lights' )
+  new( 'n3dnode', 'dlight' )
+  sel( 'dlight' )
+    
+    new( 'n3dnode', 'light1' )
+    sel( 'light1' )
+      new( 'nlightnode', 'light' )
+      sel( 'light' )
+        call( 'setattenuation', 1, 0, 0 )
+        call( 'settype', 'directional' )
+        call( 'setcolor', 1, 1, 1, 1 )
+        call( 'setcastshadows', true )
+      sel( '..' )
+      call( 'rx', -45 )
+      call( 'txyz', 0, 200, 30 )
+    sel( '..' )
+    
+    new( 'nlightnode', 'amb' )
+    sel( 'amb' )
+      call( 'settype', 'ambient' )
+      call( 'setcolor', 0.2, 0.2, 0.2, 0 )
+    sel( '..' )
+  sel( '..' )

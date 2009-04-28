@@ -1,0 +1,34 @@
+#--------------------------------------------------------------------
+#   npackagename.pak
+#   ============
+#   Description of your class/package
+#
+#   01-Jan-99   user	created
+#--------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+beginmodule nclassname
+    setdir classname
+    setfiles {
+        nclassname_main nclassname_cmds
+    }
+    setheaders {
+        nclassname
+    }
+endmodule
+
+#--------------------------------------------------------------------
+begintarget npackagename
+    settype package
+    setmods {
+        nclassname
+    }
+    setdepends { nkernel nnebula }
+    setlibs_win32 { nkernel.lib nnebula.lib }
+    setlibs_unix  { nkernel nnebula }
+endtarget
+
+#--------------------------------------------------------------------
+#   EOF
+#--------------------------------------------------------------------
+        

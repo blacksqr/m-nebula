@@ -1,0 +1,39 @@
+Dot3 Bump Mapping for Nebula
+============================
+
+The nBumpMeshNode class is an implementation of tangent space dot3 bump
+mapping. The light position is tranformed into the tangent space of
+every vertex and this vector is then encoded in the vertex color channel
+of the source vertex buffer. A nShaderNode is then set up to perform
+the dot3 product between the vertex color (our encoded light vector) and
+a texture. For this to work the texture needs to have the surface normals
+encoded - see nvidias developer pages (http://www.nvidia.com/developer) for
+tools that convert bump maps into normal maps.
+
+See the included script for an example of how to use nBumpMeshNode.
+
+See nebula/doc/source/nbump_license.txt for licensing terms.
+
+Requirements:
+  - Geoforge256/Radeon7000 class hardware or better
+  - meshes need proper uv coordinates
+
+Limitations
+  - not 100% correct bump mapping, the light vector is not
+    renormalized per pixel. As a result, brightness might
+    vary across a flat surface. Fixing this requires more
+    advanced hardware (gf2) and improved nebula shaders.
+  - very simple lighting model: one point light without
+    attenuation, no dynamic vertex lighting possible
+  - no self shadowing (also requires at least gf2 class
+    hardware and improved nebula shaders)
+
+To do:
+  - better integration with nebula lights
+  - dynamic meshes (simply do the tangent setup every frame? could
+    stuff be precomputed?)
+  - this code could probably be optimized a lot
+
+Enjoy
+Dirk Ulbricht
+fxdirk@insanesoftware.de

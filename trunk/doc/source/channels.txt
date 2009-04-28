@@ -1,0 +1,70 @@
+Nebula's New Animation Channel System
+=====================================
+22-Jul-01   floh    created
+
+The animation channel system in Nebula got a major rewrite. The new
+implementation is much simpler and more optimized then the previous
+version. Here are the major differences:
+
+- new channel server class: nChannelServer. A global channel server object
+  must be available in the runtime environment under "/sys/servers/channel"
+
+- new simplified scene graph class: nSceneGraph2. A global scene graph object
+  must be available in the runtime environment under "/sys/servers/sgraph2"
+
+- nVisNode hierarchies now register the channels they want to read or
+  write with the channel server, this way the channel server no longer
+  has to provide all channels to all objects
+
+- animation channels can now be 1..4 dimensional (you no longer have to waste
+  4 channels to write an RGBA color from your application into a channel)
+
+
+Scripting level differences:
+----------------------------
+Here are the differences you have to be aware of when working with the
+script interface:
+
+- runtime needs new /sys/servers/sgraph2 and /sys/servers/channel objects
+
+- feeding a channel works different now:
+
+    before:             /sys/servers/sgraph.feedchannel blub 1.0
+
+    now:                /sys/servers/channel.setchannel1f blub 1.0
+    or for instance:    /sys/servers/channel.setchannel3f speed 1.0 0.0 0.0
+
+- the .readchannel/.writechannel methods have gone, there is now a new
+  class nchnreader, which implements the .readchannel functionality, there
+  is no corresponding class to write channels. Please note that you no
+  longer need to feed weights into nmixer source objects, the nmixer and
+  nmeshmixer interfaces have changed to directly assign a channelname
+  as a mixer source weight (see relnotes.txt)
+
+- the channel visibility rules in a nvisnode hierarchy have changed slightly,
+  but this should only affect you if you're working with nVisNode classes which
+  write channel values (nchnmodulator for instance), but even then it's very
+  unlikely that you're affected
+
+
+C++ level differences:
+----------------------
+- the render loop now looks a bit different, see class nObserver, or gfxserv.cc
+  for details
+
+- when you have implemented your own nVisNode subclasses: calling conventions
+  for Attach() and Compute() have changed, you now get a single pointer to a
+  nSceneGraph2 object, and instead of filling our a nSGNode object you do
+  everything through the nSceneGraph2 interface, just look around a few
+  nVisNode derived classes to see how it works now.
+
+- nVisNode has been trimmed down, old fluff has been removed
+
+- when you have implemented your own nVisNode subclasses which read or
+  write channels: you need to implement the AttachChannels() method,
+  see nVisNode::AttachChannels(), nAnimNode::AttachChannels(),
+  nChnReader::AttachChannels() and/or nMixer::AttachChannels() for details.
+
+- getting your channel values inside Compute() has changed, see
+  nIpol::Compute() or nMixer::Compute() for details.
+

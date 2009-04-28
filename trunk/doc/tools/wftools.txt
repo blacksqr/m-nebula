@@ -1,0 +1,242 @@
+doc/tools/wftools.txt
+=====================
+04-Jan-99   floh    created
+07-Jan-99   floh    updated
+02-Feb-99   floh    neue Tools: wfcolor und wfstripe
+06-May-99   floh    neues Tool: wflodmerge
+18-Aug-99   floh    + translated to English
+                    + new tools: wfwedge, wfsplit, wfmerge
+13-Sep-99   bernd   Updated the filelist for the automatic distribution for Win32:
+                    + the new tools now are part of the public distribution.
+                    + the obsolete tools are removed.
+
+The WFTools are small specialized command line tools for
+manipulating Wavefront OBJ files. They work like filters, 
+reading their input from stdin and writing the modified 
+data to stdout.
+
+We have written the WFTools to prepare geometry that's coming
+out of modeling packages for rendering through Nebula. Most of 
+the tools are not Nebula specific however and can be used for
+general Wavefront file processing.
+
+Source code for the Wavefront Tools is included in the Nebula
+source package.
+
+All tools will show a short description when invoked with 
+the '-help' option.
+
+On most host environments one can connect the output from one
+program to the input of another tool through pipes like this:
+
+wfclean <in.obj | wftriang | wfflatten >out.obj
+
+               
+======================================================================
+wfnull [-help]
+======================================================================
+Copy from stdin to stdout and write some geometry information
+to stderr.
+
+
+======================================================================
+wfclean [-help] [-vtol] [-vntol] [-vttol]
+======================================================================
+Clean up a Wavefront file by removing redundant v's, vn's, vt's 
+and faces. 
+
+-vtol (float)   -- tolerance value for vertices, vertices whose
+                   distance is within the tolerance will be collapsed
+                   to one vertex
+-vntol (float)  -- tolerance for normals
+-vttol (float)  -- tolerance for texture coordinates
+
+Modeling packages may not always generate a 'clean' Wavefront
+file, or don't remove artifacts introduced during the modeling
+process. There may be vertices which are not used by any face, or
+duplicate vertices, duplicate faces and so on... wfclean tries to
+clean up the mess as well as it can. 
+
+Some WFTools will generate redundant data and don't care about
+optimizing the data, relying on wfclean to do an intermediate
+cleanup pass. The one exception is wfflatten, which generates 
+redundant data on purpose.
+
+
+======================================================================
+wftrans [-help] [-tx] [-ty] [-tz] [-rx] [-ry] [-rz] 
+        [-sx] [-sy] [-sz] [-s]            
+======================================================================
+Translate, rotate, scale a Wavefront file. Normals will be 
+renormalized after transformation.
+
+-tx,-ty,-tz (float) -- translation
+-rx,-ry,-rz (float) -- rotation in degree, rotation order is x->y->z,
+-sx,-sy,-sz (float) -- scale
+-s          (float) -- shortcut scaling (sx = sy = sz = s)
+
+*** NOTE ***
+To implement other rotation orders, one can invoke wftrans
+several times as a workaround:
+
+wftrans <in.obj -ry yy | wftrans -rz zz | wftrans -rx xx >out.obj 
+                       
+
+======================================================================
+wfflatten [-help]
+======================================================================
+Restructure the Wavefront file, so that a complete vertex can be
+described by one single index (instead of different indices into
+the v, vn, vt-arrays). This may introduce new redundant vertex
+data  into the data set, which may seem silly. However, when
+rendering through a 3d API, it is in most cases the optimal
+solution to use indexed vertex buffers, which generally only have
+ONE index for all the vertex data.
+
+wfflatten MUST be used when preparing geometry for Nebula and should
+be the last step in the pipeline.
+
+
+======================================================================
+wftriang [-help]
+======================================================================
+Triangulates the input file.
+Nebula generally expects triangulated geometry.
+
+
+======================================================================
+wfsmooth [-help] [-angle]
+======================================================================
+Throws away the normals (vn) in the source file and generates new
+normals. Can generate "soft" and "hard" edges based on a threshold 
+angle.
+
+-angle  -- all edges with a greater angle will be 'hard' 
+
+Example:
+
+wfsmooth <cube.obj -angle 89    -> generate cube with hard edges
+wfsmooth <cube.obj -angle 91    -> generate cube with soft edges
+
+*** IMPORTANT ***
+
+BEFORE and AFTER wfsmooth one should generally put a wfclean into
+the pipeline. wfsmooth will only work correctly if there is no
+redundant vertex data in the data set, and it will also generate
+HUGE amounts of redundant normals, which should be cleaned up
+with a wfclean:
+
+wfclean <bla.obj | wfsmooth -angle xx | wfclean >out.obj
+
+*** NOTE ***
+
+For rendering performance reasons soft edges should be 
+preferred over hard edges. Since soft edges reuse
+vertex normals, fewer normals need to be transformed during
+rendering.
+
+======================================================================
+wflod [-help] [-abs] [-rel]
+======================================================================
+Generate level of detail levels by collapsing edges in the source
+data set. "Cheap" edges will collapse first. The fewer "hard edges"
+there are in the data set, the better the results. A "hard edge"
+is an edge where the vertices don't share normals and/or texture
+coordinates. 
+Currently normals will be thrown away, so it may be necessary to 
+run wfsmooth over the result for correct lighting.
+
+*** IMPORTANT ***
+- the source data must be triangulated
+- the source data must have a closed surface for best results
+- wflod will generate lots of redundant vertices and texture
+  coords, so it's generally wise to run a wfclean over the
+  result
+
+
+======================================================================
+wfcolor [-help] [-tex] [-alpha]
+======================================================================
+Generate vertex colors by looking up the color in a texture image
+based on the vertice's texture coordinates. Vertex colors are 
+defined by a custom 'rgba' keyword in the obj file.
+All vt (texture coords) and vn (normals) will be thrown away. 
+
+-tex    -> filename of texture image, must be a 24 bpp BMP file,
+           general rules for Nebula textures apply
+-alpha  -> optional alpha channel file, must be a 8 bpp BMP file,
+           the same size as the image file
+
+*** NOTE ***
+- one should do a wfclean after wfcolor to collapse redundant
+  rgba statements
+- some other WFTools may not correctly copy the 'rgba' channel,
+  thus wfcolor should be used towards the end of a pipe
+- unlike other WFTools, wfcolor requires the nnebula class package,
+  which is not part of the WFTools package, because of that wfcolor
+  will not be part of the 'standard' WFTools distribution
+
+
+======================================================================
+wfmeshify [-help]
+======================================================================
+Generates triangle strips from triangle lists. Should not be used,
+because it currently has problems with flipped triangles, which
+will be visible as holes in the geometry. Until fixed, one can
+use the popular Stripe tool, available from 
+
+http://www.cs.sunysb.edu/~stripe/
+
+
+======================================================================
+wfsplit [-help] [-file] [-keys]
+======================================================================
+Splits out chunks of lines from the source data based on keywords.
+All lines starting with one of the keywords from the '-keys' set
+will be written to '-file', the rest goes to standard out.
+
+-file   -- the filename where matching lines will be written to
+           (default is split.tmp)
+-keys   -- space delimited keyword set
+
+Example:
+
+wfsplit <in.obj >out.obj -file v.tmp -keys v vt
+
+This will write all 'v' and 'vt' lines from in.obj to the file
+v.tmp, the rest will go as usual to stdout.
+
+
+======================================================================
+wfmerge [-help] [-file] [-append]
+======================================================================
+Merge text from external file into stdin and write result to stdout.
+The external text can either be appended or inserted at the beginning
+(default is to insert at the beginning).
+
+-file   -- the filename where the text to be merged is read from
+-append -- when set, external text will be appended
+
+
+======================================================================
+wfwedge [-help]
+======================================================================
+Takes the source geometries and generates face normals and a winged
+edge list. Nebula uses this data for efficient silhouette finding. 
+
+
+======================================================================
+wfstrip [-help] [-vt] [-vn] [-rgba]
+======================================================================
+*** OBSOLETE *** OBSOLETE *** OBSOLETE ***
+
+See wfsplit for a more powerful replacement.
+
+
+======================================================================
+wflodmerge [-help] [files:lod...]
+======================================================================
+*** OBSOLETE *** OBSOLETE *** OBSOLETE ***
+
+---
+EOF

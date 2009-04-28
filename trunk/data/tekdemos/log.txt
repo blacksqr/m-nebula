@@ -1,0 +1,203 @@
+reading toc file 'D:/usr/m-nebula/bin/win32d/napp.toc'
+reading toc file 'D:/usr/m-nebula/bin/win32d/ndirect3d8.toc'
+reading toc file 'D:/usr/m-nebula/bin/win32d/nnebula.toc'
+reading toc file 'D:/usr/m-nebula/bin/win32d/nopengl.toc'
+reading toc file 'D:/usr/m-nebula/bin/win32d/nparticle.toc'
+reading toc file 'D:/usr/m-nebula/bin/win32d/npython.toc'
+loading package 'nnebula'
+Setting tcl_library to 'D:\usr\m-nebula\bin\tcl\tcl8.5'
+Windows 2000 detected
+Windows 2000 detected
+Using Win9x/Win2k settings.
+loading package 'nopengl'
+gl_vendor:   NVIDIA Corporation
+gl_renderer: GeForce 7300 GT/PCI/SSE2
+gl_version:  2.1.2
+glsl_version:  1.20 NVIDIA via Cg compiler
+number of aux buffers: 4
+number of sample buffers: 0
+gl_extensions:
+GL_ARB_color_buffer_float			GL_ARB_depth_texture
+GL_ARB_draw_buffers			GL_ARB_fragment_program
+GL_ARB_fragment_program_shadow			GL_ARB_fragment_shader
+GL_ARB_half_float_pixel			GL_ARB_imaging
+GL_ARB_multisample			GL_ARB_multitexture
+GL_ARB_occlusion_query			GL_ARB_pixel_buffer_object
+GL_ARB_point_parameters			GL_ARB_point_sprite
+GL_ARB_shadow			GL_ARB_shader_objects
+GL_ARB_shading_language_100			GL_ARB_texture_border_clamp
+GL_ARB_texture_compression			GL_ARB_texture_cube_map
+GL_ARB_texture_env_add			GL_ARB_texture_env_combine
+GL_ARB_texture_env_dot3			GL_ARB_texture_float
+GL_ARB_texture_mirrored_repeat			GL_ARB_texture_non_power_of_two
+GL_ARB_texture_rectangle			GL_ARB_transpose_matrix
+GL_ARB_vertex_buffer_object			GL_ARB_vertex_program
+GL_ARB_vertex_shader			GL_ARB_window_pos
+GL_ATI_draw_buffers			GL_ATI_texture_float
+GL_ATI_texture_mirror_once			GL_S3_s3tc
+GL_EXT_texture_env_add			GL_EXT_abgr
+GL_EXT_bgra			GL_EXT_blend_color
+GL_EXT_blend_equation_separate			GL_EXT_blend_func_separate
+GL_EXT_blend_minmax			GL_EXT_blend_subtract
+GL_EXT_compiled_vertex_array			GL_EXT_Cg_shader
+GL_EXT_depth_bounds_test			GL_EXT_draw_range_elements
+GL_EXT_fog_coord			GL_EXT_framebuffer_blit
+GL_EXT_framebuffer_multisample			GL_EXT_framebuffer_object
+GL_EXT_gpu_program_parameters			GL_EXT_multi_draw_arrays
+GL_EXT_packed_depth_stencil			GL_EXT_packed_pixels
+GL_EXT_pixel_buffer_object			GL_EXT_point_parameters
+GL_EXT_rescale_normal			GL_EXT_secondary_color
+GL_EXT_separate_specular_color			GL_EXT_shadow_funcs
+GL_EXT_stencil_two_side			GL_EXT_stencil_wrap
+GL_EXT_texture3D			GL_EXT_texture_compression_s3tc
+GL_EXT_texture_cube_map			GL_EXT_texture_edge_clamp
+GL_EXT_texture_env_combine			GL_EXT_texture_env_dot3
+GL_EXT_texture_filter_anisotropic			GL_EXT_texture_lod
+GL_EXT_texture_lod_bias			GL_EXT_texture_mirror_clamp
+GL_EXT_texture_object			GL_EXT_texture_sRGB
+GL_EXT_timer_query			GL_EXT_vertex_array
+GL_IBM_rasterpos_clip			GL_IBM_texture_mirrored_repeat
+GL_KTX_buffer_region			GL_NV_blend_square
+GL_NV_copy_depth_to_color			GL_NV_depth_clamp
+GL_NV_fence			GL_NV_float_buffer
+GL_NV_fog_distance			GL_NV_fragment_program
+GL_NV_fragment_program_option			GL_NV_fragment_program2
+GL_NV_framebuffer_multisample_coverage			GL_NV_half_float
+GL_NV_light_max_exponent			GL_NV_multisample_filter_hint
+GL_NV_occlusion_query			GL_NV_packed_depth_stencil
+GL_NV_pixel_data_range			GL_NV_point_sprite
+GL_NV_primitive_restart			GL_NV_register_combiners
+GL_NV_register_combiners2			GL_NV_texgen_reflection
+GL_NV_texture_compression_vtc			GL_NV_texture_env_combine4
+GL_NV_texture_expand_normal			GL_NV_texture_rectangle
+GL_NV_texture_shader			GL_NV_texture_shader2
+GL_NV_texture_shader3			GL_NV_vertex_array_range
+GL_NV_vertex_array_range2			GL_NV_vertex_program
+GL_NV_vertex_program1_1			GL_NV_vertex_program2
+GL_NV_vertex_program2_option			GL_NV_vertex_program3
+GL_NVX_conditional_render			GL_SGIS_generate_mipmap
+GL_SGIS_texture_lod			GL_SGIX_depth_texture
+GL_SGIX_shadow			GL_SUN_slice_accum
+GL_WIN_swap_hint			WGL_EXT_swap_control
+functions acquire:
+glActiveTextureARB
+glClientActiveTextureARB		glMultiTexCoord1fARB
+glMultiTexCoord1fvARB		glMultiTexCoord2fARB
+glMultiTexCoord2fvARB		glMultiTexCoord3fARB
+glMultiTexCoord3fvARB		glMultiTexCoord4fARB
+glMultiTexCoord4fvARB		glFogCoordfEXT
+glSecondaryColor3fEXT		glSecondaryColor3fvEXT
+glSecondaryColorPointerEXT		glCombinerParameterfvNV
+glCombinerParameterivNV		glCombinerParameterfNV
+glCombinerParameteriNV		glCombinerInputNV
+glCombinerOutputNV		glFinalCombinerInputNV
+glBindBufferARB		glDeleteBuffersARB
+glGenBuffersARB		glIsBufferARB
+glBufferDataARB		glBufferSubDataARB
+glGetBufferSubDataARB		glMapBufferARB
+glUnmapBufferARB		glGetBufferParameterivARB
+glGetBufferPointervARB		glGenOcclusionQueriesNV
+glBeginOcclusionQueryNV		glEndOcclusionQueryNV
+glGetOcclusionQueryivNV		glGenProgramsARB
+glDeleteProgramsARB		glBindProgramARB
+glIsProgramARB		glProgramStringARB
+glGetProgramivARB		glVertexAttrib4fARB
+glVertexAttrib4fvARB		glVertexAttrib3fARB
+glVertexAttrib3fvARB		glVertexAttribPointerARB
+glEnableVertexAttribArrayARB		glDisableVertexAttribArrayARB
+glProgramLocalParameter4fARB		glProgramLocalParameter4fvARB
+glGetProgramLocalParameterfvARB		glProgramEnvParameter4fARB
+glProgramEnvParameter4fvARB		glGetProgramEnvParameterfvARB
+glTexImage3DEXT		glTexSubImage3DEXT
+glCompressedTexImage3DARB		glCompressedTexImage2DARB
+glCompressedTexImage1DARB		glCompressedTexSubImage3DARB
+glCompressedTexSubImage2DARB		glCompressedTexSubImage1DARB
+glGetCompressedTexImageARB		glPointParameterfARB
+glPointParameterfvARB		glGenQueriesARB
+glDeleteQueriesARB		glIsQueryARB
+glBeginQueryARB		glEndQueryARB
+glGetQueryivARB		glGetQueryObjectivARB
+glGetQueryObjectuivARB		glDeleteObjectARB
+glGetHandleARB		glDetachObjectARB
+glCreateShaderObjectARB		glShaderSourceARB
+glCompileShaderARB		glCreateProgramObjectARB
+glAttachObjectARB		glLinkProgramARB
+glUseProgramObjectARB		glValidateProgramARB
+glUniform1fARB		glUniform2fARB
+glUniform3fARB		glUniform4fARB
+glUniform1iARB		glUniform2iARB
+glUniform3iARB		glUniform4iARB
+glUniform1fvARB		glUniform2fvARB
+glUniform3fvARB		glUniform4fvARB
+glUniform1ivARB		glUniform2ivARB
+glUniform3ivARB		glUniform4ivARB
+glUniformMatrix2fvARB		glUniformMatrix3fvARB
+glUniformMatrix4fvARB		glGetObjectParameterfvARB
+glGetObjectParameterivARB		glGetInfoLogARB
+glGetAttachedObjectsARB		glGetUniformLocationARB
+glGetActiveUniformARB		glGetUniformfvARB
+glGetUniformivARB		glGetShaderSourceARB
+glBindAttribLocationARB		glGetActiveAttribARB
+glGetAttribLocationARB		glGetVertexAttribfvARB
+glActiveStencilFaceEXT		glDepthBoundsEXT
+glIsRenderbufferEXT		glBindRenderbufferEXT
+glDeleteRenderbuffersEXT		glGenRenderbuffersEXT
+glRenderbufferStorageEXT		glGetRenderbufferParameterivEXT
+glIsFramebufferEXT		glBindFramebufferEXT
+glDeleteFramebuffersEXT		glGenFramebuffersEXT
+glCheckFramebufferStatusEXT		glFramebufferTexture1DEXT
+glFramebufferTexture2DEXT		glFramebufferTexture3DEXT
+glFramebufferRenderbufferEXT		glGetFramebufferAttachmentParameterivEXT
+glGenerateMipmapEXT		glBlendColorEXT
+glLockArraysEXT		glUnlockArraysEXT
+wglGetExtensionsStringARB		wglCreatePbufferARB
+wglGetPbufferDCARB		wglReleasePbufferDCARB
+wglDestroyPbufferARB		wglQueryPbufferARB
+wglChoosePixelFormatARB		wglGetPixelFormatAttribivARB
+wglGetPixelFormatAttribfvARB		wglBindTexImageARB
+wglReleaseTexImageARB		wglSetPbufferAttribARB
+wglSwapIntervalEXT		wglGetSwapIntervalEXT
+using GL_ARB_texture_compression
+using GL_EXT_texture_edge_clamp
+using GL_EXT_texture_filter_anisotropic
+using GL_ARB_texture_non_power_of_two
+using GL_EXT_compiled_vertex_array
+no support for GL_EXT_clip_volume_hint
+using GL_ARB_multitexture
+using GL_EXT_texture_env_combine
+using GL_EXT_texture_env_add
+using GL_EXT_texture_env_dot3
+using GL_EXT_blend_color
+using GL_EXT_bgra
+using max texture dimension: 4096
+using max texture units: 4
+max vector uniform components 1024
+max vertex attribs 16
+max fragment texture units 16
+max vertex texture units 4
+max combined texture units 16
+max max varying floats 32
+max fragment uniform components 2048
+max samples 0
+new nVertexPoolManager(type=N_VBTYPE_READONLY,size=8000)
+new nVertexPoolManager(type=N_VBTYPE_WRITEONLY,size=8000)
+new nVertexPoolManager(type=N_VBTYPE_STATIC,size=8000)
+loading package 'nparticle'
+nIpcServer: listening on port 12198...
+Windows 2000 detected
+Time already started!
+Time already started!
+Time already started!
+Time already started!
+Time already started!
+Time already started!
+Object '/usr/scene/pos/ip' doesn't accept command 'setactive'
+Time already started!
+Time already started!
+Object '/usr/scene/pos/sr/pemit/mesh' doesn't accept command 'setactive'
+Time already started!
+Object '/usr/scene/pos/sr' doesn't accept command 'setminlod'
+Object '/usr/scene/pos/shd' doesn't accept command 'setminlod'
+Object '/usr/scene/pos/tex' doesn't accept command 'setminlod'
+Time already started!
+Time already started!

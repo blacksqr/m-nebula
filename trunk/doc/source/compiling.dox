@@ -1,0 +1,404 @@
+/*
+compiling.txt
+=============
+
+07-Mar-2003 yacine  Fixed up some info about Linux.
+25-May-2002 bruce   Added initial info about MacOS X.
+26-Feb-2002 leaf    Updated to latest release.
+26-Feb-2002 bruce   Various updates to Windows build instructions.
+03-Aug-2001 leaf    Added updsrc.tcl, and DevIL instructions,
+                    updated to DirectX8 SDK
+                    (linux notes courtesy of Warren Baird)
+16-Dec-2000 floh    + fixed the Tcl8.x related stuff (Tcl8.4 now req)
+21-Aug-2000 floh    + added note about path to Tcl's bin directory under VS
+09-Aug-2000 floh    + added a note about getting Tcl, as suggested by
+                      Jack Palevich (thanks!)
+19-May-2000 floh    + Linux: compiler version, Windows: VStudio fix
+13-Mar-2000 floh    + updates for new build process (VStudio support...) 
+14-Feb-2000 floh    + more updated to the Linux section
+06-Feb-2000 floh    + minor updates to both the Win32 and Linux section
+05-Feb-2000 floh    brought up to date
+15-Dec-99   floh    Linux: rewritten for new download package
+                    structure 
+03-Nov-99   floh    Direct7 SDK now required for Win32
+24-Sep-99   floh    minor updates for the Linux section
+22-Sep-99   floh    rewrote the Windows section
+10-Sep-99   floh    more updates...
+09-Sep-99   floh    updated, Tcl distribution now required
+12-Aug-99   floh    Linux section updated
+25-Jul-99   floh    created
+*/
+
+/**
+@page compiling Compiling the Nebula Device
+
+   - @ref compilingwindows
+   - @ref compilinglinux
+   - @ref compilingmacosx
+   - @ref compilingmaketargets
+
+Or, are you interested in @ref porting "porting Nebula to a new platform"?
+
+*/
+/**
+@page compilingwindows Compiling Nebula under Windows9x/NT/2k/XP
+
+@section compilingwindowsrequirements Requirements
+
+   - MS VisualC 6/7(.NET)
+   - the DirectX 8/8.1 SDK
+   - the Tcl8.4 distribution from http://www.scriptics.com/ .
+   - DevIL libraries installed (from http://openil.sourceforge.net/ )
+     You only need the end user binaries. You should
+     get the source if you want to add/remove image formats
+     or update to a newer version, you will need to replace
+     the include files in @c nebula\\code\\inc\\il, and put the
+     lib files in @c nebula\\code\\lib\\win32_vc_i386. 
+   - only when compiling from the command line:\n 
+     a GNU compatible @c make.exe and @c sh.exe (see below)
+      
+   - If you have downloaded from the CVS, then you will need to:
+      - copy the DLL files for TCL and Tk into @c nebula\\bin\\win32
+        and @c nebula\\bin\\win32d.
+        Specifically, copy the @c tcl84.dll, @c tk84.dll and @c tclpip84.dll
+        binaries.
+      - download a binary distribution of DevIL and place the 
+        DLL files in @c nebula\\bin\\win32 and nebula\\bin\\win32d.  Binaries
+        can be found at http://openil.sourceforge.net/ .
+      
+It is important to install an 8.4.x version of TCL, rather than an 8.3.x  
+version. While the newer versions are probably upwards compatible, the
+names of the executables have been changed. In order to use the newer
+versions, you would have to edit the make files.
+
+- The source package is automatically installed with the
+  Nebula download package for Windows.
+  
+- To create and/or update the build files run updsrc.tcl.
+  If you are using VStudio 7 (.NET), then you need
+  to change nebula/bin/vcver.tcl to generate project
+  files compatible with VStudio 7.
+    
+    In a Dos prompt, or shell, execute:
+
+@verbatim
+    > cd nebula\code\src    *** Change to match your install location ***
+    > tclsh84 updsrc.tcl
+@endverbatim
+
+- Nebula needs this environment to compile from the command line.
+  You can compile in Visual Studio, and run nebula without
+  these. It's convenient to have nebula\bin\win32 in your
+  path though.
+
+@verbatim
+    rem --- Nebula config vars ---
+    rem --- Change to match your install location ---
+    rem *** FORWARD SLASH SEPARATED PATH!!! ***
+    SET NOMADS_HOME=c:/dev/nebula   
+
+    rem --- path to Nebula EXEs and DLLs --- 
+    PATH %PATH%;%NOMADS_HOME%\bin\win32
+
+    rem --- Visual C command line environment ---
+    CALL D:\tools\vc6\vc98\bin\vcvars32.bat
+
+    rem --- GNU make settings ---
+    SET MAKE_MODE=UNIX
+@endverbatim
+
+@section compilingwindowscommandline Compiling from the command line
+
+    To compile from the command line, one needs a GNU compatible
+    make and a Unix compatible sh.exe, the easiest way is to
+    get the Cygwin package from http://www.cygwin.com/ .
+    In a shell, execute:
+
+@verbatim
+    > cd %NOMADS_HOME%/code/src
+    > make debug
+    > make
+@endverbatim
+
+@section compilingwindowsvisualstudio Compiling from MS Visual Studio
+    
+    - VStudio 6 doesn't understand the .cc extension by
+      default. Check out the Nebula FAQ in the doc package
+      or on www.radonlabs.de for the procedure
+      how to fix it.
+    - In the "Tools/Options.../Directories/Executable files" tab,
+      add the path to Tcl's "bin" directory.  This is required for
+      the TOC file generation to happen correctly in the build
+      process.
+    - Load the Nebula Workspace/Solution file from
+      @c nebula/code/vstudio/
+    - In Visual Studio, make 'nsh' the active project.
+    - Select "Rebuild all".
+    
+    The dll's and executables will be compiled to 
+    @c "nebula/bin/win32" in release mode and @c "nebula/bin/win32d"
+    in debug mode. 
+
+@section compilingwindowstekdemos Run the tekdemos for testing
+
+@verbatim
+    > cd nebula\data\tekdemos  *** Change to match your install location *** 
+    > nsh -run tekdemos.tcl
+@endverbatim
+
+@section compilingwindowstrouble Troubleshooting
+
+    - If you get problems when compiling DirectX dependent code
+      then its almost always because the INCLUDE and LIB paths
+      for Visual C are defined before the paths of the DX8 SDK,
+      Make sure the DX8 SDK paths are defined before the VisualC
+      includes (either in your environment settings/autoexec.bat, 
+      or in Visual Studio under Options).
+
+    - If you get errors generating the TOC files, make sure that you've
+      added the correct path the TCL bin directory to the
+      Tools/Options.../Directories/Executable files" tab.
+
+    - If nsh crashes, make sure that you've copied the TCL/Tk DLLs and
+      the DevIL DLLs.
+
+    - If your framerate is low and that concerns you, look in tekdemos.tcl
+      for the @c /observer.set_sleep @c 0.2 line and comment that out.  If your
+      framerate is still low, check to see if your video driver is synching
+      with the vertical refresh rate of your monitor.  This is typically
+      on by default with OpenGL on Windows.
+*/
+/**
+@page compilinglinux Compiling Nebula under Linux
+
+@section compilinglinuxrequirements Requirements and Configuration
+
+   - a current Linux kernel (2.2 or better) with current glibc
+   - gcc version 2.95 or better
+   - Mesa 3.x or later, or nVidia's OpenGL drivers (if you're using an
+	nVidia card) 
+   - a working Tcl/Tk 8.4 install (from http://www.scriptics.com/ )
+   - DevIL libraries installed (from http://www.imagelib.org/ )
+
+   - Make sure that the library aboves are installed to normal library path.
+	That is make sure that the library path (example: @c /usr/local/lib) is
+	included in the file @c /etc/ld.so.conf. If it's not, add it and run 
+	@c `ldconfig` as a superuser. Alternatively, make sure the libraries
+    are in a directory that is on your @c LD_LIBRARY_PATH.
+   
+   - Make sure that there are no other version of tcl installed on your
+   	system, or if there is, that @c tclsh calls the proper version
+	of tcl (@c tclsh8.4). You can check this by doing <tt>ls -l `which
+    tclsh`</tt>.
+
+The current version (March 2003) has been compiled and tested on gentoo 
+system using gcc 3.2.2 with glibc 2.3.
+ 
+Previous releases have been compiled and tested on an out-of-the-box
+SuSE 7.0 Professional system.
+
+  If you don't have Tcl/Tk 8.4 installed, get the source tarballs
+  from http://www.scriptics.com/, unpack them, and as root, for both Tcl
+  and Tk do the following from the unix subdirectory of the
+  distributions:
+
+@verbatim
+  ./configure --prefix /usr
+  make
+  make install
+@endverbatim
+  
+  If you omit the @c --prefix arg, Tcl will install itself to
+  @c /usr/local/lib and @c /usr/local/bin instead of @c /usr/lib and
+  @c /usr/bin, this may or may not be right for your distribution.
+
+  Unpack the Linux Nebula package into your home directory. This will create
+	a nebula directory:
+
+@verbatim
+    > cd ~
+    > tar -xzf nebula.tar.gz 
+@endverbatim
+
+  A small set of environment variables are required to compile and
+  run Nebula.
+
+  Add the following lines to your @c .bashrc, or if it doesn't exist, put
+  them in @c ~/.bash_profile:
+
+@verbatim
+    NOMADS_HOME=~/nebula
+    NEBULADIR=~/nebula
+    PATH=$PATH:$NOMADS_HOME/bin:$NOMADS_HOME/bin/linux
+    LD_LIBRARY_PATH=$NOMADS_HOME/bin/linux:$LD_LIBRARY_PATH
+    export OSTYPE NOMADS_HOME NEBULADIR PATH LD_LIBRARY_PATH
+@endverbatim
+
+    (thanks to Joseph H Blythe)
+    
+    Note: OSTYPE needs to be exported. The makefile scripts depend on it
+    to correctly set the dependencies. While this is set by default as
+    environment variable (you can do @c echo @c $OSTYPE without exporting it),
+    for some reason, it isn't set when you run @c make. That's why we export
+    it. (thanks to Jeremy Noetzelman and Leaf Garland) 
+ 
+To create and/or update the build files run @c updsrc.tcl:
+
+@verbatim
+    > cd $NEBULADIR/code/src
+    > tclsh updsrc.tcl
+@endverbatim
+
+@section compilinglinuxbuild Build Nebula
+
+@verbatim
+    > cd $NEBULADIR/code/src
+    > make
+@endverbatim
+
+This builds a release version of nebula. The binaries get placed in
+@c $NEBULADIR/bin/linux and the libs in @c $NEBULADIR/libs/linux.
+
+To build a debug version of nebula, do the following:
+
+@verbatim
+    > cd $NEBULADIR/code/src
+    > make clean   (if you've already built nebula)
+    > make debug
+    > make
+@endverbatim
+
+This builds a debug version of Nebula. The binaries get placed in 
+@c $NEBULADIR/bin/linuxd and the libs in @c $NEBULADIR/libs/linuxd.
+When building a debug version you need to change the paths set above
+you need to add a 'd' to the bins path and a 'd' the library path. 
+Alternatively, you can add the extra paths and never worry about it.
+Put the following in your config files instead of what's above:
+
+@verbatim
+    NOMADS_HOME=~/nebula
+    NEBULADIR=~/nebula
+    PATH=$PATH:$NOMADS_HOME/bin:$NOMADS_HOME/bin/linux:$NOMADS_HOME/bin/linuxd 
+    LD_LIBRARY_PATH=$NOMADS_HOME/bin/linux:$NOMADS_HOME/bin/linuxd:$LD_LIBRARY_PATH
+    export OSTYPE NOMADS_HOME NEBULADIR PATH LD_LIBRARY_PATH
+@endverbatim
+  
+@section compilinglinuxtekdemos Run the tekdemos for testing
+
+@verbatim
+    > cd $NEBULADIR/data/tekdemos
+    > nsh -run tekdemos.tcl
+@endverbatim
+    
+And that's it!
+*/
+/**
+@page compilingmacosx Compiling Nebula under MacOS X
+
+@section compilingmacosxstatus Port status
+
+The MacOS X of Nebula port builds and links but does not yet run correctly.
+The following major bits of work remain:
+  - Solve crash bugs.
+  - Implement OS-specific code for window management, audio, events.
+  - Look into any potential OS X specific rendering/OpenGL usage bugs or
+    issues.
+  - Consider generating a PB project rather than solely using the Linux
+    makefiles.
+
+See further notes and commentary on the Nebula Wiki:
+
+   - http://nebuladevice.sourceforge.net/cgi-bin/twiki/view/Nebula/CompilingNebulaOnOSX
+
+@section compilingmacosxrequirements Requirements
+
+   - A current install of MacOS X. 10.1.5 is known to work.
+   - The Apple development tools. The December 2001 release is known
+     to work (so far!) as are the April 2002 beta tools.
+   - A working Tcl/Tk 8.4 install
+   - DevIL libraries installed (from http://www.imagelib.org)
+   - The dlcompat library. This part of Fink (http://fink.sf.net/) but
+     may be obtained and installed separately.
+   - You may need to have Fink installed.  If this is not the case, then
+     we would like to know so that we can remove any references to it.
+   - a working TCL/Tk install is slightly more complex currently on
+     OS X.  It is recommended that the instructions on
+     http://mini.net/tcl/2923.html be used.  This will provide a current
+     build of TCL/Tk 8.4 along with the Aqua version of the Tk controls.\n\n
+     Once TCL and Tk have been built, copy the frameworks into one of
+     the usual system locations (@c /Library/Frameworks/ works well). You
+     will also need to copy the Tk file from @c Tk.framework into
+     @c bin/macosx and rename it to @c 'libtk8.4.so'.
+
+- unpack the Unix Nebula package into your home directory:
+
+@verbatim
+    > cd ~
+    > gzip -d nebula.tar.gz
+    > tar -xf nebula.tar
+@endverbatim
+
+- the following environment variables are required to compile and
+  run Nebula:
+
+  Add the following lines to your .cshrc:
+
+@verbatim
+    setenv NOMADS_HOME ~/nebula
+    setenv NEBULADIR ~/nebula
+    setenv PATH $PATH:$NOMADS_HOME/bin:$NOMADS_HOME/bin/macosx
+    setenv DYLD_LIBRARY_PATH $NOMADS_HOME/bin/macosx:$DYLD_LIBRARY_PATH
+@endverbatim
+
+  If you have modified your shell from the default, then you will
+  need to adjust the above to match.
+
+- to create and/or update the build files run @c updsrc.tcl:
+
+@verbatim
+    > cd $NEBULADIR/code/src
+    > tclsh updsrc.tcl
+@endverbatim
+
+- build Nebula:
+
+@verbatim
+    > cd $NEBULADIR/code/src
+    > make debug
+    > make
+@endverbatim
+
+- run the tekdemos for testing:
+
+@verbatim
+    > cd $NEBULADIR/data/tekdemos
+    > nsh -run tekdemos.tcl
+@endverbatim
+
+- that's it!
+*/
+/**
+@page compilingmaketargets List of make targets
+
+The following make targets are defined when compiling from 
+the command line. See @c '/nebula/code/postmake.mak' and 
+@c '/nebula/code/src/Makefile' for details. 
+
+   - release\n
+     Clean up and set flag for building the Release version
+     (optimized and no debug info).
+   - debug\n
+     Clean up and set flag for building the Debug version
+     (non optimized and debug info).
+   - clean\n
+     Clean up only.
+   - profile\n
+     Clean up and set flag for profiling version.
+   - doc\n
+     Generate the documentation.
+*/
+
+/*
+======================================================================
+EOF
+*/

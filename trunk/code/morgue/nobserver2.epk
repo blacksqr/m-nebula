@@ -1,0 +1,37 @@
+#--------------------------------------------------------------------
+#   nobserver2 pak
+#   ==========
+#   Already modified to poll the GUI and Java servers (if present)
+#  
+#   If you're not going to use the Java server, comment it out in
+#   the nobserver2.h header, and remove it from nobs2_main.cc or 
+#   else it won't link.  This module provided as a demonstration
+#   consistent with Nebula's observer model.
+#
+#   19-Jan-02   whitegold created
+#--------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+#	replacement for nobserver that knows about the physics linkage
+#--------------------------------------------------------------------
+beginmodule nobserver2
+    setdir misc
+    setfiles { nobs2_cmds nobs2_init nobs2_main nobs2_input }
+	setheaders { nobserver2 }
+	setversion nobserver2_ver
+endmodule
+
+#--------------------------------------------------------------------
+begintarget nobserver2
+    settype package
+    setmods {
+        nobserver2
+    }
+    setdepends { nkernel nnebula nparticle nodephysics nopcode }
+    setlibs_win32 { nkernel.lib nnebula.lib nodephysics.lib ncollide.lib}
+    setlibs_unix  { nkernel nnebula nodephysics ncollide nopcode }
+endtarget
+#--------------------------------------------------------------------
+#   EOF
+#--------------------------------------------------------------------
+

@@ -1,0 +1,471 @@
+<html><head><link rel="stylesheet" type="text/css" href="style.css"></head>
+<body  bgcolor=#7E8C92 text=#000000 leftmargin=0 topmargin=0 marginheight=0 marginwidth=0>
+<table width=100% border=0 cellspacing=0 cellpadding=0>
+<tr bgcolor=#5C7984><td><img src="pix2/nebula_faq.gif" align=left width=538 height=55></td></tr></table>
+<table width=100% border=0 cellspacing=0 cellpadding=0 bgcolor=#7E8C92>
+<tr><td width=12 bgcolor=#7E8C92><img height=12 width=12 src="pix2/eckelinks.gif"></td>
+<td width=100% bgcolor=#7E8C92><img height=1 src="pix2/spacer.gif"></td>
+<td width=12  bgcolor=#7E8C92><img height=12 width=12 src="pix2/eckerechts.gif"></td></tr></table>
+<center><table width=95% cellpadding=2>
+<table width=100%>
+<tr>
+<td width=10%></td><td width=65%>
+<a href=#01> What 3d chip sets are supported? </a>
+</td><td><font size=2>upd.: 18-Feb-01<br></font></td>
+</tr>
+<tr>
+<td width=10%></td><td width=65%>
+<a href=#02> When starting one of the Wavefront tools, nothing happens. </a>
+</td><td><font size=2>upd.: 18-Feb-01<br></font></td>
+</tr>
+<tr>
+<td width=10%></td><td width=65%>
+<a href=#03> How do I get my own 3d objects into Nebula? </a>
+</td><td><font size=2>upd.: 18-Feb-01<br></font></td>
+</tr>
+<tr>
+<td width=10%></td><td width=65%>
+<a href=#06> The new VisualStudio project files don't work! </a>
+</td><td><font size=2>upd.: 18-Feb-01<br></font></td>
+</tr>
+<tr>
+<td width=10%></td><td width=65%>
+<a href=#07> Compiling under Linux doesn't work! </a>
+</td><td><font size=2>upd.: 25-Mar-00<br></font></td>
+</tr>
+<tr>
+<td width=10%></td><td width=65%>
+<a href=#08> How do I start a new Nebula class? </a>
+</td><td><font size=2>upd.: 31-May-00<br></font></td>
+</tr>
+<tr>
+<td width=10%></td><td width=65%>
+<a href=#09> How to I debug a Nebula application? </a>
+</td><td><font size=2>upd.: 31-May-00<br></font></td>
+</tr>
+<tr>
+<td width=10%></td><td width=65%>
+<a href=#10> What are Nebula class packages? </a>
+</td><td><font size=2>upd.: 31-May-00<br></font></td>
+</tr>
+</table><hr><center>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#727F84><td>
+<a name="01">
+<b>What 3d chip sets are supported?</b> 
+ </td><td align=right><a href=#top><img src="pix2/smallup.gif" border=0></a>
+</td></tr></table>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#8F9D9F><td>
+<br>
+Nebula should run on every chip with Direct3D and/or OpenGL support.
+We generally use the chip manufacturer's reference drivers for testing.
+Here's a list of current chip sets, and their known issues:
+
+<h4>nVidia TNT family</h4>
+Ok.
+
+<h4>nVidia GeForce family</h4>
+Ok. May be tricky to actually get hardware t&l especially
+under Win2k (hardware t&l should be less fragile with
+the upcoming D3D8 support in Nebula).
+
+<h4>ATI Rage128</h4>
+Ok.
+
+<h4>ATI Radeon</h4>
+Untested.
+
+<h4>3dfx Voodoo3</h4>
+D3D ok. OpenGL not recommended.
+
+<h4>Matrox G400</h4>
+D3D ok. OpenGL not recommended.
+
+<br>
+<br>
+
+</td></tr></table><br>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#727F84><td>
+<a name="02">
+<b>When starting one of the Wavefront tools, nothing happens.</b> 
+ </td><td align=right><a href=#top><img src="pix2/smallup.gif" border=0></a>
+</td></tr></table>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#8F9D9F><td>
+<p>
+The WFTools generally expect their input from stdin and write their output to stdout. This seems strange but has the advantage that one can construct "pipelines" on the command line by handing output from one tool directly to another tool without having to go through intermediate files:
+<pre>
+wfclean < in.obj | wftriang | wfflatten >out.n3d
+</pre>
+This example starts wfclean first, reading input from the file 'in.obj',  which hands its output to wftriang, which in turn hand its output to wfflatten, which finally writes its output to the file 'out.n3d'.
+</p>
+<br><br>
+
+</td></tr></table><br>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#727F84><td>
+<a name="03">
+<b>How do I get my own 3d objects into Nebula?</b> 
+ </td><td align=right><a href=#top><img src="pix2/smallup.gif" border=0></a>
+</td></tr></table>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#8F9D9F><td>
+<br>
+<p>
+This is basically explained in our tutorial, here's a somewhat more
+techie description:
+</p>
+<p>
+You need a 3d modeler that can save Wavefront OBJ files, and the WFTools
+from our download page. The OBJ file should contain vertices, normals,
+texture coordinates and face definitions (v, vn, vt and f statements).
+</p>
+<p>
+Suppose you save the 3d object as "object.obj" from the modeler. Now, run
+the file through the following wftools pipeline:
+</p>
+<pre>
+wfclean < object.obj | wftriang | wfflatten > object.n3d
+</pre>
+<p>
+This will cleanup, triangulate and "flatten" the Wavefront file so that
+it can be used by Nebula. You can put the pipeline into a .bat script
+like this:
+</p>
+<pre>
+rem ---------------------------------------------
+rem convert.bat 'from' 'to'
+rem Prepare standard Wavefront file for Nebula.
+rem 'from' -- name of input file
+rem 'out'  -- name of output file
+rem
+rem ---------------------------------------------
+
+wfclean < %1 | wftriang | wfflatten > %2
+
+rem ---------------------------------------------
+rem EOF
+rem ---------------------------------------------
+</pre>
+
+<p>
+And then just run:
+</p>
+<pre>
+convert object.obj object.n3d
+</pre>
+
+<p>
+If the object has a texture, convert the texture to BMP format
+(8 bpp or 24 bpp uncompressed), scale it to a 2^n size (256x256
+for instance) and save it into the same directory
+as "object.n3d" under the filename "texture.bmp".
+</p>
+<p>
+To display the object in Nebula, a minimal visual hierarchy is required,
+consisting of a n3dnode (providing position and orientation), a nmeshnode
+(providing the geometry), a ntexarraynode (providing the texture) and a
+nshadernode (providing the surface material), you should also include
+an ambient lightsource to see something. The following Nebula script
+should do the job:
+</p>
+<pre>
+# -----------------------------------------------
+#   Minimal display hierarchy to display an
+#   object.
+# -----------------------------------------------
+
+sel /usr/scene
+
+# create an ambient light
+new nlightnode amb
+    sel amb
+    .setcolor 1.0 1.0 1.0 1.0
+sel ..
+
+# create a 3d node with mesh, texture and material
+new n3dnode pos
+    sel pos
+    new nmeshnode mesh
+        sel mesh
+        .setfilename "object.n3d"
+    sel ..
+
+    new nshadernode sn
+        sel sn
+        .setnumstages 1
+        .setcolorop 0 "mul tex prev"
+        .setlightenable true
+        .setdiffuse  1 1 1 1
+        .setemissive 0 0 0 0
+        .setambient  1 1 1 1
+    sel ..
+
+    new ntexarraynode tex
+        sel tex
+        .settexture 0 texture.bmp none
+    sel ..
+sel ..
+# -----------------------------------------------
+# EOF
+# -----------------------------------------------
+</pre>
+
+<p>
+Save this script as "show.tcl" in the same directory as "object.n3d"
+and "texture.bmp". Start nlaunch.exe with the startup.tcl script
+from the tutorial directory:
+</p>
+<pre>
+nlaunch startup.tcl
+</pre>
+<p>
+When the 3d window is up, open the console with Esc, change to
+the filesystem directory where your "object.n3d", "texture.bmp"
+and "show.tcl" script are located:
+</p>
+<pre>
+&gt; cd "fs_path"
+&gt; _
+</pre>
+
+<p>
+Load the "show.tcl" script with Tcl's "source" command:
+</p>
+
+<pre>
+&gt; source show.tcl
+&gt; _
+</pre>
+
+<p>
+You should now see your 3d object (unless it is very big, the ground
+grid has a resolution of 1.0 coordinates so your object's coordinates
+should be somewhere in the range of -5.0 to +5.0 to fit comfortably
+into the default 3d view.
+</p>
+</p>
+
+</td></tr></table><br>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#727F84><td>
+<a name="06">
+<b>The new VisualStudio project files don't work!</b> 
+ </td><td align=right><a href=#top><img src="pix2/smallup.gif" border=0></a>
+</td></tr></table>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#8F9D9F><td>
+<br>
+VisualC++ doesn't know about the .cc file extension by default. To fix this a few changes to 
+the system registry are necessary:
+<ul>
+<li>
+Create a new key under HKEY_CLASSES_ROOT with the name '.cc' and value data 'cppfile'. This will
+associate the .cc extension with VisualStudio, so that the proper icon is shown on the desktop and a
+double click on the file will launch VS.
+</li>
+<li>
+Goto 'HKEY_CURRENT_USER\Software\Microsoft\DevStudio\6.0\'.
+</li>
+<li>
+Under 'Build System\Components\Platforms', select the key 'Win32 (x86)\Tools\32-Bit C/C++ Compiler for 80x86'
+</li>
+<li>
+Double click on 'Input_Spec' appearing on the right pane and add ';*.cc' to the list of extensions.
+</li>
+<li>
+The following is for proper text coloring only: Select the key '(Text) Editor\Tabs\Language Settings\C/C++'. 
+Double click on 'FileExtensions' in the right pane. Add ';cc' to the Value Data field.
+</li>
+</ul>
+A more detailed explanation can be found on Microsoft's homepage (in the support area), search for article Q181506.
+<br>
+
+
+
+
+
+
+
+
+</td></tr></table><br>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#727F84><td>
+<a name="07">
+<b>Compiling under Linux doesn't work!</b> 
+ </td><td align=right><a href=#top><img src="pix2/smallup.gif" border=0></a>
+</td></tr></table>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#8F9D9F><td>
+<br>
+Nebula's makefiles try to detect automatically which platform they run on to select the proper tools and options.
+The critical code snippet is at the beginning of 'nebula/code/config.mak':
+<br>
+<pre>
+#---------------------------------------------------------------------
+# N_PLATFORM = __LINUX__, __WIN32__
+# Automatically try to determine the platform we are running
+# on. WinNT and Linux offer the 'OSTYPE' env var, Win9x not.
+#---------------------------------------------------------------------
+N_PLATFORM = __WIN32__
+ifeq ($(OSTYPE),linux)
+  N_PLATFORM = __LINUX__
+endif 
+ifeq ($(OSTYPE),linux-gnu)
+  N_PLATFORM = __LINUX__
+endif
+ifeq ($(OSTYPE),Linux)
+  N_PLATFORM = __LINUX__
+endif
+</pre>
+<br>
+If your Linux OSTYPE variable is not set to one of the above values, you need to add another 
+'ifeq ($(OSTYPE),YourOsType)' block there and try again. Please send me a mail (floh@radonlabs.de) if 
+your OSTYPE is not supported, thanx!
+<br>
+
+
+</td></tr></table><br>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#727F84><td>
+<a name="08">
+<b>How do I start a new Nebula class?</b> 
+ </td><td align=right><a href=#top><img src="pix2/smallup.gif" border=0></a>
+</td></tr></table>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#8F9D9F><td>
+<br>
+A new class that can make use of Nebula's scripting, persistency interface and 
+hierarchical object namespace must be derived from the nRoot class or one
+of its subclasses. Since nRoot classes live in dynamically loaded class package
+dlls, there are a few rules one needs to follow:
+<br>
+<ul>
+<li>
+<ul>
+<li>
+there may only be one constructor, the default constructor
+</li>
+<li>
+don't override operators
+</li>
+<li>
+decide whether the class should be visible from outside the dll
+(public classes add some size overhead to the dll due to the symbols
+exported)
+<li>
+the destructor must be declared as virtual
+</li>
+<li>
+all methods should be declared as virtual, unless you know what you're doing
+</li>
+<li>
+always be aware that nRoot derived objects MUST be created through nKernelServer::New()
+and MUST be destroyed with by invoking the Release() method on the object. NEVER construct or
+destruct nRoot derived objects directly!
+</li>
+</ul>
+
+<li>
+Choose a C++ name and a script name for your class. The C++ name should start with a lowercase
+'n' and have uppercase letters at the start of each new word. The script name for the
+class should be identical to the C++ name, but all lower case.
+</li>
+<li>
+Create a new header file somewhere under '/code/inc/subdir', the name should be 'yourclassname.h',
+all lowercase. Copy-Paste the contents of '/code/template/class.h' into the new file and adjust to
+your needs. If your class should be visible from outside the dll, replace the N_DLLCLASS with
+N_PUBLIC. Note that each public class adds a small size overhead to the class package dll due
+to the exported symbol names.
+</li>
+<li>
+Add your own methods to the class, all methods should be virtual except you know what you're doing.
+Keep in mind that the script interface of the class should be similar to the C++ interface
+(it makes sense to make at least all accessor methods visible in the script interface).
+</li>
+<li>
+Create a new source file '/code/src/subdir/yourclass_init.cc'. This file should to export the
+public function n_init(), n_fini(), n_new(), n_version(). Those functions will be called by
+the Nebula kernel to link/unlink the class module into/from the global class list, construct a 
+new object of the class and get the version string of a class. Copy-Paste the contents from
+'/code/templates/class.cc' and adjust the contents to your needs. Check out terrain/nterrain_init.cc
+for an example.
+</li>
+<li>
+Create your implementation source files, where you implement the class methods. Each implementation
+file needs a line at the top '#define N_IMPLEMENTS nYourClassName'. This is necessary under Win32
+for the linker to know whether the class declaration should be defined as '__declspec(import)' or
+'__declspec(export)'.
+</li>
+<li>
+Create the script interface and persistency implementation file under the name 
+'code/src/subdir/yourclass_cmds.cc'. Have a look at some other *_cmds.cc file for an example. Please
+use exactly the same function header style, otherwise our automated doc tool can't understand them.
+You need to choose a fourcc code 'XYZW' for each script command that is unique in the inheritance
+chain (you will get an assertion if there's an duplicate id code). For an inherited function, 
+you usually don't need to add a new script command on your class level, since one of your superclasses
+already did, and since methods are virtual, your C++ method will be called by the superclass's 
+script interface.
+</li>
+<li>
+Integrate your class into the build files. Nebula builds .dsw/.dsp and Unix-style make files from
+a set of abstract 'package definition files'. This are the .pak files under 'code/src'. First you
+need to decide in which package the class should live (mostly this will be nnebula.pak). If you
+want to create your own class package dll, check out that other faq question. In the .pak file,
+add a new 'beginmodule/endmodule' block and fill it with your source files. If there is more
+then one header file, add curly braces around them. Find the 'begintarget' block and add your
+own module to the modules list. From 'code/src' run 'tclsh84 updsrc.tcl' (or from Linux,
+'tclsh8.4 updsrc.tcl'). If the script fails to execute, investigate and fix (mostly it will be 
+a typo in the 'beginmodule' block or a non-existing include file when generating file dependencies).
+</li>
+<li>
+Double click nebula.dsw, or run make. If your module doesn't appear in VisualStudio's class list,
+or doesn't seem to compile you probably forgot to add the module to the 'begintarget' block.
+</li>
+<li>
+Recompile and enjoy!
+</li>
+<li>
+If possible, please compile your files under Linux as well, fix compiler warnings and verify that
+everything works as expected. You'll be surprised what a different compiler has to say about
+your code :)
+</li>
+<li>
+To test your class: run nsh, and enter 'new nyourclassname objname', and invoke a few
+script commands on it.
+</li>
+<br>
+
+
+</td></tr></table><br>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#727F84><td>
+<a name="09">
+<b>How to I debug a Nebula application?</b> 
+ </td><td align=right><a href=#top><img src="pix2/smallup.gif" border=0></a>
+</td></tr></table>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#8F9D9F><td>
+Nebula class packages other then nnebula.dll (nopengl.dll or ndirect3d.dll) are loaded on demand
+when the first object of a class from such a class package is created. The problem is that
+the symbols for those dll's are only available after the dll is loaded. The solution is to
+put a break point into the function 'code/src/kernel/npackage.cc/loadPackage()', right
+after the call to n_dllopen(). Each time a new package dll is loaded, the debugger will
+stop there and you'll have a chance to set or enable your breakpoints.
+
+
+</td></tr></table><br>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#727F84><td>
+<a name="10">
+<b>What are Nebula class packages?</b> 
+ </td><td align=right><a href=#top><img src="pix2/smallup.gif" border=0></a>
+</td></tr></table>
+<table width=95% border=0 cellspacing=0 cellpadding=1><tr bgcolor=#8F9D9F><td>
+Nebula class packages are the recommended way to write 3rd party extensions for Nebula. Class package dll's
+can be redistributed separately from the official Nebula distribution, and they may run under
+a different license then Nebula (although we don't recommend this). Optional class packages 
+are also a good way to link Nebula to existing 3rd party libraries that run under a different
+license (for instance a commercial license). The technical advantage is that class package dll's 
+are only loaded on demand. If a Nebula app renders through D3D, it only has to load the ndirect3d.dll, 
+not the nopengl.dll. Also, when switching from D3D to OpenGL at runtime, the ndirect3d.dll will be 
+unloaded, and the nopengl.dll will be loaded. All this is managed internally by the Nebula kernel. If a
+new object of an unknown class is to be created, the kernel will first look through all
+the package-table-of-contents files it can find. If the class is in there, the kernel knows
+what dll to load, and which constructor function to call to create the requested object. At the
+moment, the kernel simply fails, but in the future, this may be the place to hook in an exception
+handler which could download the required dll transparently from an update server or something
+similar.
+
+
+
+</td></tr></table><br>
+<font size=1>Copyright &#169; 2000-2002 Radon Labs GmbH. All rights reserved.</font>
+</center></body></html>

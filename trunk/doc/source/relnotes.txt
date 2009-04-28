@@ -1,0 +1,1210 @@
+relnotes.txt
+============
+
+=====================================================================
+2002-04-15
+=====================================================================
+NOTES
+- Bug fixes for spikes in nFlatTerrainNode. (Ken Melms)
+- More documentation work. (Bruce Mitchener, Ling Lo, Leaf Garland)
+- Small bug fixes from Florian Theimer.
+- New nIpol interpolation types (cubic and catmull-rom spline)
+  from Markus Ewald.
+- Preload() support for nFlatTerrainNode from Ling Lo.
+- Upgrade to DevIL 1.3.0. (Leaf Garland)
+- Linux build fixes by Andre Weissflog and Bruce Mitchener.
+- Updated Python support. (Jason Asbahr)
+
+=====================================================================
+2002-02-26
+=====================================================================
+NOTES
+- This is a big merge with the current RadonLabs stuff. I hope
+  nothing is messed up but you never know.
+- If you notice something that broke during the merge, let 
+  me know. There are also some interface changes, which may affect
+  code under cvs control. If you're stuck when converting your code 
+  drop me a mail (floh@radonlabs.de).
+- I have moved the Direct3D7 code to the morgue.
+  Please consider moving to the d3d8 gfx server, its much cleaner.
+- The nScriptServer::Run() and nScriptServer::RunScript() method
+  prototypes have changed. This will affect the Python and Lua 
+  script packages.
+- Bruce Mitchener has been cleaning up the docs and source comments.
+- the build scripts have been updated. updsrc.tcl has changed. All
+  targets are now found dynamically instead of being hardcoded. See
+  updsrc.tcl for more information. Note, .epk files are no longer 
+  needed, although they will still work.
+
+NEW STUFF
+
+- the *_init.cc and *_ver.cc files are no longer needed. There
+  are now 2 preprocessor macros nNebulaScriptClass and nNebulaClass
+  with encapsulate the stuff that was in the *_init.cc files before.
+  The classes in the particle package have been converted. Check them
+  out to see how to use the macros.
+- a wrapper to the OPCODE1.1 polygon soup collision package has been
+  added. OPCODE1.1 is a very efficient collision system by Pierre Terdiman
+  (www.codercorner.com/Opcode.htm) with a small memory footprint.
+  OPCODE has been hacked to compile under Linux, but has not yet been
+  tested under Linux, so beware.
+- the collision system now offers a Ray-Model-Check (nCollideContext::LineCheck())
+- the collision system has a new collide type COLLIDE_CONTACT which
+  only checks for contact between 2 models (may be faster then a full check)
+- A new nFileServer2 object has been added, which wraps access to the
+  host filesystem through nFile and nDirectory classes, brand new
+  and untested. nDirectory under Linux compiles to nothing at the moment.
+  Parts of the file accesses in Nebula have been rewritten to use nFile,
+  but the whole persistent object stuff and Tcl source parsing not.
+  This is on the todo list.
+- A first version of an nZipFileServer (uses the LGPL'ed zlib.lib)
+  has been implemented, currently only compiles under Win32. Largely
+  untested. The idea is that once Nebula's file access has been redirected
+  to the nFileServer2 interface, that read access to zip files happens
+  transparently by replacing the nFileServer2 object with the nZipFileServer
+  object.
+- some cleanup and simplifications in the animation channel code
+- added mouse cursor methods to nGfxServer (hide, show cursor, and
+  define custom cursor images), custom images are only implemented
+  in the nd3d8server
+- implemented a simple texture mipmap lod system (only functional in nD3D8Server),
+  allows to drop mipmap levels based on object distance to the viewer, saves
+  video mem and agp bandwidth, Mipmap lods can be adjusted on a per shader
+  basis with a new nshadernode method.
+- new Nebula specific binary file format for meshes, nvx (for faster mesh loading)
+- new nMeshLoader class with subclasses nN3dMeshLoader and nNvxMeshLoader
+- new Nebula specific texture file format ntx for faster texture loading
+- 2 new tools nn3d2nvx and nbmp2ntx for generating ntx and nvx files
+- nVertexBuffer: setting joint weights will now generally renormalize the weights
+  so that their sum is 1.0
+- new ndi8input server class, which replaces the ndxinputserver class
+- new "nInputDevice" parent classes which represent a virtual Nebula input
+  device (accepts input from a platform specific input device and generates
+  Nebula input events), only the ndi8server uses those nInputDevice classes so far
+- nInputDevice subclasses nJoystickDevice, nJoyMouseDevice, nPadMouseDevice, 
+  nKeyboardDevice, the 2 mouse device emulate a recentering and sticky joystick 
+  using input from the system mouse device
+- one input event can now feed several input states
+- added a proper C++ interface to nInputEvent (accessor method, made the data
+  members private)
+- new nMeshCluster2 and nJoint2 classes for skinned characters, much simpler
+  then the previous attempts
+- new nVisNode subclass nCurveArrayNode for animating entire object hierarchies,
+  and a new *.nanim file format which holds animation curves
+- new nMeshEffect class
+- added support to wfObject and wfToolbox to support up to 4 texture coordinate
+  layers (brand new and untested!)
+- Commented out the memlog file output, which used to clutter the directory
+  hierarchy. The memleaks should be appended to a logfile in bin/win32 or
+  bin/linux
+- new nVisNode::PreLoad() method, apps can call this method to ask a nVisNode
+  hierarchy to load its required resources in advance (can prevent stuttering
+  at render time)
+- new class builder wizard - creates a basic class.
+- Visual Studio 7 support, thanks to Stefan Kirsch.
+- ...and probably a few smaller things which got lost in the noise
+
+=====================================================================
+????-??-??
+=====================================================================
+NOTES:
+
+NEW STUFF:
+- Added flat terrain component.  The component uses a quadtree based
+  CLOD (Continuous Level of Detail) algorithm based on Thatcher
+  Ulrich's algorithm described in the Gamasutra article "Continuous
+  LOD Terrain Meshing Using Adaptive Quadtrees" to render flat
+  terrains described by heightfields.  The code was derived from the
+  already existing nterrain component for spherical geometries.  You
+  can see the component at work in the tekdemos.  Credit goes to Ken
+  Melms for the original code and Jonathon Fischer for subsequent
+  updates.
+
+BUGFIXES:
+- nsh and gfxserv now put the -args option string (if any) into 
+  /sys/share/args. This was done to remove the Tcl specific code.
+
+=====================================================================
+2001-08-18
+=====================================================================
+NOTES:
+- a not-so-big-update integrating new RadonLabs labs stuff
+
+NEW STUFF:
+- a shadow subsystem using the stencil buffer shadow technique
+  has been implemented, see new tekdemo and /doc/source/shadow.txt
+
+- finally got my VTune, the particle sprite renderer has been
+  optimized a lot, and particles use a smaller memory footprint
+
+- added a fast float-to-int conversion trick (see function
+  n_ftol() in code/inc/math/nmath.h)
+
+
+BUGFIXES:
+- There were some bugs in the new animation channel code,
+  specifically in communicating the dirty state of a channel
+  set across nLinkNode objects, this should be fixed now
+
+- added a workaround for the DevIL nonsquare-mipmapping bug
+  in nD3D8Texture, the workaround is to just NOT mipmap
+  non-square textures. To disable this behaviour, comment-out
+  the NONSQUARE_MIPMAP_WORKAROUND define at the beginning of
+  nd3d8tex_openil.cc
+
+- The new Ctrl-Left/Right functionality in the console would
+  crash when doing ctrl-left at the beginning of the line,
+  or would behave strange when doing ctrl-right at the end
+  of a line, fixed.
+
+- some potential key array overflows in the nipol class
+  and similar classes have been fixed
+
+
+=====================================================================
+2001-07-22
+=====================================================================
+NOTES:
+- this is a massive update, Direct3D 8 support is now "final"
+  (although there is no infrastructure yet for DX8 pixel and
+  vertex shaders), the animation channel system has been
+  rewritten completely (much more optimized), the API has
+  been cleaned up, and lots of little changes and additions
+  which accumulated over time in the CVS repository are contained,
+  so treat the following more as an overview.
+
+- some obscure and useless classes have been removed (most notably
+  the mysterious nxnode class)
+
+BUGFIXES:
+- The nd3d8server issues have been fixed (fogging and
+  projection matrix stuff was messed up). The d3d8 server
+  should now be "good enough" to replace the nd3d7server.
+
+NEW:
+
+- the animation channel system has been rewritten (much faster
+  and smaller memory footprint). See /nebula/doc/source/channels.txt
+  for the important details.
+
+- animation channels can now be 1..4 dimensional (which means
+  you can write things like RGBA colors or positions into
+  a single channel).
+
+- support for more image formats in the nglserver and nd3d8server
+  with the help of DevIL (formerly known as OpenIL)
+  
+- by using .tga textures you no longer need 2 files if you
+  want to define a texture with alpha channel:
+    tex.settexture 0 bla.tga none
+  This only works with the nglserver and nd3d8server.
+
+- nicer and faster text rendering in the d3d8 server
+
+- the 3dfx and Matrox workarounds in the nGlPixelShader classes
+  have been removed, frankly, I'm getting sick and tired of those shitty
+  OpenGL ICDs.
+
+- there is a new "nstaticmeshemitter", this simply places static particles
+  on the vertex positions of a mesh, see the new tekdemo
+
+- added support for alpha test, see the new tekdemo
+
+- To aid debugging mem leaks there are now alternative global "new" and
+  "delete" macros, called n_new and n_delete, use these if you want
+  correct file/line# information for C++ objects in the memleak log when
+  Nebula exits.
+  Since there was a naming collision in the *_init.cc files, the old
+  n_new() functions have been renamed to n_create(). You need to
+  fix this in your own classes as well.
+
+- the interface to the nMixer and nMeshMixer classes have changed
+
+- the nvisnode.readchannel and nvisnode.writechannel script commands
+  have gone, there is a new class nChnReader, which implements
+  the readchannel functionality
+
+- njoint objects can now also act as n3DNode (which means you can
+  attach ordinary 3d objects to the bones of a skeleton
+
+- new nhypermixer2 class which mixes attributes for whole object
+  hierarchies (as opposed to nmixer which only mixes single objects)
+
+- new ntclscriptlet objects, which can embed script code, this may
+  simplify your game database management, since you no longer need
+  to handle all those small tcl files as external resources.
+  
+
+=====================================================================
+2001-01-09
+=====================================================================
+NOTES:
+- this is only a super mini update:
+- the nterrainnode class has been moved into its own package
+- detail map support for nterrainnode, also, the base texture map
+  is now spherical mapped, see tekdemos for how it looks and works
+- the tutorial has been corrected to work with ntexarraynode objects
+
+BUGFIXES:
+- there were some places where tclsh82 was still called, converted
+  everything to tclsh84
+- fixed fogging bug in nGlPixelShader and nD3D7PixelShader, the
+  object-local fog-enable state was compiled into the state blocks
+  or display lists, however, whether fogging is turned on or off
+  for an object also depends on the global N_RS_FOGENABLE state,
+  which can change independently from the pixel shaders fog state,
+  instead of doing a recompile of the whole state block, switching
+  the fog state has been moved out of the state block, and is
+  done immediately when the first pass of the pixel shader is rendered.
+
+=====================================================================
+2000-12-15
+=====================================================================
+NEWS & NOTES:
+- *** IMPORTANT ***
+  The texture assignment for the nshadernode class has changed. The
+  last release used 1..4 ntexnode objects, which had to be child
+  objects of the nshadernode object. This was inflexible, because
+  textures and shadernodes were hardwired together. It would
+  have been hard to have one "shader library", where shaders could
+  be combined with different textures (see the new 
+  nebula/doc/source/shadernodes.txt file why having a shader library and
+  sharing shaders is a good thing).
+  A new ntexarraynode class has been introduced, which bundles 
+  1..4 textures into a single object, and the general structure 
+  of a 3d object now looks like this:
+  
+    new n3dnode pos
+        sel pos
+        new nmeshnode mesh
+        new nshadernode shader
+        new ntexarraynode tex
+    sel ..
+    
+  See the tekdemos for examples.
+  
+- DO NOT use the "new style" and "old style" visnode classes
+  together under the same n3dnode (e.g. don't mix nmeshnode with
+  nmatnode, or nvbufnode with nshadernode), there are now 
+  checks in nscenegraph which will throw an assertion in this case.
+  It is anyway a good idea to get rid of any nvbuf*, nmatnode and
+  ntexnode objects as soon as possible, they will very likely 
+  be removed from the next release because of the current code
+  bloat in nscenegraph and ngfxserver.
+  
+- Fixed the recent compile problems under some Linux distros, having
+  to do with the glxext.h header file.
+  
+- Switched everything to Tcl8.4. For windows, the necessary runtime
+  components come with the download package, but you still need
+  the full Tcl8.4 install for the build process. Get it from
+  http://www.scriptics.com. For Linux, get the source tarballs,
+  and do a 
+  ./configure --prefix /usr
+  make
+  make install
+
+  Without the --prefix, Tcl will install itself to /usr/local/lib
+  and /usr/local/bin, which is wrong, at least under SuSE Linux.
+
+- I wrote a Tcl extension dll (win32 only so far) which allows
+  Nebula to be loaded dynamically as a proper Tcl extension
+  (the big win is that one can use Tcl debuggers to debug
+  Nebula scripts). Unfortunately something broke when I switched
+  to Tcl8.4 (Tcl crashes on exit when the Nebula extension was
+  loaded). I'll have to investigate this (or maybe someone with
+  a bit more experience on Tcl extensions can help), in any way,
+  to try it out:
+  
+  start a tclsh84
+  % load tclnebula
+  % new n3dnode bla
+  % bla.getcmds
+  % exit
+  $$$crash$$$
+  
+  PS: in case you didn't notice yet, TclPro is now FREE! Comes
+  with an excellent source level debugger.
+
+- In n3DNode, matrix evaluation has been moved from Compute() to
+  Attach(). Also, billboard and sprite handling, and flattening
+  matrix hierarchies into view space is now done in n3Dnode and
+  not in the scenegraph object. This fixes a lot of small problems 
+  especially with the lod handling (especially deactivating 
+  a n3DNode based on some min lod value).
+  
+- There's a new nRoot::Initialize() method, which is called by
+  the kernel as soon as an object is constructed and linked into
+  the name space. You can use this method for one-time-initializations
+  which depend on proper insertion in the name space hierarchy (which
+  is impossible in the C++ constructor).
+  
+- new methods nIpol::Disconnect() and nIpol::GetConnect() (also visible
+  in the script interface)
+  
+- added an quaternion interface to n3DNode and nJoint (thanks
+  to Matthias Schindler of Kritzelkratz 3000 for implementing this). 
+  
+- beefed up the quaternion class a bit (careful, not tested too much,
+  may still contain bugs).
+  
+- nIpol now has settable "interpolation types", at the moment there is
+
+  step          - step through keyframes, don't interpolate
+  linear        - do normal linear interpolation (default)
+  quaternion    - do spherical interpolation with 4d keys interpreted
+                  as quaternions
+
+
+BUGFIXES:
+
+- Fixed a serious mem leak in nD3D7PixelShader, D3D state block
+  objects were not properly released on Compile(). Thanx to 
+  Eric Newhuis and Aaron Oneal for finding the bug and sending
+  me the fix.
+
+- nBmpFile didn't take the 4 byte alignment into account when reading, this
+  resulted in garbage when the width of the image was not a multiple of 4
+
+- several bugfixes and cleanups in nTclServer, mostly having to do with
+  the new tcl extension code
+
+- fixed a bug where nDynVertexBuffer tried to render vertex buffers
+  with no vertices in them, and added assertions to nD3D7VertexPool
+  and nGlVertexPool for that case
+  
+- several bugfixes in vertex bubble and pixel shader rendering code,
+  especially with the dirty detection mechanism which prevents 
+  redundant state switches (sometimes, states were not switched
+  when they should)
+  
+- fixed a bug where the "current working object" pointer in the kernel 
+  was not always properly invalidated if this object was killed
+  
+- fixed a bug where sometimes vertex buffers of the wrong format
+  were returned by nGfxServer::NewVertexBuffer() if the vertex
+  buffer had joint weights. This resulted in an assertion in the
+  mesh loader code if a mesh containing joint weights were loaded.
+  
+
+
+=====================================================================
+2000-11-12
+=====================================================================
+NOTES
+- Apologies for the long delay of this update, as always, all things
+  came together, the pixel shader stuff took longer then expected,
+  mainly due to compatibility problems between different OpenGL
+  drivers, hardware t&l support went pretty smoothly, except that
+  one has to be very careful about blowing the whole thing up (one false
+  render state switch, and the hardware t&l pipeline will stall
+  completely and be no faster then software t&l, took a long time to 
+  get everything right). 
+
+- this is a massive update, almost the whole rendering subsystem has 
+  been rewritten and long-outstanding performance optimizations have
+  been implemented, as well as infrastructure changes to make 
+  such massive rewrites less likely in the future, as a negative
+  side effect, there will very likely be a number of new bugs in the
+  new code, and due to the more complex material shader code, there
+  are a number compatibility problems with complex shaders, especially on 
+  3dfx and Matrix cards under OpenGL (I worked around most of them,
+  unfortunately I had to disable multitexturing altogether on those cards)
+  
+- Please read the following files for an detailed overview on what's
+  new in this release: 
+  
+  doc/source/vertexbuffers.txt
+  doc/source/meshnodes.txt
+  doc/source/shadernodes.txt
+  
+- the following classes are considered obsolete, they will still be 
+  around for a while, but will die sooner or later:
+  
+  nVBuffer       
+  nD3D7VBuffer   
+  nGlVBuffer
+  nMaterial
+  nCluster
+  nMatNode
+  nVBufIpol
+  nVBufMixer
+  nVBufNode
+  nParticleSystem
+  nSpriteSystem
+  
+  See the vertexbuffer.txt, meshnodes.txt, shadernodes.txt files
+  for information of how they are replaced with new classes. 
+
+- support for the following OpenGL extensions has been added:
+    GL_ARB_multitexture
+    GL_EXT_texture_env_combine
+    GL_EXT_texture_env_add
+    GL_EXT_texture_blend_color
+
+- support for the following D3D7 concepts has been added:
+    state blocks
+    general support for t&l devices
+    various vertex buffer hints (D3DVBCAPS_WRITEONLY, DDLOCK_WRITEONLY, 
+    DDLOCK_DISCARDCONTENTS)
+    optimized static vertex buffers
+    multitexturing 
+    
+
+NEW:
+- Nebula now supports multitexturing in a very flexible way, its not
+  quite DX8 pixel shaders yet, but the paths have been laid. A future
+  update of Nebula may support reading DX8 pixel shader scripts
+  directly. Hopefully, a similar syntax will be established for
+  OpenGL as well in the near future (related new classes: nPixelShader,
+  nD3D7PixelShader, nGlPixelShader, nShaderNode). The cool thing is that
+  one can specify more texture stages then are supported in hw, Nebula will 
+  then try to achieve the desired effect with the most efficient combination of
+  multitexturing and multipass rendering given the abilities of the
+  host system. Unfortunately this is mostly the theoretical ideal, there's
+  no way around testing new shaders on all available 3d cards. God how I wait
+  for a pixel shader standard to replace the fixed function pipelines...
+  
+- a new vertex buffer infrastructure has been implemented which is
+  better suited for hardware t&l (and generally makes better use
+  of what optimizations the 3d api has to offer). See "doc/source/vertexbuffer.txt"
+  for details (related new classes: nVertexPool, nD3D7VertexPool, 
+  nGlVertexPool, nVertexPoolManager, nVertexBubble, nVertexBuffer, 
+  nIndexBuffer, nDynVertexBuffer, nMeshNode, nMeshIpol, nMeshMixer, 
+  nMeshCluster)
+
+- Nebula now comes with STLport-4.0 integrated, for all you STL
+  fanatics out there :)
+
+- The WFTools have been cleaned up. There are now 2 Nebula-independent 
+  helper classes called wfObject and wfToolbox for easy integration into
+  3d modeler plugins. wfObject is the "live representation" of a Wavefront
+  obj file with Nebula extensions (.n3d files). wfToolbox implements
+  algorithms on wfObject (pretty much everything the WFTools offer 
+  through the command line, but packed into a C++ class). This should
+  make writing geometry exporter plugins for Nebula much easier.
+
+- Nebula now supports smooth skinning with up to 4 weights per vertex
+  (see nMeshCluster class for details)
+
+- The n3d file format has been extended to support vertex weights and
+  joint palette indices.
+
+- some OpenGL specific cleanups necessary to compile under XFree4.x
+
+- new nDynVertexBuffer class simplifies classes who generate dynamic
+  geometry
+
+- simplified the nProfiler C++ interface, there's now only an
+  nProfiler::Start()/Stop()/Rewind()
+
+- new nRoot::SetFlags() flag N_FLAG_SAVESHALLOW, a nRoot::Save()
+  or nRoot::SaveAs() won't save child objects if this flag is set
+
+- nTerrainNode now caches cartesian coordinates, so they wont be
+  recomputed for each vertex, this comes at a increased memory
+  usage though
+
+- nRef, nAutoRef and nDynAutoRef now have default constructors,
+  this simplifies using them in arrays and stl containers
+
+- new method nCollideContext::MovingSphereCheck()
+
+- new methods nKernelServer::PushCwd(), nKernelServer::PopCwd()
+
+- nJoint: internal matrix evaluation has been simplified alot
+
+- new vertex components for weights and joint palette indices
+  (vertex weights are no longer defined in the nmeshcluster class,
+  they are instead a normal vertex component like coordinates or
+  normals, this will make it easier to implement hardware accelerated
+  skinning in the future (I decided not to use the current skinning
+  extensions, but wait for vertex shaders instead))
+
+- nTexture can now generate mipmap levels on the fly, only the highest
+  mipmap level has to be given (the respective D3DX and GLU functions
+  are used for this, I'm not excited about their speed however)
+
+- the nPixelShader subclasses now pack all render states which are
+  likely to remain static into D3D state blocks or OpenGL display lists,
+  there's also a dirty detection mechanism which prevents excessive 
+  redundant render state switches (as was the case with nMaterial).
+
+- various workarounds for Matrox and 3dfx OpenGL drivers (blech!)
+
+- new class packages: nobsolete.pak and nparticle.pak
+
+
+=====================================================================
+2000-07-23
+=====================================================================
+NEW
+- New sound subsystem, check out the nAudioServer, nSoundNode and
+  nListenerNode classes. Linking the sound subsystem to a specific
+  audio API is done by subclassing nAudioServer. There is only
+  one subclass at the moment, ndsoundserver, which links to
+  DirectSound V7. Sound is generally embedded into 3d space, and 
+  all sound data is streamed from disk. EAX support is planned 
+  but not implemented yet.
+- New collision subsystem, check out nCollideServer, nCollideContext,
+  nCollideObject, nCollideShape and nCollideReport. The basic framework
+  has only support for moving spherical collision volumes, but
+  polygon-2-polygon checks can be done by subclassing nCollideShape
+  (we are using the RAPID collision system that way).
+- D3D textures are now generally created with the DDSCAPS2_OPAQUE
+  flag.
+- added watcher variables for D3D7 texture manager information
+- nKeyArray is now a template class
+- additional bounding box check in nTerrainNode, so that 
+  Update() isn't called if the island isn't visible
+- rewrote ndxinputserver to the DirectInput V7 interfaces
+- matrix44::rotate_rx()/ry()/rz(), matrix44::translate()
+- removed obsolete nplatform and nisland classes
+- optimizations in n3DNode (more inline methods)
+- rewrote Nebula completely to the new mathlib classes
+  (matrix44 and vector3/vector4)
+- new WFTool: wfnormalize, rescale wavefront object so that
+  it fits exactly into a unit sphere
+- added nTerrainNode::SaveToWavefront(), this simply renders
+  the terrain into a wavefront file, we use this to generate
+  collision shapes in Nomads
+- cleaned up the Nebula distribution a bit
+
+BUGFIXES:
+- nspritesystem and nspriterender: it could happen that empty
+  vertex buffers could be rendered (if there were no particles to
+  be rendered)
+- added assertion to nglserver and nd3d7server if attempted to
+  render an empty vertex buffer
+- workaround in ndxinputserver: the joystick axes range can be 
+  read-only, which caused broken joystick input (for instance
+  with the Microsoft game pad under Win2k)
+- nvbuffer: triangle lists didn't work with LOD chunks
+- N_RS_ZBIAS in nglserver was broken
+
+=====================================================================
+2000-05-19
+=====================================================================
+NOTES:
+- long time no update, sorry
+
+NEW:
+- The spherical terrain renderer is done! Check out the tek demo.
+  It really scales down triangle count very nicely based on
+  geometrical error, and its totally scalable concerning triangle-count 
+  vs. popping tradeoff.
+  Its so much cooler then my original sandwiched terrain renderer...
+
+  The renderer is based on ***Thatcher Ulrich's*** adaptive lod terrain 
+  renderer featured in Gamasutra, with the following changes:
+
+  * Its wrapped around a sphere, the original x and z coordinates
+    are now polar coordinates, original y has become radius.
+  * The error computation had to be changed to work in cartesian 
+    space.
+  * Misc fixes were necessary to fit the edges together (there are
+    still some artifacts at the poles, but for now I can live with 
+    that).
+  * Computes real normals for proper dynamic lighting.
+  * Writes vertices to a double buffered Nebula vertex buffers,
+    and reuses shared vertices when possible (so that only an
+    index is written instead of a whole vertex). Up to 75%(!)
+    of vertices are reused.
+  * A private binary file format has been added which stores the
+    quad tree directly so that error and static culling doesn't
+    need to be done on load time.
+  * quadsquare objects are allocated from a fixed size memory pool 
+    instead of being dynamically allocated
+  * GetHeight() has been replaced by a general 3d line intersection 
+    routine.
+  * It has been embedded into a Nebula wrapper class (nterrainnode) to 
+    integrate with the rest of Nebula.
+  * A software 3d scanner WF tool has been written, which creates
+    a spherical height map for any 3d object.
+  Check out nterrainnode for more details.
+
+- Jeremy Bishop (the new guy on board) has written a lense flare 
+  effect class and started to work on a totally cool cloud renderer.
+- Translated n3dnode script docs to English.
+- New n3dnode behaviour: n3DNode::SetLockViewer(), n3DNode::GetLockViewer()
+  If locked to viewer, the 3d node will always position itself relative
+  to the viewer (we use this for our sky)
+- Removed some fluff from nscenegraph
+- Started a new set of slim math inline classes under inc/mathlib.
+- New inline class npknorm (packed normal), packs a normal vector into
+  16 bits (this is used in the terrain renderer).
+- added N_RS_CULLMODE to nmatnode (controls backface culling)
+- added some render statistics 
+  (check it out with '/sys/servers/console.watch gfx*') not complete 
+  yet though...
+- added nObserver::RenderFrame() to render a single frame
+- removed the old Direct3D V6 based ngfxserver subclasses classes
+- added a matrix stack to nGfxServer (nGfxServer::PushMatrix(), 
+  nGfxServer::PopMatrix())
+- New method nRoot::Import(), parses an external persistent object file
+  and keeps an internal flag, if the object saves its state, it will
+  write out original the 'import' command, instead of its own state.
+  This is useful when working with libraries of external persistence files.
+- nParticleServer: particle systems without any living particles
+  now automatically kill themselves, only living particle systems
+  use up memory
+- rewrote particle system context handling completely, it was 
+  basically complete bullshit...
+- new class: nOverlayPlane, simply renders a viewer aligned polygon
+  across the entire view, we use this for fading effects
+- new: nVBufNode::SetVBufferObject()
+- new class: nSpecialFxServer, this will be the collection point for
+  all types of visual special fx that don't fit anywhere (at the 
+  moment it can only controls the overlay plane fade effect)
+- New render state: N_RS_COLORMATERIAL, reroutes vertex color
+  to one of the lighting material components (just translates to
+  glColorMaterial() and the D3DRENDERSTATE_*MATERIALSOURCE Direct3d
+  render state, this is a good way to combine vertex colors with
+  OpenGL's and Direct3D's the lighting engine.
+- Started with sound stuff, this is all unfinished and incomplete,
+  so it can't currently be used. Sound support will only be supported
+  under Windows9x/2000 in the beginning (using DirectSound3D and EAX).
+  If someone feels brave enough to implement sound support under
+  Linux, let me know (floh@radonlabs.de), I would like to wait until
+  OpenAL has matured though...
+- added support for header files in the package definition files,
+  so that VisualStudio has a chance to generate a proper C++ class list
+- added nKernelServer::AddClass(), nKernelServer::RemClass() to simplify
+  class module setup in n_init()/n_fini()
+
+BUGFIXES:
+- nVBufEmitter didn't save state upside down
+- dead particles could still be rendered if the particle system
+  was non-looping
+- nMixer: if weights of subobjects were read from a channel, the
+  weight was one frame behind, because GetWeight() was called
+  before ReadChannels()
+- ... the same was the reason that objects with an initial weight
+  of zero were never taken into the mixing process because ReadChannels()
+  was never called on objects with a weight of zero
+- nMixer didn't execute uplink command if the sum of all child weights
+  was 0.0
+- nBlob: an invalid pointer could result when executing nBlob::Set()
+  with a NULL pointer
+
+
+=====================================================================
+2000-04-06
+=====================================================================
+NOTES:
+- RadonLabs has relocated to Berlin!
+- The particle system has been rebuilt completely (check out the
+  new burning banana tekdemo). There are now particle emitter and
+  particle renderer classes, which work together to manage and
+  visualize a particle system. At the moment there are 2 emitter
+  classes, npointemitter emits particles from a point, nvbufemitter
+  emits particles from a vertex buffer node (static, animated or
+  whatever). There is only 1 particle renderer class: nspriterender
+  which renders particles as viewer aligned quads.
+- Nebula has fog support now. This is only the vanilla range based
+  fog supported by D3D and OpenGL, nothing fancy yet. Check out 
+  the N_RS_FOG* render states and the nfognode class.
+- I have started a new terrain renderer class, building on Thatcher Ulrich's
+  adaptive lod renderer in one of the last Gamasutras. There is nothing
+  finished yet, so don't use it :)
+  Due to the world space error based geometry simplification the new one
+  produces almost no noticeable popping artifacts and has a much lower
+  triangle count then my own attempt. I added support for dynamic lighting
+  (computes real normals to fit into Nebula's lighting model) and a 
+  more optimized rendering structure using double buffered vertex buffers
+  with vertex reuse. When I came to the flying island problem (I solved this
+  in the past by gluing 2 conventional terrains together, getting a smooth
+  island border by defining a clip plane) I gave up because all the code
+  to make sure that the upper and lower part of the island fit together with
+  no holes and cracks would have bloated the simple and elegant terrain render
+  code too much...
+  What I'm doing now is to wrap the terrain renderer around a sphere.
+  The old X and Z coordinates turn into Theta and Rho angles in a polar coordinate
+  system and the former height becomes radius. Whenever model space coordinates are
+  needed, a simple coordinate transformation from polar to cartesian space is done,
+  and that's it (almost, normal computation, quadtree node culling need to be 
+  changed and the geometry error needs to take an additional spherical error into
+  account, otherwise a smooth sphere would be reduced to a single node).
+  More news and a tekdemo (hopefully) next time.
+
+NEW:
+- 2 new tekdemos demonstrating exponential fog and the new particle systems
+- translated the ngfxserver script docs to English
+- nGfxServer::ScaledScreenshot() takes a screenshot at a given size (we use
+  this for savegame identification in Nomads)
+- added 'Linux' as platform identification string in config.mak
+
+BUGFIXES:
+- nobserver didn't trigger particle server
+
+=====================================================================
+2000-03-13
+=====================================================================
+NOTES:
+- We had to spend much time for general business stuff for the Nomads
+  project, so not that much new code this time...
+- We now have VISUAL STUDIO workspace files! I spent a few days 
+  with a complete rewrite of the build process. The problem was
+  that I didn't want to maintain two sets of make files, one set
+  of .dsp files for Visual Studio and one set of handcrafted 
+  Unix makefiles. Adding new source file or merely changing compile
+  options would be a nightmare. I have written a few tcl scripts
+  which generate .dsp/.dsw files AND GNU Make compatible 
+  makefiles from one abstract "project definition file", which
+  defines project attributes in a very simple syntax.
+  As a side effect, file dependencies are now finally correct
+  when compiling from the command line, so a simple 'make'
+  should work now under all circumstances. Visual Studio support
+  is not perfect yet, the class hierarchy browser isn't working
+  right now because header files are missing.
+- Added general Win2k support, however, driver support under 
+  Win2k (D3D and OpenGL) is a joke under Win2k at the moment,
+  specifically, we have problem reports when running Nebula
+  on the Matrix G400 under W2k.
+  
+NEW:
+- Killed nVisNode::Render(), the scene graph now simple calls
+  nVisNode::Compute() instead of nVisNode::Render(), there was
+  no clear reason why nVisNode::Render() even existed.
+- new kernel inline class: nKeyArray, associates a pointer with
+  a key and can do a fast by-key-lookup through a binary search
+- rewrote nClass::FindCmdById() to use nKeyArray instead of bsearch()
+- rewrote nParticleServer completely
+- some general cleanup in class nThread
+- made the object persistence handling in nFileServer and nScriptServer
+  a bit more flexible in order for situation where no straight 
+  object hierarchy can be saved (we stumbled across this when 
+  implementing savegame handling for Nomads)
+- wrote a nRingBuffer template class (nkernel/nringbuffer.h)
+- Worked on nAlphaSystem/nParticleSystem. Alpha particles are
+  particles that live in world space and keep their state between
+  frames. The point is that there are much fewer alpha particles then
+  visual particles in a particle system (saves memory).
+- New primitive type: N_PTYPE_LINE_STRIP
+- New tcl script to generate .dsp and makefiles from .pak files:
+  makemake.tcl, makedsw.tcl, makeunix.tcl, makedepend.tcl
+- wrote a generic nStack template class (first in last out)
+- n_strcat(): save strcat() version which will never overwrite the
+  destination buffer
+- nRoot::GetRelPath() get shortest name space path between 2 objects
+
+BUGFIXES:
+- fixed a serious bug in nThread under Win32 involving a CloseHandle()
+  on an invalid handle (this only showed up under Win2k), rewrote
+  threading code to use _beginthreadex()/_endthreadex() instead
+  of _beginthread()/_endthread()
+- serious bugfix: non-square textures crashed (width and height were
+  messed up, doh...)
+
+
+=====================================================================
+2000-02-14
+=====================================================================
+NOTES:
+- This is an minor release which fixes a compiling problem
+  under Linux: EAGAIN and EINVAL was not defined on some systems
+  unless errno.h is included. This should be fixed now.
+- Makefiles have been fixed to (hopefully) compile on more
+  Linux dists. 
+- Tcl8.2 is now required to compile and run Nebula!
+- Particle system Tekdemo is here (tada!)
+- The whole scripting system has been rewritten to use Tcl8.2
+  (it now also uses the more efficient Tcl_Obj stuff, which makes
+  better use of Tcl's bytecode compilation).
+
+NEW:
+- nlaunch output is now redirected to a file instead of going
+  to nowhere under Windows (the file is nebula/bin/win32/nlaunchlog.txt),
+  this may help to find the reason why tekdemos are not starting.
+- changed default OpenGL libs to GL and GLU instead of MesaGL and
+  MesaGLU
+- added more detailed shutdown messages in ~nKernelServer() to
+  catch the mysterious hang-on-exit bug under Windows (no success
+  so far though...)
+- translated nRoot script docs to English
+- added start/stop/repeat times to nparticlesystem
+- nparticlesystem: number of computed particles can be queried now 
+
+BUGFIXES:
+- fixed several minor bugs in nparticlesystem and nspritesystem
+- on a fatal error, the log file is now correctly flushed, so that
+  any assertion messages should be there
+
+=====================================================================
+2000-01-31
+=====================================================================
+NOTES:
+- Particle systems have been implemented. Nebula particle system
+  don't keep any per-particle state between frames, instead they
+  can recreate the entire particle system based on a single time stamp.
+  This is necessary if an application wants to render several
+  instances of the same single particle system object with different
+  local time stamps within a frame and without having to create
+  a unique context for each visual particle system instance (this
+  would waste tons of memory if the world is populated with thousands
+  of objects). Particles can travel towards an optional attractor node.
+  Both the emitter and attractor nodes are normal n3dnode objects and
+  can be fully animated. All particle attributes can be animated over 
+  the lifetime of the particle. We will prepare a new tekdemo to
+  show off some features of the particle system, there will also
+  be a Tk editor that will allow to tweak the particle system 
+  interactively. All this has to wait until the next source
+  release though, because we are in crunch time for a Nomads demo
+  at the moment.
+
+NEW:
+- several fixes to the nIsland class to remove clipping artifacts
+- moved some code from nPlatform to nIsland
+- removed nFileServer::SaveCmds()
+- there were 2 script server objects alive, one for loading object
+  scripts, the other was the "standard" script server. Now there
+  is only the standard script server.
+- old light source have not been correctly deactivated at the start
+  of a frame
+- added a workaround in nD3D7VBuffer, which fixes problems with
+  automatic texture generation in D3D7 and mixing flexible 
+  vertex formats (there were problems if there was no texture
+  channel in the FVFs)
+- Added new methods nInputServer::ObtainFocus() 
+  and nInputServer::LoseFocus(), which are called by the
+  gfx servers, if the application window is losing input focus.
+  Before that fix the input server would get confused when losing
+  and obtaining focus again (input states would get stuck).
+- removed mouse cursor under OpenGl fullscreen mode 
+- globally removed code involving specular lighting. Nebula does
+  only support diffuse lighting through the gfx server api
+  (later on, we will probably support specular effects through
+  things like multitexture, that's more flexible)
+- added new frame time methods to nTimeServer class, which return
+  an identical time stamp between 2 nTimeServer::Trigger() calls
+  (nTimeServer::GetTime() will return a different time stamp each
+  time it is called)
+- Added Pseudo-Random-Number support to time server. The point
+  is that an identical "key value" is guaranteed to return the
+  same random number each time it is obtained.
+- new primitive type in gfx server N_PTYPE_POINT_LIST
+- new visual node classes: nparticlesystem and nspritesystem, the
+  latter is a particle system renderer that uses viewer aligned
+  sprites
+
+BUGFIXES:
+- none? strange...
+
+=====================================================================
+2000-01-17
+=====================================================================
+
+NOTES:
+- major code update
+- much cleanup
+- first real support for Direct3D V7 
+- tekdemos have been updated to switch between
+  OpenGL, Direct3D V6, Direct3D V7 with hardware
+  rendering and Direct3D V7 with software rendering
+
+NEW:
+- nGlServer: fullscreen support under Win32,
+  including Alt-Enter (toggle fullscreen/windowed),
+  Alt-Plus/Minus (switch to next/previous display mode)
+- new method: nGfxServer::GetDisplayMode()
+- new doc file, 'doc/spec/sysinfo.txt' contains
+  information about the queryable Nebula system
+  database and the location and meaning of standard
+  objects
+- new doc file, 'doc/spec/coding_tutorial.txt'
+- new builtin nsh command 'dir'
+- implemented all new scripting infrastructure using
+  bsearch() lookup and direct calls to callback functions,
+  which eliminates the 'Dispatch()-walking' command resolution
+  used before (it's not that much faster as I was hoping though)
+- added some watcher variables to monitor texture mem usage
+- nGfxServer: new render state N_RS_CULLMODE
+- started new nIsland class that glues together 2
+  nPlatform objects
+- nGfxServer: support for user defined clip planes
+- added a smooth border to nPlatform using a user defined
+  clip plane
+- some cleanup in nPlatform
+- Direct3D V7 support through new class nd3d7server, we'll
+  keep the old nd3dserver around for a while until
+  nd3d7server has enough testing. The new gfx server
+  is a migrated version of nd3dserver, written to the
+  new D3D interfaces, many D3D7 specific features are not
+  supported yet, or are still 'emulated'. The old nd3dserver
+  will eventually vanish.
+- nD3D7Server: can now enumerate several hardware 3d
+  rendering devices (nD3DServer stopped at the first
+  hardware device found)
+- nD3D7Server: enumerates z buffer formats (nD3DServer didn't)
+- killed the N_RS_AMBIENT/N_RS_DIFFUSE/N_RS_EMISSION/N_RS_SPECULAR
+  render states, they have never been used and nMaterial objects
+  are more efficient
+- killed N_RS_TEXTURE render states, texturing is now disabled
+  by setting a NULL N_RS_TEXTUREHANDLE (this eliminates some
+  clumsy workaround in the Direct3D servers)
+- killed N_RS_GLOW* render states, they are obsolete
+- killed N_RS_SHININESS render states, specular vertex lighting
+  is not supported by Nebula right now
+- killed light type N_LIGHT_PARALLELPOINT, OpenGL doesn't
+  support this light type anyway
+- killed nVBuffer::RenderGlowHalo()
+- nD3D7Server now enumerates the RGB Emulation and Reference 
+  Rasterizer
+- N_RS_TEXGENMODE_U/V have been unified to N_RS_TEXGENMODE
+  (Direct3D 7 can not handle different texgen modes for
+  individual texture dimensions)
+- nD3D7Server: texgen emulation killed, now uses Direct3D
+  automatic texture generation API
+- new nsh builtin command: 'exists'
+- support for user defined clip planes in nD3D7Server
+
+
+BUGS FIXED:
+- nD3DServer::SetDisplayMode() was generating an invalid
+  display mode descriptor string in some cases
+- nInputServer: several critical bug fixes in new input mapping code
+  that could lead to memory corruption and crashes
+- nTimeServer: if time server was running in 'lock delta t' mode,
+  the time could not be halted
+- nInputServer: qualifier-related input-event-obscuring
+  didn't work correctly in all cases
+- nInputServer: up/down events haven't been generated correctly
+  with qualifiers in some events
+- nPlatform: now centered at the coordinate systems origin
+- nPlatform: fixed a normal generation bug
+- nInputEvent constructor didn't initialize all members
+- nGlServer: when switching from fullscreen to windowed, the
+  window was still declared as topmost
+
+
+=====================================================================
+99-12-23
+=====================================================================
+
+NOTES:
+- complete rewrite of input mapping code
+- the gfx servers can now take screenshots 
+
+NEW:
+- input axes now also generate button events
+- added saver interface to nImageFile
+- cleaned up nPixelFormat
+- added screenshot functionality to nd3dserver and
+  nglserver (24bpp BMP files)
+- renamed some methods:
+    nConServer::OpenConsole() -> nConServer::Open()
+    nConServer::CloseConsole() -> nConServer::Close()
+  (also in the script interface)
+- new method nConServer::Toggle()
+- toggling the console is no longer hardwired to
+  the Escape key; instead, define an input mapping as this:
+    .map keyb0:esc.down "script:/sys/servers/console.toggle"
+- the console server is more relaxed on swallowing input
+  events when open
+- simplified input recording/playing/logging interface of
+  ninputserver
+- input server now triggers console server (if one exists)
+  to fix chicken-egg problem with input recording if
+  console open
+- rewrote input mapping completely, one has now much finer
+  control about when an input state should actually be triggered
+  with 'input modifiers', which describe whether a key or
+  button is pressed down, released, double clicked, or long
+  pressed, examples:
+    keyb0:a.down       -> 'a' pressed down
+    keyb0:a.up         -> 'a' released
+    keyb0:a.pressed    -> 'a' currently down 
+    keyb0:a.long       -> 'a' down for a while
+    keyb0:a.double     -> 'a' double clicked
+- also, binding script commands to input events was a mess... 
+
+BUGS FIXED:
+- nplatform didn't save 'setlodscale'
+- nplatform didn't take scale into account in
+  nPlatform::IntersectTopDown()
+- nplatform didn't intersect correctly for the
+  'lower right triangle' case
+- removed ntiletree and ntilelib sources (they are obsolete)
+- ntclserver: result from tcl interpreter was broken
+  sometimes, because ntclserver blindly appended when
+  building its own result string, without initializing the
+  current result to an empty string (this caused
+  problems when 'after' was used to run things in the
+  background)
+- fixed a crashing bug in nplatform, IntersectTopDown() could
+  be called without a height map loaded.
+- no more redundant 'down' input events when key repeat
+  kicks in (actually, input EVENTS are still generated,
+  but input STATES mapped to those events just swallow them)
+
+=====================================================================
+99-12-15
+=====================================================================
+
+NOTES:
+- none
+
+NEW:
+- restructured download packages (now there are only 2
+  all-in-one-packages, one for Linux, one for Windows, the
+  Windows package comes with precompiled binaries)
+- added Icons to Win32 binaries
+- worked on the nplatform terrain renderer so that its actually
+  somewhat usable
+- preliminary input event recording (doesn't work yet if console
+  is open though)
+- n_assert() Macro overridden with own implementation, which
+  first flushes stdout/stderr, waits a seconds, then calls
+  abort(). This was necessary to make debug output through
+  n_printf() work, it was cut off if n_assert() was called,
+  because abort() doesn't flush buffers.
+- new make target 'noassert' which replaces n_assert()'s
+  with a nop
+- killed some obsolete nkernel routines
+
+BUGS FIXED:
+- none
+
+99-12-02
+========
+NOTES:
+- some cleanup work in the bitmap loader code, loading bmp files
+  has been moved into the new nImageFile and nBmpFile classes
+- some cleanup in resource loading code (nVbufNode and nTexNode
+  classes)
+- removed some dead code from nd3dserver
+- nvbuffer related scenegraph visualization code has been moved
+  into the nvbuffer class (instead of nscenegraph) 
+- ATI has finally fixed the broken triangle strip/fan clipping
+  code under OpenGL in their latest Rage128 beta drivers 
+
+NEW:
+- nInputServer::Map() must now be surrounded by
+  nInputServer::BeginMap() and nInputServer::EndMap(). This
+  will also kill any obsolete input mappings (which used to
+  pile up before)
+- the scene graph visualization mode now also renders
+  vertex normals (to test this, do a
+  '/sys/servers/sgraph.setvisualize true' and make sure
+  you're running under OpenGL)
+
+BUGS FIXED:
+- In the nglserver, the zbuffer was not cleared if the
+  previous frame contained at least one transparent material.
+  This only showed up with the Rage128 OpenGL driver. The reason
+  was that glDepthMask() was still set to 0, when glClear() was
+  called for the zbuffer. According to the OpenGL 1.1 specs,
+  ATI seems to be right with this behaviour though.
+- nIpol::Connect() always returned 'false', fixed.
+- fixed some strange behaviour when remapping input states
+  while a Nebula app runs (input states could get stuck, or
+  get lost during the remap)
+- fixed an obscure crashing bug, if a script was attached to
+  an input event, and that script would remap some input states,
+  the input mapping loop would crash hard
+
+
+=====================================================================
+99-11-11
+=====================================================================
+
+NOTES:
+- another small bugfix release
+
+BUGS FIXED:
+- z-sorting of nodes with transparent material was inverted
+- nTclServer::WriteCmd() assertion bug fixed, if an ARGTYPE_OBJECT
+  argument was encountered with value NULL
+
+NEW:
+- nInputServer::ClearMappings(), clears all current input mappings
+
+99-11-08
+========
+NOTES:
+- just a minimal bugfix release
+
+BUGS FIXED:
+- nipol objects can now be reconnected without throwing an assertion
+- fixed a typo bug in nmatnode saving code (it would write out
+  "scrcolor" instead of "srccolor"
+
+99-11-03
+========
+NOTES:
+- the ATI Rage128 display drivers are still troublesome,
+  the latest beta drivers show some strange DirectInput(!) behaviour
+  when rendering through Direct3D (input events are arriving "late"
+  (up to 0.5 seconds) and acquiring of devices fails sometimes),
+  under OpenGL, triangle strips and fans seem to be broken when clipped.
+
+NEW:
+- n3dnode class now supports 'sprite' and 'billboard' behaviour,
+  a sprite n3dnode will always orient its negative z axis towards
+  the viewer, a billboard n3dnode will do the same, but with it's
+  y axis fixed. See the new tekdemos for an example
+
+BUGS FIXED:
+- Going step by step through the tutorial would throw an
+  assertion as soon as the nvbufnode object is created.
+  This has been fixed. Thanks to Jason Phillips for spotting
+  the bug.
+
+=====================================================================
+99-10-24
+=====================================================================
+
+NOTES:
+- we worked mainly on Nomads specific stuff, so no big updates
+  in the Nebula source code this time...
+- some more English comments in the kernel sources
+- DirextX7 SDK now required for compiling under Windows
+
+NEW:
+- Started a new gfx server sitting on Direct3D 7, however,
+  due to recent priority changes, work on it has been frozen.
+  The nD3D7Server will make use of the new d3dx library to
+  simplify device setup code, will finally support multitexturing,
+  hardware tl, and the new vertex blending feature, so it's quite
+  an undertaking.
+- nPlatform (incomplete) sort of a terrain renderer, fairly specialized
+  for Nomads though... shows how to pump polygons into a
+  nvbuffer object with view frustum culling and level of detail 
+- nTileTree (incomplete, obsolete) an experimental octree based
+  3d tile renderer for volume visualization, obsolete because
+  it will not be used for Nomads, and isn't that useful anyway.
+  Has a nice optimized octree implementation though with
+  fast view frustum and face culling.
+- nLinkNode class, sort of a placeholder in a visual hierarchy
+  which points to some other object
+- nEnv class can now serialize itself
+- all profiler objects created by the time server now have an
+  watch entry under "/sys/var/", so that they can be observed at runtime
+  with the command "/sys/servers/console.watch prof_*"
+- build process no longer needs UNIX file utils, a new tcl script
+  "bin/fileutils.tcl" does the job instead
+
+BUGS FIXED:
+- some minor kernel cleanups and bug fixes:
+- no longer crashes when trying to create an object of an unknown
+  class names from the script interface
+- throws a fatal error if a script command id is used more
+  then once in a class inheritance chain
+- fixed a crashing bug, the cwd pointer in the kernel could
+  become invalid under rare circumstances
+- the following animator classes now clamp correctly when
+  time values outside the key set are encountered, the
+  previous behaviour in that case was to not touch the
+  target object at all:
+    nipol
+    nchnsplitter
+    nvbufipol
+    nflipflop
+- input states didn't reset when their input mapping was changed
+
+KNOWN BUGS:
+- class nIpol: crashes, when in loop mode and first key isn't set 
+  to time zero
+
+---
+EOF

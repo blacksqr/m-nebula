@@ -1,0 +1,97 @@
+gfxserv.txt
+===========
+02-Dec-98   floh    created
+04-Jun-99   floh    updated
+13-Aug-99   floh    translated to English
+
+
+Gfxserv is a simple Nebula application that implements a 3d viewer
+with builtin ipc port and nsh-type console.
+
+======================================================================
+    Command line options
+======================================================================
+
+-port [port name]
+    Define the name of the ipc port which will be opened. Default
+    is 'gfxserv'. To connect from another Nebula application (for
+    instance nsh) type:
+        /> connect localhost:gfxserv
+    Once the connection is established, you can manipulate the
+    remote objects as if you would manipulate local ones. 
+
+-w [pixels]
+-h [pixels]
+    Define width and height of the output window (please note
+    that the '-mode' option is more powerful)
+
+-startup [scriptname]
+    Executes the named startup script.
+
+-nogrid
+    Turns off the ground grid.
+
+-nosleep
+    Turns off the multitasking friendly per-frame
+    sleep period of 0.02 seconds.
+
+-server [gfx server class]
+    Set the gfx server used for rendering:
+
+        Windows9x -> 'nd3dserver' or 'nglserver'
+        WindowsNT -> 'nglserver'
+        Windows2k -> 'nd3dserver' or 'nglserver'
+        WindowsXP -> 'nd3dserver' or 'nglserver'
+        Linux ->     'nglserver'
+
+    nd3dserver uses Direct3D Version 8, nglserver
+    uses OpenGL 1.1.
+
+-script [script server class]
+    Set the script server to be instantiated and used:
+
+        TCL -> ntclserver
+
+    Other languages are supported by external projects
+    and can be plugged into Nebula.
+
+-mode [display mode descriptor]
+    The more powerful way to describe the display mode. The
+    display mode descriptor is a string with the following
+    components (all of them are optional):
+    
+    dev(N)-type(win|full)-w(N)-h(N)-bpp(N)
+    
+    To describe a 800x600 fullscreen mode:
+    
+        type(full)-w(800)-h(600)
+        
+    Note that the OpenGL server doesn't support fullscreen at the
+    moment.
+    
+    If you have more then one 3d device in the system (for instance
+    a Riva128 and a Voodoo fullscreen board), use dev(x) to select
+    the device (this only works for Direct3D). The following statement
+    will open a 640 by 480 fullscreen mode on the Voodoo:
+    
+        dev(1)-type(full)-w(640)-h(480)
+
+    In some shells you have to surround the mode descriptor with '"'
+    characters to not confuse the shell.
+
+-args [script args]
+    Anything after -args will be given as arguments to the startup
+    script (in the Tcl variable 'args').
+
+
+======================================================================
+    Navigation
+======================================================================
+
+Mouse drag with left/right mouse button moves/rotates camera.
+Cursor keys with optional shift key moves/rotates camera.
+Esc opens/closes the console (see nsh.txt for more details).
+
+---
+EOF
+

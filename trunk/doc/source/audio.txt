@@ -1,0 +1,65 @@
+audio.txt
+=========
+22-Jul-00   floh    created
+
+Nebula has basic 3d audio support now. The following classes make up the Nebula
+audio subsystem:
+
+nAudioServer
+nStream
+nWavStream
+nSoundNode
+nListenerNode
+
+Win32 only:
+nDSoundServer
+
+There is no audio support yet under Linux.
+
+
+nAudioServer
+------------
+This is the abstract base class of the audio servers. It needs to be
+subclassed to actually have a working audio subsystem (there is only
+one subclass at the moment, nDSoundServer, which links to DirectSound). The
+architecture is very similar to the gfx servers, there is a 'audio frame',
+during which audio sources are attached to the 'audio scene'. Once the
+'audio scene' has been described, audio for this frame is updated.
+
+nStream
+-------
+This is the abstract base class of all audio streamers. An audio streamer 
+reads (and probably decodes) audio data from a file on demand from the
+audio server.
+
+nWavStream
+----------
+This is the only current nStream subclass, which reads audio data from
+a 16 bit mono pcm wav file.
+
+nSoundNode
+----------
+This is a sound source in a Nebula visual hierarchy. It represents a sound
+in 3d space and can be linked into a visual hierarchy just like nMeshNode,
+nTexArrayNode, nShaderNode and the like. It can also be animated like any
+other nVisNode derived Nebula class.
+
+nListenerNode
+-------------
+This describes the current listener attributes in a visual hierarchy and is 
+similar to an ambient light source, but for sound. There should only be one 
+nListenerNode object in the scene, multiple listener nodes will overwrite
+each other.
+
+nDSoundServer
+-------------
+This is the only currently existing nAudioServer subclass and links the
+audio subsystem to DirectSound V8. nDSoundServer has built in channel
+management (only the N highest priority sound sources are played back per
+frame). Sound sources are generally streamed from disk (although there may
+be an extra caching system implemented some day if it becomes a performance
+problem).  EAX support is planned, but not yet implemented.
+
+---
+EOF
+

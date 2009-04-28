@@ -1,0 +1,257 @@
+/**
+@defgroup NODEPhysicsContribModule ODE-based Physics Contributed Module
+@ingroup NebulaContribModules
+
+<h1>nOdeServer & friends</h1>
+
+<h2>Introduction</h2>
+
+The OdePhysics package is a wrapper for the Open Dynamics Engine,
+OdePhysics provides script level access to many ODE features to
+make it easier to setup your simulations. Note that at this time
+OdePhysics only uses single precision.
+
+The information in this document may not always be up to date (or complete), 
+please be sure to check out 
+http://nebuladevice.sourceforge.net/cgi-bin/twiki/view/Nebula/OdePhysics
+for additional last minute info.
+
+<h2>Changes Since Last Version</h2>
+   - Removed the Nebulized ODE tri-collider, now using the one in core ODE 
+     instead.
+   - Added support for ODE spaces (and nesting) has been added, you can use 
+     the Simple and Hash spaces, the Quad Tree space lacks an implementation 
+     for dSpaceGetGeom in ODE at this moment which means you can't traverse 
+     the shapes in it and the OdePhysics collision system won't work if you 
+     use it.
+   - Added optional support for the breakable joints contribution.
+   - Added optional support for the body auto disabling contribution.
+   - Added support for the iterative solver (StepFast).
+   - Some other small updates to bring us to speed with ODE 0.39.
+   .
+
+<h2>Building ODE</h2>
+There are a number of things I've had to add to ODE to support the features 
+provided by OdePhysics. Hopefuly one day they will be integrated into ODE's 
+CVS, but until then you're going to have to do some extra work. Note that 
+you have to build ODE as a dll/shared library in order for it to work with 
+Nebula.
+
+   -# Apply the patches @c "ode/ode_include.patch" and @c "ode/ode_src.patch" 
+      found in your OdePhysics checkout to ODE core. It's possible they may
+      be out of date sometimes so you might have to apply them by 
+      hand (and send me an updated version :)), but it's reasonably straight 
+      forward anyway. If you want to use the breakable joints contribution
+      you'll also have to apply @c "ode/breakable_joints.patch".
+      To apply a patch copy it to the root of your ODE checkout and run
+      "patch -p 0 < file.patch". If you're on Windows you'll need to find
+      yourself a patch tool, cygwin is one option there should be others.<br>
+   -# Add mesh/capsule collision source:
+      - Copy @c "ode/ode/src/collision_trimesh_ccylinder.cpp" from your 
+        OdePhysics checkout to @c "ode/src/collision_trimesh_ccylinder.cpp" in 
+        your ODE checkout.
+      - Copy @c "ode/ode/src/collision_trimesh_distance.cpp" from your 
+        OdePhysics checkout to @c "ode/src/collision_trimesh_distance.cpp" in 
+        your ODE checkout.<br>
+   -# Add composite geom source:
+      - Copy @c "ode/include/ode/compositegeom.h" from your OdePhysics checkout 
+        to @c "include/ode/compositegeom.h" in your ODE checkout.
+      - Copy @c "ode/ode/src/compositegeom.cpp" from your OdePhysics checkout to 
+        @c "ode/src/compositegeom.cpp" in your ODE checkout.<br>
+   -# Update the build configuration:<br>
+      - If building from the command line apply the patch @c "ode/Makefile.patch" 
+        found in your OdePhysics checkout to ODE core, and 
+        copy @c "ode/config/user-settings" to the corresponding place in your ODE 
+        checkout. Modify NEBULA_DIRECTORY in user-settings to
+        point at the root of your nebula checkout, make further modifications
+        as necessary (primarily you may need to change the platform), but don't
+        touch OPCODE_DIRECTORY.
+      - If you want to build ODE from the command line using MSVC then apply the
+        patch @c "ode/makefile.msvc-dll.patch" to your ODE checkout.
+      - If you have problems generating a config.h using ODE's configurator 
+        thing copy @c "ode/include/ode/config.h" from your OdePhysics checkout 
+        to @c "include/ode/config.h" in your ODE checkout.<br>
+      - If you use MS Visual C++ you can either copy @c "ode/config/msvcdefs.def"
+        from your OdePhysics checkout to @c "config/msvcdefs.def" in your ODE
+        checkout OR follow steps 1 and 2 below to update your msvcdefs.def manually. 
+        Note that the msvcdefs.def in OdePhysics doesn't have breakable joints support, 
+        you'll have to add that in yourself.<br>
+         -# Remove the following from @c "config/msvcdefs.def" in your ODE 
+            checkout:
+@verbatim
+  dInfinityValue
+  dBodyGetAutoDisableSF1
+  dBodyGetAutoDisableStepsSF1
+  dBodyGetAutoDisableThresholdSF1
+  dBodySetAutoDisableSF1
+  dBodySetAutoDisableStepsSF1
+  dBodySetAutoDisableThresholdSF1
+@endverbatim
+         -# Add the following to @c "config/msvcdefs.def" in your ODE 
+            checkout:<br>
+@verbatim
+  dCreateCompositeGeom
+  dCompositeGeomAdd
+  dCompositeGeomRemove
+  dCompositeGeomGet
+  dCompositeGeomGetNumGeoms
+  dCompositeGeomSetRelPosition
+  dCompositeGeomGetRelPosition 
+  dCompositeGeomSetRelRotation
+  dCompositeGeomGetRelRotation
+  dCompositeGeomContains
+  dGeomTriMeshDataCreate
+  dGeomTriMeshDataDestroy
+  dGeomTriMeshDataBuildSingle
+  dGeomTriMeshDataBuildDouble
+  dGeomTriMeshDataBuildSimple
+  dCreateTriMesh
+  dGeomTriMeshGetTriangle
+  dGeomTriMeshGetPoint
+  dGeomTriMeshEnableTC
+  dGeomTriMeshIsTCEnabled
+  dGeomRaySetParams
+  dGeomRayGetParams
+  dJointSetUniversalParam
+  dJointGetUniversalParam
+  dHashSpaceGetLevels
+  dQuadTreeSpaceCreate
+  dGeomRaySetClosestHit
+  dGeomRayGetClosestHit
+@endverbatim
+            <br>
+            Make sure there aren't any duplicate symbols in the file.<br>
+         -# Add these files from the ODE checkout to your MSVC ODE project:<br>
+@verbatim
+  collision_trimesh_ccylinder.cpp
+  collision_trimesh_distance.cpp
+  compositegeom.h
+  compositegeom.cpp
+@endverbatim
+       <br>
+   -# Make sure that you're including/using the OPCODE that
+      is in Nebula core when you build your ODE, you can do so by changing
+      the OPCODE #include in @c "ode/src/collision_trimesh_internal.h".
+      This is already done for you if you've applied the ODE core patches mentioned
+      earlier.<br>
+@verbatim
+  #include "Opcode.h" <-- Change this
+  #include "opcode/opcode.h" <-- To this
+@endverbatim
+      <br>
+      Then ensure that your ODE project doesn't point to the OPCODE directory
+      in your ODE checkout, instead it should be pointing at the usual Nebula
+      include directories, i.e. @c "$neb_home/code/inc". Under MSVC you can either 
+      add it to the "VC Projects Include Directories" OR a better approach if you're 
+      working with multiple Nebula checkouts is to add that directory under 
+      "Additional Include Directories" when you open the project properties for the 
+      ODE project (NOT OdePhysics, but ODE itself).<br>
+      You'll need to build the OPCODE dll/shared library via Nebula, don't try
+      and build OdePhysics at the same time since it needs the ODE library and
+      you haven't built it yet :).<br>
+   -# If you're building via the command line...
+      - under Windows using MSVC as your compiler then you should simply be able 
+        to execute "make ode-lib" from the MSVC command prompt (or vcvars32.bat in
+        a regular command prompt first) to build ODE.
+      - under Cygwin, Linux or whatever else you'll have to modify the ODE make files
+        so that ODE is linked with OPCODE.
+   -# Build ODE, copy @c "lib/ode.lib" (if using Windows) from the lib dir in your ODE 
+      checkout to the appropriate Nebula lib dir, and @c "lib/ode.dll" (the shared library) 
+      into the appropriate Nebula bin dir.<br>
+   -# Finally you can build OdePhysics.
+   .
+
+<h2>Breakable Joints</h2>
+Breakable joints are not part of core ODE yet, and I haven't gotten around to 
+trying them out yet. However the interface for using them has been added to 
+OdePhysics, that interface isn't built by default you need to define 
+ODE_BREAKABLE_JOINTS when building the OdePhysics package. You'll also have to 
+add one additional function to the ODE breakable joints contribution to
+get it to work with OdePhysics. You can find the patch to do that over here:
+http://nebuladevice.sourceforge.net/cgi-bin/twiki/view/Nebula/OdePhysics
+
+First apply the patch, then follow the instructions provided with the 
+breakable joints contribution to integrate them into your ODE. If you're using
+MSVC you'll probably have to add the following to your @c "config/msvcdefs.def" 
+(in addition to the rest of the breakable joints functions):
+
+@verbatim
+  dJointGetBreakMode
+@endverbatim
+
+Note that I don't know if this contribution replaces any files in ODE core 
+that were patched earlier on, if it does you'll have to make the proper 
+modifications again.
+
+<h2>Body Auto Disabling</h2>
+This is part of the StepFast contribution, however this particular part hasn't
+been integrated into ODE core as yet, and I haven't tried it either. Once 
+you've integrated that into ODE you can enable OdePhysics support for this by 
+defining ODE_STEPFAST_AUTO_DISABLE and the rebuilding OdePhysics. Again don't 
+forget to update @c "config/msvcdefs.def" appropriately if you use MSVC (add
+the *SF1 functions back in :)).
+
+<h2>Notes</h2>
+   - First of all read the ODE user guide from top to bottom, a few times.
+   - You can setup simulations from script by using the nOde*Node classes,
+     you can then either keep them around during run-time (to manipulate them
+     via script) or extract the underlying "lightweight" instances and release 
+     the nodes (and from then on do everything via C++).
+     
+<h2>Bugs</h2>
+- Enabling temporal coherence for mesh/capsule collisions can cause the 
+  capsule to bounce unexpectedly.
+     
+<h2>OdePhysics Tests</h2>
+
+The ODE Tests module contains ports of some of the tests that come with ODE in 
+order to test the OdePhysics module. It also provides examples of how you can 
+use the OdePhysics module, and since it currently uses the LUA script server, 
+you get example usage of that too (note that you can run the TCL version via nsh).
+
+<h3>Input Bindings</h3>
+<table>
+  <tr><td>Key</td><td>Description</td></tr>
+  <tr><td>1</td><td>Run hinge test.</td></tr>
+  <tr><td>2</td><td>Run buggy test.</td></tr>
+  <tr><td>3</td><td>Run composite shape test.</td></tr>
+  <tr><td>4</td><td>Run mesh collision test.</td></tr>
+  <tr><td colspan="2">Hinge Test</td></tr>
+  <tr><td>E</td><td>Turn ON/OFF hinge error</td></tr>
+  <tr><td colspan="2">&nbsp;</td></tr>
+  <tr><td colspan="2">Buggy Test</td></tr>
+  <tr><td>W</td><td>Speed Up</td></tr>
+  <tr><td>S</td><td>Slow Down</td></tr>
+  <tr><td>A</td><td>Steer Left</td></tr>
+  <tr><td>D</td><td>Steer Right</td></tr>
+  <tr><td>SPACE</td><td>Reset Speed & Steer</td></tr>
+  <tr><td colspan="2">&nbsp;</td></tr>
+  <tr><td colspan="2">Mesh Collision Test</td></tr>
+  <tr><td>8</td><td>Select sphere (while running the mesh test)</td></tr>
+  <tr><td>9</td><td>Select capsule (while running the mesh test)</td></tr>
+  <tr><td>0</td><td>Select box (while running the mesh test)</td></tr>
+  <tr><td>W</td><td>Move selected shape forward</td></tr>
+  <tr><td>S</td><td>Move selected shape back</td></tr>
+  <tr><td>A</td><td>Steer selected shape left</td></tr>
+  <tr><td>D</td><td>Steer selected shape right</td></tr>
+  <tr><td>SPACE</td><td>Stop selected shape</td></tr>
+  <tr><td colspan="2">&nbsp;</td></tr>
+  <tr><td colspan="2">Camera Controls</td></tr>
+  <tr><td>UP</td><td>Forward</td></tr>
+  <tr><td>DOWN</td><td>Back</td></tr>
+  <tr><td>U</td><td>Move Up</td></tr>
+  <tr><td>J</td><td>Move Down</td></tr>
+  <tr><td>I</td><td>Strafe Left</td></tr>
+  <tr><td>O</td><td>Strafe Right</td></tr>
+  <tr><td>Mouse X/Y</td><td>Look</td></tr>
+  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td>F7</td><td>Turn OFF stats display.</td></tr>
+  <tr><td>F8</td><td>Turn ON stats display.</td></tr>
+  <tr><td>F11</td><td>Toggle console.</td></tr>
+  <tr><td>ESC</td><td>Quit.</td></tr>
+</table>
+
+The mouse look will only work when using the di8server.
+<br><br><br>
+Last updated on 22-Sept-2003.
+*/
