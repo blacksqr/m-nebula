@@ -1,0 +1,134 @@
+nsh: Nebula Shell
+=================
+14-Jan-00   floh    + new builtin command 'exists'
+28-Dec-99   floh    + there is now a builtin command 'dir'
+13-Aug-99   floh    + translated to English.
+04-Jun-99   floh    + updated
+06-Feb-99   floh    + alle nsh-Kommandozeilen-Args beginnen nur
+                      noch mit 1 Strich, nicht 2
+                    + neues Arg: -args, der Rest der Zeile geht
+                      als Variable argv an den Tcl-Interpreter
+12-Jan-99   floh    + reviewed & updated
+31-Oct-98   floh    nsh.exe jetzt komplett neu und improved
+                    (z.B. Client/Server faehig).
+22-Oct-98   floh    created
+
+nsh is the standard Nebula console. It allows to interactively 
+browse the Nebula object hierarchy like a hierarchical filesystem, 
+invoke script commands on objects, or generally evaluate any Tcl 
+commands or scripts.
+
+=====================================================================
+    Command line args
+=====================================================================
+
+-help              -> show short help text
+-quiet             -> suppress output
+-startup [script]  -> evaluate script and go into interactive mode
+-run [script]      -> evaluate script and exit
+-script [class]    -> use 'class' as a script server
+-args              -> rest of line is given to the Tcl interpreter in
+                      the variable 'args'
+
+=====================================================================
+    Getting Started
+=====================================================================
+
+Basically, nsh lets you navigate the hierarchical 
+object tree like a normal shell lets you navigate 
+a filesystem.
+
+From a shell, type 'nsh', this will start nsh and
+go into interactive mode.
+
+/>new nroot bla
+
+    This will create a new object of class 'nroot' which has the
+    name 'bla'. 
+
+/>sel bla
+
+    This makes 'bla' the current object. 'sel' just works like 'cd'
+    in an ordinary shell, except that it selects the current object,
+    not the current working directory in the filesystem.
+
+/bla>getcmds
+
+    This invokes the method 'getcmds' on 'bla', which
+    will return a list of all command prototypes that 'bla'
+    accepts.
+
+/bla>sel ..
+
+    Go back to the root object.
+
+/>bla.getversion
+
+    This is an alternative form of invoking a command on 'bla'.
+    You can just give a valid path to an object, followed by
+    a dot '.' followed by the command you want to invoke on that
+    object.
+
+=====================================================================
+    Builtin Commands
+=====================================================================
+
+'nsh' offers the following builtin commands that don't fit
+into the category of 'script commands that can be invoked on
+objects':
+
+
+new [class] [path]
+    Create a new object of class [class] with the name
+    [path]. Name may be any valid path, missing path
+    components will be filled up with 'nroot' objects.
+    Returns the complete path name of the new object.
+
+delete [path]
+    Delete the object with name [path] and all of it's
+    sub objects.
+
+dir
+    List contents of current 'directory'.
+
+sel [path]
+    Make the object defined by [path] the current object.
+    Returns the complete path of the selected object.
+ 
+psel
+    Returns the full path of the currently selected object.
+
+exists [path]
+    Check whether object exists. Return "1" if yes,
+    return "0" if no.
+
+get [script]
+    Read a serialized object from the 'real' filesystem.
+    The serialized object must have been created with
+    the '.save' or '.saveas' object command.
+    Returns the full path of the created object.
+
+server [portname]
+    Leave interactive mode and go into server mode by
+    creating an ipc port. In server mode, nsh will wait
+    for other Nebula apps to connect and execute any
+    incoming commands on the local objects. 
+
+connect [hostname:portname]
+    Connect to another Nebula application in server mode.
+    The remote app may be on the same machine (in this
+    case you can omit the leading 'hostname:'), or
+    on another machine. Communication will go through
+    TCP/IP sockets. 'hostname' is any valid TCP/IP address
+    in the form of 'ww.xx.yy.zz', or a machine name that
+    can be resolved into a numerical tcp/ip address.
+
+disconnect
+    Disconnect from a server.
+
+exit
+    End the nsh session (can also be used to shutdown a
+    remote server when in connected state).
+
+--
+EOF

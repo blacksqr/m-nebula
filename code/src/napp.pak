@@ -1,0 +1,43 @@
+#--------------------------------------------------------------------
+#   app.pak
+#   ============
+#   Description of your class/package
+#
+#   23-Jan-2009   plushy	created
+#--------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+beginmodule napplication
+    setdir app
+    setfiles {
+        napplication_main napplication_cmds
+    }
+    setheaders {
+        napplication
+    }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nrenderapp
+    setdir app
+    setfiles {
+        nrenderapp_main nrenderapp_cmds
+    }
+    setheaders {
+        nrenderapp
+    }
+endmodule
+#--------------------------------------------------------------------
+begintarget napp
+    settype package
+    setmods {
+        napplication nrenderapp
+    }
+    setdepends { nkernel nnebula }
+    setlibs_win32 { nkernel.lib nnebula.lib }
+    setlibs_unix  { nkernel nnebula}
+endtarget
+
+#--------------------------------------------------------------------
+#   EOF
+#--------------------------------------------------------------------
+

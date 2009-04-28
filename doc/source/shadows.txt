@@ -1,0 +1,126 @@
+Nebula's Shadow System
+======================
+18-Aug-01   floh    created
+
+Nebula now has a shadow casting subsystem which implement stencil buffer shadows, but
+the structure should be general enough to implement other shadow technologies as well.
+
+Many thanks go to Leaf Garland for his valuable input.
+
+New classes:
+============
+
+nShadowServer
+
+The shadow server is the central object of any shadow system. Specific shadow
+implementations are derived from class nShadowServer. nShadowServer is the factory
+of nShadowCaster objects (much like class nGfxServer is factory of nVertexBuffer
+objects). The nShadowServer object defines a "shadow scene", which is started
+with a nShadowServer::BeginScene(), described by invoking
+nShadowServer::AttachLight() and nShadowServer::AttachCaster(), and finished
+with nShadowServer::EndScene(). AttachLight() and AttachCaster() usually only
+collect data, while actual rendering happens in EndScene(), but this may
+differ depending on the actual implementation. The nShadowServer object
+must live under the name /sys/servers/shadow.
+
+
+nSBufShadowServer
+
+This is a specific subclass of nShadowServer and implements the well known
+stencil buffer shadows (light direction silhouettes of shadow casting objects
+are found and extruded along direction of light forming a shadow volume,
+front facing polygons of the shadow volume are rendered with stencil buffer
+increment, backfacing polygons with stencil buffer decrement, finally, a
+alpha blended quad is stencil-mask-rendered over the scene). There can only
+be one directional shadow casting light source with this implementation,
+the number of shadow casting objects is unlimited (although the is an internal
+fixed size buffer to store silhouette edges).
+
+
+nShadowCaster
+
+nShadowCaster objects store the geometry of shadow casting objects (much like
+a vertex buffer). Existing vertex buffers are not well suited for this because
+its hard to read data back, and vertex buffers don't store the winged edge
+information which helps in doing an efficient silhouette edge finding.
+
+
+nShadowControl
+
+This is just a small nVisNode class which can modify the shadow color from
+a nVisNode hierarchy (so that you can interpolate shadow colors etc...).
+We use this in Nomads to fade out the shadow color near sunrise and sunset,
+switch to the moon as shadow caster, and then fade in the shadow color again.
+You could also interpolate the shadow color over the day, or dependent on the
+weather.
+
+
+Modifications to existing classes:
+==================================
+
+nGfxServer
+nD3D8Server
+nGlServer
+
+Stencil buffer support has been added to the nGfxServer interface. Note
+that nD3D7Server has no stencil buffer support.
+
+
+nSceneGraph2
+
+The scene graph object collects the shadow caster information from nVisNode
+hierarchies, and hands them to the shadow server for rendering.
+
+
+nMeshNode
+
+Has a shadow caster flag to declare a mesh as a shadow caster. n3d file format
+has been extended to store winged edge information which can be generated offline
+using the new wfwedge tool.
+
+
+nMeshCluster
+
+Currently the only dynamic mesh class which has been enhanced to serve as a
+shadow caster.
+
+
+Known Issues and Bugs:
+======================
+
+- The shadow support has been implemented in a rush (all in all under a week)
+  to meet a Nomads milestone (currently only the main character in Nomads
+  casts a shadow), so there are quite a few bugs and todos open.
+
+- Stencil buffer initialization in the gfx servers is not very solid, the
+  gfx server does not communicate whether allocating a stencil buffer actually
+  was successful. Thus the shadow server doesn't know when shadowing should
+  be globally disabled.
+
+- Alt-Tabbing with the D3D8 server is currently broken.
+  IDirect3DDevice8::Reset() returns a DEVICELOST and the render loop
+  hangs in a Restore/Reset loop. Not sure yet whether this is related to the
+  new stencil buffer code.
+
+- The Linux portion of nGlServer hasn't been updated to allocate a stencil
+  buffer yet.
+
+- The shadow volume is broken on some (most?) objects, this leads to shadowed triangle
+  artifacts along the extruded shadow volume.
+
+- When I tried to allocate dynamic vertex buffers in the D3DPOOL_DEFAULT pool
+  as opposed to the D3DPOOL_SYSTEMMEM, the shadow volume was totally broken,
+  this may just visualize a bug in a totally different place though.
+
+- Silhouette finding could be optimized more (especially the backface culling
+  could benefit from normal mask culling as proposed by "Hansong Zhang and
+  Kenneth E Hoff III").
+
+- I ignored the "camera inside shadow volume" problem so far. Basically, if the
+  camera is inside a shadow volume, the stencil buffer must be initialized with
+  an "odd" value to account for the missing front faces.
+
+
+Enjoy,
+-Floh.
+

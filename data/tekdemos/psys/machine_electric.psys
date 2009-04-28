@@ -1,0 +1,80 @@
+# ---
+# $parser:ntclserver$ $class:n3dnode$ $ver:Fri Jan 19 10:37:41 2001$
+# ---
+# 17-Jan-04 eric created
+# ---------------------------
+
+new nipol tx_ipol
+  sel tx_ipol
+  .connect tx
+  .addkey1f 0.00 0.299
+  .addkey1f 0.02 0.611
+  .addkey1f 0.40 0.299
+sel ..
+
+new nspriterender sr
+  sel sr
+  new npointemitter pe
+    sel pe
+    #.setminlod 0.000000
+    .setreptype "loop"
+    .setchannel "time"
+    .settimes 0.000000 0.000000 0.000000
+    .setlifetime 0.050000
+    .setfreq 100.000000
+    .setspeed 0.000000
+    .setaccel 0.00000 0.00000 0.00000
+    .setinnercone 0.000000
+    .setoutercone 168.000000
+  sel ..
+  #.setminlod 0.000000
+  .setreptype "loop"
+  .setchannel "time"
+  .setscale 1.000000
+  .setstretch false
+  .setspin 0.000000
+  .setspinaccel 0.000000
+  .setemitter "pe"
+  .beginkeys 1
+  .setkey 0  0.0300000 0.03  0.400000 0.400000 0.850000  0
+  .endkeys
+sel ..
+
+new nshadernode shd
+  sel shd
+  #.setminlod 0.000000
+  .setrenderpri 100000
+  .setnumstages 1
+  .setcolorop 0 "mul tex prev"
+  .setalphaop 0 "nop"
+  .setconst 0 0.000000 0.000000 0.000000 0.000000
+  .begintunit 0
+  .setaddress "wrap" "wrap"
+  .setminmagfilter "linear_mipmap_nearest" "linear"
+  .settexcoordsrc "uv0"
+  .setenabletransform false
+  .txyz 0.000000 0.000000 0.000000
+  .rxyz 0.000000 0.000000 0.000000
+  .sxyz 1.000000 1.000000 1.000000
+  .endtunit
+  .setdiffuse 0.000000 0.000000 0.000000 0.000000
+  .setemissive 0.000000 0.000000 0.000000 0.000000
+  .setambient 0.000000 0.000000 0.000000 0.000000
+  .setlightenable false
+  .setalphaenable true
+  .setzwriteenable true
+  .setfogenable false
+  .setalphablend "one" "one"
+  .setzfunc "lessequal"
+  .setcullmode "ccw"
+  .setcolormaterial "material"
+sel ..
+
+new ntexarraynode tex
+  sel tex
+  .settexture 0 "bmp/glow.bmp" "none"
+sel ..
+
+
+# ---
+# EOF

@@ -1,0 +1,162 @@
+future.txt
+==========
+19-Feb-02   floh    some updates
+12-Dec-01   floh    quick update
+13-Dec-00   floh    updated
+26-Jul-00   floh    updated
+18-Jan-2000 floh    updated
+23-Dec-99   floh    DirectX7 section updated
+16-Dec-99   bernd   additional notes
+28-Aug-99   floh    updates and fixes
+12-Aug-99   floh    created
+
+These are the next big (and not so big) things to do in the near future 
+(the concrete implementation date will depend on when we will need 
+those features for Nomads).
+
+
+======================================================================
+Low level and kernel stuff
+======================================================================
+- do a major cleanup session which radically removes all obsolete
+  classes (probably a good start for the new year :))
+
+- make nRoot class slimmer, named hierarchy linkage and persistency
+  code should not be hardwired into the nRoot class (what if I want
+  to create an object which is not linked into the name space
+  or which doesn't need persistency?)
+
+- this will hopefully remove some of the monkey work required to
+  write a new class
+  [NOTE: check out the nNebulaClass and nNebulaScriptClass macros,
+  which wrap much of the Nebula specific code into a macro
+  (no more *_init.cc and *_ver.cc files!]
+ 
+- see if there is a nice way to automate writing the script interface
+  stub functions
+
+- implement 'name server', which encapsulates the whole named
+  object hierarchy stuff, objects can be registered with the name
+  server, but this is optional
+  
+- split persistency stuff out of file server and implement new 
+  'persistency server', concentrate file server to a pure 
+  interface to the host file system, also, the persistency server
+  doesn't necessarily have to stream nCmd objects to the file server,
+  but maybe to some other consumer
+  [NOTE: a new nfileserver2 has been started, the old fileserver
+  must still be present, but it's a start]
+  
+- experimental binary format 'script server', to see how much is gained
+  in terms of saved disk space and loading time when using a binary
+  persistency format
+  
+[DONE] split animation channel handling out of nscenegraph into a new 
+  nchannelserver, also, simplify channel implementation (major performance 
+  bottleneck with many active channels at the moment). Probably simplify 
+  'channel visibility rules' to simplify and optimize implementation
+
+[DONE] let nvisnode objects hint to the channel server which channels they
+  are actually interested in for reading and writing, this should
+  help alot in minimizing channel context overhead
+  
+- implement a hierarchical bounding box system for the scene graph
+  (each scene graph node knows its bounding box, and hands this
+  bounding upwards in the hierarchy so that the parent nodes can
+  adjust their bounding boxes as well). For better view frustum
+  culling.
+  
+- For 'Nebula 2': spec out and implement a whole new scenegraph 
+  system which is based on input & output slots and connections, look 
+  at the Maya's Dependency Graph and DAG nodes, and Qt for inspiration.
+
+
+======================================================================
+Gfx (D3D7 and OpenGL related)
+======================================================================
+[DONE]  all new nd3d7server with support for hardware t&l,
+        multitexture, vertex blending, use d3dx library for simpler setup
+        code and automatic mipmap generation
+[DONE]  implement fullscreen modes for nglserver (at least under Win32)
+[DONE]  try out GLU's automatic mipmap generation
+[WONT BE DONE, wait for vertex shader instead] support NV's vertex blending extension
+[PARTLY DONE] support NV's hardware t&l related extensions
+[DONE]  support ARB_multitexture (this will also require a rewrite
+  of the current nmaterial class)
+[WONT BE DONE -> vertex shaders!] rewrite nvbuffer animator classes to make 
+  use of vertex blending interface
+[DONE]  rewrite nvbuffer to support "transform hints" (dynamic, static,
+        read-only)
+
+======================================================================
+Misc
+======================================================================
+[DONE - see ntx and nvx file formats] 
+  optimize texture loader, this is terribly slow now mainly
+  because of the pixel format conversion, the plan is to first
+  optimize pixel conversion, if that's not enough, implement
+  a disc cache that holds textures in the right texture format
+  (since Nomads is not going to be a level-based game, resources
+  will be streamed from disk when needed, so that needs to be
+  fast)
+  
+[NOTE: The right fix is probably to switch to a different bitmap
+format like one of the compressed texture formats] 
+
+======================================================================
+ Audio:
+======================================================================
+[ALL DONE]
+    - architecture very close to the gfx server, there's an
+      abstract base class defining the interface, and sub classes
+      that talk to platform specific API's (DirectSound, Miles,
+      OSS, or whatever)
+    - very OpenGL like (a state machine controlled by render states)
+    - generally 3d sound
+    - generally streams from disk
+    - sound sources integrate into the scene graph just like
+      texture-, geometry-, material- or light-nodes, and can
+      be animated like any other object
+
+[OBSOLETE]
+    - support for programmable sound sequences through MIDI-like
+      command streams, probably using MIDI with DLS
+    - write the output sample stream into an animation channel,
+      which should enable some very cool audio-visual effects
+    - support for audio capture, for multiplayer chatting
+
+
+======================================================================
+Various special fx visual nodes:
+======================================================================
+
+[DONE] particle generators
+[DONE] fake light sources (lens flares, visible light cones, etc...)
+
+======================================================================
+Source comments and script interface autodocs in English:
+======================================================================
+
+[DONE!:)]
+
+======================================================================
+"Cool things that I am looking into from time to time but
+are NOT very likely to go into Nebula in the near future":
+======================================================================
+
+[ THIS IS CONSIDERED A NOGO AT THE MOMENT, IF SOMEBODY NEEDS IT:
+  THE INFRASTRUCTURE IS THERE, DO IT YOURSELF :) ]
+
+- progressive meshes (very cool LOD technology, the job is
+  not putting the render code into Nebula, which is really trivial,
+  but to write the tool that will generate a good p-mesh from
+  an object that has some 'hard' edges which don't necessarily
+  share texture coords and normals).
+
+- Curved surfaces (the best way to do it would be to subclass
+  nvbuffer to directly spit out triangle strips from the tessellation
+  (and probably caches them), but as long as we don't need it for Nomads,
+  it wont be done).
+
+---
+EOF

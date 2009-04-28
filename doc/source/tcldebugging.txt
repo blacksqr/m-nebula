@@ -1,0 +1,71 @@
+tcldebugging.txt
+================
+25-Nov-00   floh    created
+
+Gone are the days of "puts" debugging :)
+
+This file describes how to debug Nebula scripts with the Tcl debugger
+coming with TclPro.
+
+Nebula now comes with the tclnebula.dll, which allows to load Nebula as
+a standard Tcl extension. This makes it possible to use the full Nebula
+functionality from inside a normal tclsh (as opposed to the nsh shell
+coming with Nebula). The coolest thing about this: Nebula scripts can
+now be debugged by using one of the existing Tcl debuggers (for instance
+the TclPro debugger). 
+
+===============================================================================
+Here's how you can use Nebula functionality inside a tclsh84:
+
+(1) start a tclsh84
+(2) load Nebula as a tcl extension:
+
+    % load tclnebula
+    
+    You should see the usual startup messages from the Nebula kernel.
+    
+(3) try out a few Nebula commands:
+
+    % new n3dnode bla
+    % bla.getcmds
+    % bla.txyz 10 20 30
+    % delete bla
+    
+    Tada! Nebula in a tclsh :)
+
+
+===============================================================================
+Here's a step by step guide how to debug a Nebula script with the TclPro debugger:
+
+(1) install the current TclPro from http://www.scriptics.com, TclPro started 
+    as commercial project, but can now be used for free, yeah!
+
+(2) create a Nebula script "test.tcl":
+
+    # this must be present before any Nebula specific statement
+    load tclnebula
+    
+    new n3dnode pos
+        sel pos
+        .txyz 0 10 0
+    sel ..
+    
+(3) launch the TclPro debugger and create a new project, fill the project settings
+    as necessary, set the interpreter to "tclsh84".
+    
+(4) start debugging and be happy :)
+
+
+===============================================================================
+Known problems:
+
+The TclPro debugger forbids to overwrite the standard 'puts' command. Nebula
+normally overwrites 'puts' to reroute the puts output into the Nebula console.
+
+As a workaround, Nebula will not touch the original 'puts' command if it is
+running as an extension. This means you will only get 'puts' output to stdout,
+and not to the Nebula console.
+
+===============================================================================
+EOF    
+

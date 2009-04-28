@@ -1,0 +1,60 @@
+Nebula's collision system
+==========================
+22-Jul-00   floh    created
+
+Nebula has a framework for a collision system bundled in the ncollide
+class package. This framework alone allows for collision detection between
+moving spheres, but polygon-level collision detection is possible by
+subclassing a single class (nCollideShape).
+
+The relevant classes for the collision system are:
+
+nCollideServer
+nCollideContext
+nCollideObject
+nCollideShape
+nCollideReport
+
+nCollideServer
+--------------
+The nCollideServer object is the only object which is visible in Nebula's
+named object hierarchy and serves purely as a factory for nCollideContext
+and nCollideShape objects. The nCollideServer object also defines a
+'collision type table', where collision check relationships between
+different collision object types are stored. The relationship types between
+collision object types maybe "ignore", "quick", "exact".
+
+nCollideContext
+---------------
+An nCollideContext object defines one "collision space", where collisions
+between moving nCollideObject's are checked and reported. It is also the
+factory object for nCollideObjects. The nCollideContext can produce
+collision reports for each attached nCollideObject.
+
+nCollideObject
+--------------
+This is a single entity in an collide space defined by a nCollideContext
+object. nCollideObjects can be attached/detached from their nCollideContext
+at any time.  An nCollideObject normally has a reference to a shared 
+nCollideShape object, which represents the polygon-shape of the object.
+nCollideObjects can be positioned in space.
+
+nCollideShape
+-------------
+This describes the actual shape of an nCollideObject. One nCollideShape
+object can be shared between multiple nCollideObjects to reduce memory
+usage. The base class nCollideShape object can only describe a sphere,
+but subclasses can be derived to describe a polygon-shape (we linked
+RAPID to the collision system that way). nCollideShapes can load
+themselves from a Wavefront file.
+
+nCollideReport
+--------------
+This describes a contact between 2 nCollideObjects. It contains the
+pointers to the 2 nCollideObjects, a timestamp, a point of contact
+and 2 collide normals (normally the averaged normals of the triangles
+that are involved in the collision).
+
+---
+EOF
+

@@ -1,0 +1,249 @@
+NEBULA Overview
+===============
+13-Feb-99	floh	created
+13-Aug-99   floh    minor updates
+
+
+(*) Intro
+=========
+Nebula is a set of C++ classes that form the basis of our next computer game
+"Nomads". While it is the fundament of Nomads, we still want to keep the design
+and implementation open in a way that enables us to reuse major parts
+of the code for other projects. Most of the features of Nebula are a
+direct result of what we learned during work on our previous project
+"Urban Assault".
+ 
+The main goals of Nebula are:
+
+- To hide platform specifics from the majority of the Nebula code
+  and all of the client app's code.
+
+- To manage the 'game database': 3d hierarchies, textures, materials,
+  lights, sounds, animations, states... and their relationships. 
+
+- To be the basic toolset for all team members working directly
+  on the game project.
+
+
+Nebula tries to reach those goals through the
+following fundamental principles and philosophies:
+
+- Runtime linked C++ classes: C++ classes live in DLLs, which are
+  loaded on demand when the first object of a class is created.
+
+- Portability: Platform specifics that go beyond basic
+  ANSI-C/Posix-Layer-1 are hidden from higher level code by wrapper
+  classes. Nebula currently compiles and runs under
+  Win32 (Win95/98, Win NT) and Linux. 
+
+- Using Standard APIs: If possible, Nebula tries to build on
+  "open" API standards that are not controlled by a single company.
+  Crossplatform standards are preferred over proprietary APIs to
+  simplify porting work.
+
+- Hierarchical Object Name Space: Nebula objects live in a hierarchical tree
+  of named nodes similar to a file system hierarchy. An object name can be
+  converted into a C++ pointer and a C++ pointer can be converted into a
+  name at any time. Having named object around is very convenient when
+  referencing objects through the script interface, or in their persistent
+  state. Runtime efficiency doesn't suffer from this, since normally,
+  references by name are resolved into references by pointer only once at
+  load/initialization time. During an objects lifetime, references to
+  other objects are normally kept as cached C++ pointers.
+
+- Scripting: Scripting in Nebula means sending script commands directly
+  to C++ objects. Nebula objects come with 2 interfaces: their
+  C++ interface for runtime efficiency, and a script interface
+  for flexibility. The script interface is as close
+  to the C++ interface as possible to minimize work on the dispatcher
+  code (around 3..6 lines of codes per script command). Internally,
+  script commands are handed around in language independent binary
+  packets, which are translated by a script server object into and from
+  a specific script syntax. Nebula is currently using Tcl as it's
+  script frontend, but switching to other scripting languages
+  or some sort of bytecode is just a matter of writing new script server
+  classes. Script commands can be sent from within the same process,
+  from another process on the same machine, or from other
+  machines using sockets.  Externally supported script servers exist
+  for Java, Lua, and Python.
+
+- Object Persistence: Nebula objects survive on disk as ascii
+  scripts that contain exactly the sequence of script commands
+  that would put a default object of that class into an exact clone
+  of the object which created the script. Since the object persistency
+  mechanism reuses the script interface there is no conceptual difference
+  between a "Nebula script" and a "Nebula data file".
+
+- Networking from the beginning: Ideally, there should be no difference
+  between a single player and a multiplayer session. Players should be able
+  to declare a single player session as a multiplayer session at any time,
+  and other players should be able to join an open session at any time.
+  The engine should place no artificial restrictions on the number of players,
+  or the number of entities in a multiplayer session. Bandwidth should be the
+  only limiting factor, and the engine should be scalable to almost any
+  bandwidth. 
+  
+
+The Kernel
+==========
+The Nebula kernel lives in the nkernel shared library and is the first
+Nebula object created by an application that wants to use Nebula. The kernel
+implements:
+
+    - the dynamic class package loader
+    - the hierarchical object name space
+    - object creation
+    - a memory manager for optimizing small block allocations
+    - a sockets based ipc implementation
+    - wrapper classes for a simple multithreading model
+      (threads, mutexes, events)
+    - inline classes for doubly linked lists, hash lists...
+    - nRoot, the super class for all Nebula higher level classes
+
+
+The nRoot Class
+===============
+The nRoot class is the superclass of all higher level Nebula C++ classes.
+It defines the following basic mechanisms:
+
+- linkage into the hierarchical name space
+- a reference tracking mechanism that implements safe
+  pointers to other C++ objects
+- runtime type information, objects can be asked whether they
+  belong to or are inherited from a specific class 
+- object persistency, objects can save their current state into
+  a command stream and can restore their state from such a
+  command stream (the command stream can go into a file,
+  directly to another object, or over a network, this depends on
+  the fileserver object that handles the stream)
+- a scripting interface in form of a single Dispatch() method
+  that receives incoming commands and translates them into a
+  native C++ method call, care has been taken to minimize the
+  required number of lines per supported script command (ca. 3..6) 
+
+
+Server Objects
+==============
+Server objects live under a single, well known name and
+provide specific services to other Nebula objects. Client
+objects do a one-time name lookup and are then free to
+talk directly to the C++ interface of the servers. 
+
+
+Currently existing server objects include:
+
+gfx
+---
+The graphics server wraps around existing 3d API's (currently OpenGL and
+D3D) and manages the render target. It offers a thin general API that is
+optimized for rendering vertex buffers, not single primitives. Low level
+work like transformation, clipping, lighting, texture management is left
+to the 3d API to leave room for hardware acceleration. The gfx server
+has not been designed with software rasterization or rendering single
+primitives in mind. 
+
+time
+-----
+The time server provides a single realtime source to decouple simulation
+speed from the frame rate. It also offers "mini" high-resolution timer
+objects that can be used by client code for profiling and local time
+measurement reasons.
+
+script
+------
+The script server connects the internal language-independent scripting
+mechanism to a specific scripting language. It translates commands
+emitted from objects into script statements, and back into commands that
+are understood by an object's Dispatch() method. The script server also
+implements an ipc port to allow external applications (running in
+another process or another machine) to talk to local objects.
+
+The script server is also used by the file server to translate
+persistency command streams into and back from command scripts.
+
+Currently there is only one official script server class sitting on
+top of Tcl/Tk. It uses the Scriptics Tcl 8.x interpreter core and
+gives us variables, control flow, math expressions, platform
+independent GUIs. 
+
+file
+----
+The file server connects the persistency mechanism to the file system.
+It opens the file handles which objects will use to save to or load
+from. It will also select the right script server when a persistent
+object is loaded (the information which script server accepts the
+commands in a persistent object file is encoded in the file itself).
+
+input
+-----
+The input server is the central collection point for input events.
+Basically anyone can feed input events into or read them
+back from the global list of input events. The input server
+also maps low level input events to high level 'app events', or
+can bind the execution of script statements to input events.
+
+console
+-------
+The console server is built around the gfx, input and script
+server and implements an ingame console. It reads keyboard
+data from the input server, sends command lines to the script
+server for evaluation and renders text through the gfx server.
+It's basically a command line shell layered over a realtime
+3d view.
+
+The console is one of the most powerful features of Nebula.
+It's like working in a conventional console ('bash' for instance),
+but instead of inspecting and manipulating files one will inspect
+and manipulate living C++ objects directly by invoking script
+commands on them. Objects can be created, deleted, copied around,
+made persistent, or restored from persistency. Since the console
+is also a complete Tcl shell, one can run Tcl scripts at any time,
+or create Tk frontends which in turn can be used to query and
+manipulate the state of Nebula objects through a GUI.
+
+Finally, the console can talk to other Nebula applications in
+a telnet like fashion. Even Nebula apps on some other machines
+can be remote controlled through a console.
+
+sgraph
+------
+The scenegraph server is a high level 'rendering device' that
+collects objects for rendering and does some optimizations before
+actually rendering them through the gfx server. This includes
+for example sorting the nodes for minimized texture and render
+state switches, or hinting the gfx server whether the vertex
+buffer of a particular scene graph node needs clipping.
+
+math
+----
+The math server implements a simple software cpu that is specialized
+on vertex array operations. Any object that will do simple operations
+on big vertex arrays should use the math server since this is the
+central point where cpu specific optimizations will occur (such as
+support for 3DNow or SSE).
+
+channel
+-------
+[TODO]
+
+audio
+-----
+[TODO]
+
+shadow
+------
+[TODO]
+
+particle
+--------
+[TODO]
+
+
+The Scene Graph And Visual Object Hierarchies
+=============================================
+[TODO]
+
+
+The Animation System
+====================
+[TODO]

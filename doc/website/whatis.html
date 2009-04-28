@@ -1,0 +1,171 @@
+<html>
+<head>
+<meta content="Bernd Beyreuther" name="author">
+<meta name="robots" content="index,follow">
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body  bgcolor=#7e8c92 text=#000000 link=#ffffff vlink=#ffffff alink=ffffff leftmargin=0 topmargin=0 marginheight=0 marginwidth=0>
+<table width=100% border=0 cellspacing=0 cellpadding=0>
+<tr bgcolor=#5c7984><td><img src="pix2/nebula_device.gif" align=left></td></tr>
+</table>
+<table width=100% border=0 cellspacing=0 cellpadding=0 bgcolor=#7e8c92>
+<TR><TD width=12 bgcolor=#7e8c92><img height=12 width=12 src="pix2/eckelinks.gif"></TD>
+<TD width="100%" bgcolor=#7e8c92><img height=1 src="pix2/spacer.gif"></TD>
+<TD width=12 bgcolor=#7e8c92><img height=12 width=12 src="pix2/eckerechts.gif"></TD></TR>
+</table><table width=100% border=0 cellspacing=0 cellpadding=10 bgcolor=#7e8c92><tr><td>
+<img src="pix2/smallnebula.gif" align=right>
+<h3>Free Portable Game Engine</h3>
+<p>
+"The Nebula Device" is a new professional quality game engine, that can be used by
+anybody for free - full source included. Its creators, the core team
+behind "Urban Assault" (published in 1998 by Microsoft), use Nebula to implement
+their next commercial computer game project, codenamed "The Nomads".
+<p>
+
+<br>
+<h3>Coolest Features</h3>
+<ul>
+
+<li>
+<b> it's free </b>
+    <ul><li>
+    Provided for free on an "as-is" basis, including full source.
+    You can do with it whatever you want, just keep the copyright notices
+    in place (see license.txt for details)
+    </li></ul>
+</li>
+<br>
+
+<li>
+<b> modern architecture </b>
+    <ul><li>
+    object oriented; Nebula is a collection of c++ classes 
+    </li><li>
+    modular; c++ class dlls are depend-loaded and -unloaded at runtime
+    </li><li>
+    portable; currently runs on Linux, Win9x, WinNT. Platform dependent code
+    is kept minimal and isolated in wrapper classes
+    </li><li>
+    hot pluggable objects; e.g. switch between D3D and OpenGL rendering without
+    interruption
+    </li><li>
+    no custom transform pipeline; leaves vertex transformation, diffuse lighting,
+    clipping, hidden surface removal, etc. to the 3D API to make automatic use of
+    transform/lighting hardware 
+    </li></ul>
+</li>
+<br>
+
+<li>
+<b> integrated scripting system </b>
+    <ul><li>
+    uses industry standard <b>Tcl/Tk</b> as the default scripting language
+    </li><li>
+    easy support for other scripting languages through plug-in script
+    server classes
+    </li><li>
+    select c++ objects by name and invoke methods as script commands on them
+    </li><li>
+    object serialization uses script language syntax to create human readable
+    persistent object files
+    </li></ul>
+</li>
+<br>
+
+<li>
+<b> channel based animation system </b>
+    <ul><li>
+    small set of general purpose classes for interpolating and mixing object
+    attributes allows <b>any</b> 1..4 dimensional float attribute to be animated
+    (position, rotation, scale, light color, material attributes,...) 
+    </li><li>
+    animation channels: keyframe definitions can
+    be bound to channels, where "time" is only one of many. Application can write
+    their own values into custom channels, so that animations can be bound to
+    "speed", "temperature", "wind direction", or whatever the application decides
+    to export.
+    </li><li>
+    weight based animation blending allows to blend any number
+    of animation states into a resulting complex animation, controlled by
+    per-state-weights which can be read from channels
+    </li><li>
+    optimized classes for animating vertex buffers
+        <ul><li>
+        shape interpolation, all vertex attributes (e.g. uv, color) can be interpolated
+        </li><li>
+        weight based shape blending, mix vertex buffers based on weights
+        </li><li>
+        realtime bone animation with weighted vertex skin 
+        </li></ul>
+    </li></ul>
+</li>
+<br>
+
+<li>
+<b> powerful console  </b>
+    <ul><li>
+    "nsh" the standard Nebula shell, lets the user
+    browse the internal object hierarchy like a filesystem, create,
+    save, load or delete objects, invoke script commands on them, run
+    Tcl/Tk scripts or generally any Tcl/Tk statement 
+    </li><li>
+    built in client/server protocol: connect to another Nebula application
+    running on the same machine or on a remote machine and manipulate
+    its objects
+    </li><li> 
+    flexible input mapping, bind abstract "app events" or the execution
+    of scripts to input events
+    </li><li>
+    built in console, same feature set as the stand alone "nsh", but
+    is layered in realtime over the 3d view
+    </li><li>
+    with the help of <b>Tk</b>, easily create portable GUIs that can directly
+    interact with Nebula objects
+    </li><li>
+    system information database; many Nebula objects export useful information
+    into the internal object hierarchy, e.g. which 3d devices have been found 
+    in the system, and what resolutions and features they support, what input
+    devices are connected, etc.; the exported data can easily be parsed with
+    the script interface
+    </li></ul>
+</li>
+<br>
+
+<li>
+<b> Wavefront OBJ tools included</b>
+    <ul><li>
+    comes with small set of command line tools for processing Wavefront files 
+    (cleanup, transform, triangulate, smooth, compute lod levels, etc...)
+    </li></ul>
+</li>
+<br>
+
+<li>
+<b> ascii file formats</b>
+    <ul><li>
+    3d mesh file format is a slightly extended Wavefront OBJ format
+    </li><li>
+    no conceptual difference between a script and a stored object, the latter
+    is just a sequence of script commands
+    </li></ul>
+</li>
+<br>
+
+</ul>
+<br>
+<h3>Details</h3>
+<p>
+More details are available in the downloadable package.
+<br>
+<p>
+<font size=1><center>
+MS, Microsoft, DirectX, Direct 3D, Windows, Windows NT, Urban Assault are trademarks 
+or registered trademarks of Microsoft Corp. OpenGL is a trademark of Silicon 
+Graphics, Inc. Other product names mentioned may be trademarks or registered 
+trademarks of their respective owners. <br>
+Copyright &#169; 1998-2002 Radon Labs GmbH. All rights reserved.
+</center>
+</tr></td></table>
+</font>
+</body>
+</html>

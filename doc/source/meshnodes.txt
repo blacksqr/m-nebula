@@ -1,0 +1,102 @@
+meshnodes.txt
+=============
+11-Nov-00   floh    created
+
+Describes the new scene graph level class for mesh rendering. This file is
+mainly of interest for people who work with the script interface.
+
+
+Intro:
+======
+This release of Nebula comes with a new set of nvisnode derived classes for
+rendering meshes. The new classes work in conjunction with the new vertex
+buffer infrastructure described in the vertexbuffers.txt file. 
+
+The following geometry rendering classes have been replaced so far:
+
+nvbufnode       -> replaced by nmeshnode
+nvbufipol       -> replaced by nmeshipol
+nvbufmixer      -> replaced by nmeshmixer
+ncluster        -> replaced by nmeshcluster
+
+Please note that the old classes have been removed from Nebula entirely.
+
+
+The .setreadonly command:
+=========================
+This is an important new flag which tells Nebula whether this object is
+going to be used for rendering, or if the mesh simply serves as input
+geometry for another mesh class (usually an animated mesh class which
+requires one or more input meshes).  Such animated mesh classes are for
+instance nmeshipol, nmeshmixer, nmeshcluster.  The problem is that a
+vertex buffer which is optimized for rendering is usually not suited for
+reading data out of it (check out the vertexbuffers.txt file, and the D3D
+and OpenGL specs if you're interested in the details). To keep Nebula both
+flexible and efficient all mesh classes have the .setreadonly command which
+has to be set to 'true' if the mesh is going to be used as input geometry
+(default is 'false').
+
+That way even a dynamic mesh can serve as input geometry for another mesh
+animator class (you could stack several nmeshipol, nmeshmixer and even
+nmeshcluster objects into a hierarchy, of which only the 'top mesh' is
+actually rendered).
+
+
+nshadernode:
+============
+All new mesh classes are optimized to work together with the new nshadernode
+class (see shadernodes.txt). In short, nshadernode objects replace the
+obsolete nmatnode objects, they define how an object's surface should look
+like. nshadernodes add multitexturing, access to the texture coordinate
+matrix, and a more optimized implementation which uses compiled render
+state blocks and avoids redundant render state switches.
+
+
+nmeshnode:
+==========
+The nmeshnode class replaces the nvbufnode class and is otherwise used the
+same way, thus, it can load itself from an n3d file (Nebula's Wavefront .obj
+derivate) and render itself as static geometry, or server as input for more
+complex mesh rendering classes).
+
+The differences are:
+
+- you have to be careful about the .setreadonly command (see above)
+- the command to define the n3d filename is .setfilename
+
+
+nmeshipol:
+==========
+nmeshipol replaces the obsolete nvbufipol. It implements shape interpolation
+between several input geometries (see the scripting interface docs for
+details). It works the same way as the old nvbufipol class. Note that all
+input mesh objects have to be '.setreadonly true'.
+
+
+nmeshmixer:
+===========
+nmeshmixer replaces the obsolete nvbufmixer class. It can mix several input
+meshes into one resulting mesh based on a weight value for each input mesh.
+Input meshes must now be defined explicitly (nvbufmixer simply mixed all of
+its child objects which could provide vertex data). Note that all input mesh
+objects have to be '.setreadonly true'.
+
+
+nmeshcluster:
+=============
+nmeshcluster replaces ncluster and implements vertex skinning (a mesh is
+skinned over a bone skeleton, Nebula's term for a bone is 'njoint'). The
+major improvement from the old ncluster class is that nmeshcluster can now
+do multiple matrix skinning. One vertex can be bound to up to 4 matrixes
+which gives a much better result then the previously used 1-weight-per-vertex
+method.
+
+Also, vertex weights are now a simple vertex component (just as coords,
+normals, texture coordinates) and live in the n3d files, instead of being
+declared explicitly in the mesh cluster object's script interface.
+
+=====================================================================
+EOF
+=====================================================================
+
+

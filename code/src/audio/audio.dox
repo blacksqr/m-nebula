@@ -1,0 +1,37 @@
+/**
+@mainpage Nebula Audio Documentation
+
+Nebula has basic 3D audio support.  The audio system uses DirectSound8 under Windows.  Linux is not currently supported.
+
+ - @ref audio_usage
+   - @ref audio_initialization
+   - @ref audio_updating_listener
+   - @ref audio_playing_sounds
+   - @ref audio_shutdown
+*/
+
+/**
+@page audio_usage Using Nebula Audio
+
+ - @ref audio_initialization
+ - @ref audio_updating_listener
+ - @ref audio_playing_sounds
+ - @ref audio_shutdown
+
+@section audio_initialization Initialization and Setup
+
+...
+
+@section audio_updating_listener Updating the Listener Node
+
+...
+
+@section audio_playing_sounds Playing Sounds
+
+...
+
+@section audio_shutdown Shutting Down the Sound System
+
+...
+
+*/

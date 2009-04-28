@@ -1,0 +1,190 @@
+Vertex Buffer Infrastructure (NEW!)
+===================================
+10-Nov-00   floh    created
+
+This file describes the new vertex buffer subsystem of Nebula. It is
+only of interest to the Nebula programmers who want to extend Nebula by
+new vertex buffer related classes or who are interested in the gfx
+subsystem details. For the changes on the scene graph level, please refer
+to the file 'meshnodes.txt'.
+
+===============================================================================
+Why the old stuff was bad:
+===============================================================================
+
+Nebula's 'old' vertex buffer code based on the nvbuffer class had some
+serious problems which made it hard to optimize Nebula for hardware t&l.
+The main problems with the old system were: 
+
+- there was no vertex buffer usage indicator, the same vertex buffers were
+  used for static and dynamic geometry
+  
+- each vertex buffer normally occupied one 3d api specific vertex buffer, which 
+  lead to a very high frequency of vertex buffer switches, which is very evil 
+  indeed
+  
+- the old style vertex buffers were not written with multipass/multitexture 
+  rendering in mind
+  
+- it was hard to create classes which generate geometry on the fly
+    
+All this lead to very poor performance especially if a Nebula was populated by
+many low polygon objects.
+
+
+===============================================================================
+Why the new stuff is good:
+===============================================================================
+
+- enables hardware t&l in a clean way (at least under D3D for the current
+  implementation)
+
+- prepares Nebula for DX8 vertex streams and vertex shaders and OpenGL
+  "vertex programs"
+
+- drastically reduces redundant render state switches (especially vertex buffer
+  switches under D3D)
+  
+- less overhead for vertex buffers which are never rendered (e.g. source
+  buffers for shape interpolation or skinning), previously, those buffers
+  have been wrapped into D3D or OpenGL specific classes as well
+  
+- better support for dynamic geometry
+
+
+===============================================================================
+The new vertex buffer classes:
+===============================================================================
+
+The following classes implement the new vertex buffer subsystem:
+
+nVertexBuffer    - highlevel frontend to a vertex bubble (see below)
+nIndexBuffer     - highlevel frontend for a chunk of indexed primitives
+nDynVertexBuffer - helper class which simplifies writing classes which generate
+                   dynamic geometry
+
+nVertexPoolManager  - manages vertex pools (gfx subsystem internal)
+nVertexPool         - vertex pools contain a number of vertex bubbles (gfx
+                      subsystem internal)
+nVertexBubble       - a chunk of vertex data inside a vertex pool (gfx
+                      subsystem internal)
+
+These are the new relevant factory methods for the new vertex buffer subsystem:
+
+nGfxServer::NewVertexBuffer()
+nGfxServer::NewIndexBuffer()
+
+
+===============================================================================
+Vertex Buffer Types:
+===============================================================================
+When creating vertex buffers one can indicate now to Nebula how the
+vertex buffer will be used, so that Nebula can return a vertex buffer
+object tuned for this specific purpose: 
+
+
+N_VBTYPE_READONLY
+-----------------
+The vertex buffer only serves as source data (for instance for animated
+mesh classes) and will never be rendered. 'readonly' vertex buffers are
+not 3d API specific and generally live in system memory for optimal read
+performance. 
+
+N_VBTYPE_STATIC
+---------------
+The vertex buffer will be filled once and will never be touched again.
+It can render itself through the 3d api. This allows several
+optimizations inside the 3d api, the vertex buffer can be placed in
+driver optimal memory, and the vertex data can be rearranged internally
+by the 3d api for faster vertex processing. 
+
+N_VBTYPE_DYNAMIC
+----------------
+These are vertex buffers for dynamic geometry (thus, the cpu will
+frequently write new data to the vertex buffers, but never do any read
+access). Internally the 3d api will usually use double buffered vertex
+buffers to allow the cpu and hardware to work in parallel. Please note
+that there's a high level class 'nDynVertexBuffer' which hides the gory
+details and simplifies writing Nebula classes which generate geometry on
+the fly. 
+    
+    
+===============================================================================
+New vertex components:
+===============================================================================
+
+The new vertex buffer class has support for up to 4 texture coordinate
+sets for multitexturing and up to 4 per-vertex-weights and matrix
+indices (for smooth matrix-palette-skinning). 
+
+
+===============================================================================
+The vertex pool subsystem:
+===============================================================================
+
+Vertex pools reduce vertex buffer switches during rendering. The idea is
+to place the geometry for many 3d objects into one big vertex pool, and
+during rendering, sort the objects to be rendered by vertex pool. This
+may give a dramatic performance boost when rendering a big number of
+objects as compared to the old implementation. The highest level class
+of the vertex pool subsystem is the nVertexPoolManager class.
+nVertexPoolManager objects serve as factory object for nVertexBubble
+objects. nVertexBubble objects define chunks of vertex data inside
+nVertexPools (which are created internally and on demand by the
+vertex pool manager). 
+
+The nVertexPool class is the only class of the new vertex buffer
+infrastructure that is 3d api specific. The nD3D7VertexPool class
+implements a vertex pool on top of D3D vertex buffers, while the
+nGlVertexPool class sits on top of OpenGL vertex arrays. 
+
+Gfx server objects normally create one vertex pool manager for each
+basic vertex buffer type (N_VBTYPE_READONLY, N_VBTYPE_STATIC,
+N_VBTYPE_DYNAMIC) and vertex format.
+
+
+===============================================================================
+The nVertexBuffer class:
+===============================================================================
+
+nVertexBuffer wraps around a nVertexBubble and provides a friendly
+interface to the vertex data inside the bubble. Important vertex buffer
+attributes are the vertex format (a set of vertex components like
+coordinates, normals, vertex colors, texture coordinates...), the vertex
+buffer type (N_VBTYPE_*, see above) and the number of vertices in the
+buffer. 
+
+nVertexBuffer objects must generally be created through the
+nGfxServer::NewVertexBuffer() factory method, because gfx server will
+probably return objects of different subclasses based on the underlying 3d
+api. 
+
+
+===============================================================================
+The nIndexBuffer class:
+===============================================================================
+
+This is a new class which encapsulates indexed primitives. A later
+Nebula release will probably add 3d api specific subclasses of
+nIndexBuffer (DX8 uses index buffer objects to store index arrays in
+driver optimal memory, so that the 3d hardware can access them more
+optimally). 
+
+
+===============================================================================
+The nDynVertexBuffer class:
+===============================================================================
+
+This is really just a helper class to simplify writing higher level
+classes which generate dynamic geometry, like terrain renderers, mesh
+interpolators, mesh mixers, skinning classes curved surfaces and the
+like. It offers a simple Begin() / Swap() / End() interface which hides
+the details of managing a double buffered vertex buffer under an
+abstract interface. Later nDynVertexBuffer may be subclasses by 3d api
+specific subclasses which can handle dynamic geometry even more
+optimally. 
+
+===============================================================================
+EOF
+===============================================================================
+

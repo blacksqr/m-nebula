@@ -1,0 +1,376 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="author" content="Bernd Beyreuther">
+<meta name="robots" content="index,follow">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title></title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body bgcolor="#7E8C92" text="#000000" topmargin="0"
+leftmargin="0" marginheight="0" marginwidth="0">
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td bgcolor="#5C7984"><img src="pix2/nebula_tutorial.gif"
+        align="left" hspace="0" width="538" height="55"></td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#7E8C92">
+    <tr>
+        <td width="12" bgcolor="#7E8C92"><img
+        src="pix2/eckelinks.gif" width="12" height="12"></td>
+        <td width="100%" bgcolor="#7E8C92"><img
+        src="pix2/spacer.gif" width="1" height="1"></td>
+        <td width="12" bgcolor="#7E8C92"><img
+        src="pix2/eckerechts.gif" width="12" height="12"></td>
+    </tr>
+</table>
+
+<p><br>
+</p>
+
+<ul>
+    <li>This is a very simple step by step tutorial, how to
+        create a visual Nebula object from some raw data.<br>
+        <b>Please note !</b> You can find the example files of
+        this tutorial at <a href="./">nebula/doc/tutorial/</a>.<br>
+        <font color="#FFBB00">Updated: 02-Jan-2000 (Bugfix !)<br>
+        Updated: 20-Aug-2001 - A few minor tweaks..<br> Updated:
+        02-Mar-2002 - A few more minor tweaks.</font></li>
+</ul>
+
+<p align="center"><br>
+</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="3" cellspacing="0" width="95%">
+    <tr>
+        <td bgcolor="#727F84">&nbsp;</td>
+        <td bgcolor="#727F84"><b>Preparing Source Data for Nebula</b></td>
+    </tr>
+    <tr>
+        <td valign="top" width="256" bgcolor="#8F9D9F"><img
+        src="pix2/01.gif" width="122" height="110"><br>
+        <b>Example: source.obj</b> </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>1.
+        Wavefront OBJ Raw Data.</b></font> To create your
+        3D-Model you may use any 3D-Modeller that is capable to
+        handle polygonal objects, per vertex UV coordinates and
+        to save Wavefront OBJ Objects.<br>
+        Save your Object as Wavefront OBJ. The resulting ASCII
+        File should look like this: <pre><font size="2">
+    v -49.999992 -100.000000 -86.602554
+    v -50.000008 -100.000000  86.602539
+    v 100.000000 -100.000000   0.000000
+    v   0.000000  100.000000   0.000000
+    vt  0.250000   -0.933013
+    vt  0.250000   -0.066987
+    vt  1.000000   -0.500000
+    vt  0.000000    0.000000
+    ...
+    vn -0.970142    0.242536  -0.000000
+    vn -0.970142    0.242536  -0.000000
+    vn  0.485071    0.242536  -0.840168
+    vn  0.000000   -1.000000  -0.000000
+    f   1/1/12  3/3/4   2/2/7
+    f   1/4/10  2/5/9   4/8/1
+    f   2/5/8   3/6/6   4/8/2
+    f   3/6/5   1/7/11  4/8/3
+</font></pre>
+        <p>Mostly it will not be necessary for you to edit this
+        3D-Data by hand, but using a simple ASCII Format also
+        allows simple scripts for manipulating that data, you can
+        easily have &quot;a look&quot; into the scripts if bugs
+        appear and - last but not least - Wavefront OBJ is an
+        industry standard for polygonal objects and supported by
+        nearly every 3D program. <br>
+        <br>
+        </p>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" bgcolor="#8F9D9F"><b>Example: object.n3d</b>
+        </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>2.
+        Polygon Pipeline.</b></font> Till now we have a
+        nonoptimized 3D-Object. Nebula will not be able to show
+        this. You have to do some optimization on it. The
+        WF-Tools (you may compile them yourself or download
+        executables from the Download-Page.) - a collection of
+        command line tools - offer a variety of optimization for
+        Wavefront objects. At least you have to flatten the
+        3D-Object. Open a shell. Make sure that the WF-Tools are
+        in your search path. Type: <pre>
+    cd          [the folder you saved the object]
+    wfflatten   &lt;yourobject &gt;targetfile
+</pre>
+        <p><font size="2"><em><strong>Note</strong></em><em>: The
+        angle brackets '&lt;' &amp; '&gt;' are part of the
+        command.</em></font></p>
+        <p>Now the targetfile is ready for Nebula. <br>
+        <br>
+        </p>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" bgcolor="#8F9D9F"><img src="pix2/02.jpg"
+        width="64" height="64"><br>
+        <b>Example: texture.bmp</b> </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>3.
+        Preparing a texture.</b></font> Use any paint program to
+        create your texture. For image textures Nebula supports
+        the Windows BMP Format. Textures has to be square.
+        Indexed Colors (256 colors, color table) and RGB colors
+        (Truecolor) supported. Both of them has to be
+        uncompressed. Texture sizes of 2^n (32,64,128 etc.)
+        recommended. Save this image file to your folder. </td>
+    </tr>
+</table>
+</center></div>
+
+<p align="center"><br>
+</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="3" cellspacing="0" width="95%">
+    <tr>
+        <td bgcolor="#727F84">&nbsp;</td>
+        <td bgcolor="#727F84"><b>Loading and displaying a 3D
+        Object</b></td>
+    </tr>
+    <tr>
+        <td valign="top" width="256" bgcolor="#8F9D9F"><img
+        src="pix2/03.gif" width="256" height="192"><br>
+        <b>Example: startup.tcl</b> </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>4.
+        Starting the Nebula Console.</b></font> Open a shell.
+        Make sure that nlaunch.exe is in your path. Type: <pre>
+    nlaunch startup.tcl
+</pre>
+        <p><br>
+        This starts a Nebula Shell. The startup-script
+        initializes an OpenGL window and a simple input mapping.
+        It is recommended to create a link on your desktop or an
+        alias in your shell to simplify this call. To customize
+        the window please see the TCL-Script startup.tcl. (For
+        example you might want to use Direct3D instead of the
+        default OpenGL.) <br>
+        <br>
+        </p>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="256" bgcolor="#8F9D9F"><img
+        src="pix2/04.gif" width="256" height="192"><br>
+        </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>5.
+        Using the onscreen console. </b></font>Press <b>ESCAPE</b>
+        to activate the the onscreen console. You can use the
+        console to create and modify Nebula objects on the fly.
+        Type: <pre>
+    dir
+</pre>
+        <p>You will see: </p>
+        <pre>
+    sys usr observer
+    /&gt;_
+</pre>
+        <p>These are runtime-directories of the internal Nebula
+        structure. Imagine the internal Nebula structure as a
+        virtual filesystem. Every object, each server or handler
+        uses such an internal directory to show to the script
+        interface. Using the <b>sel</b> (similar to <b>cd</b>)
+        command you can move within these structures. Move to the
+        /usr/scene directory. </p>
+        <pre>
+    sel /usr/scene
+</pre>
+        <p>/usr/scene is a special directory: every object
+        created in this directory, will be visually
+        triggered/shown. <br>
+        Pressing ESCAPE will toggle the console on/off. <br>
+        <br>
+        </p>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="256" bgcolor="#8F9D9F"><img
+        src="pix2/05.gif" width="256" height="102"><br>
+        </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>6.
+        Creating a standard 3D node. </b></font><br>
+        Type: <pre>
+    new n3dnode test
+    sel test
+    new nmeshnode   mesh
+    new nshadernode shader
+    new ntexarraynode tex
+</pre>
+        <p>This creates a basic 3D Node, with the standard
+        subnodes, which define 3D Mesh, texture and material.
+        Currently nothing is visible since all the subnodes are
+        empty. The basic syntax of <b>new</b> is:<br>
+        <b>new objecttype objectname</b> <br>
+        <br>
+        </p>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="256" bgcolor="#8F9D9F"><img
+        src="pix2/06.gif" width="256" height="192"> </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>7.
+        Loading the prepared ressources. </b></font>Now we simply
+        have to add the prepared raw data to the subnodes. Type: <pre>
+    sel mesh
+    setfilename object.n3d
+</pre>
+        <p>A black shape should be visible in the 3D view. This
+        is since we still do not have any material, light or
+        texture information. So we will have to adjust the other
+        subnodes. Since NEBULA now supports multitexturing and
+        complex renderstates, a shader needs a lot of data to be
+        rendered correctly. We do not need to type them into the
+        console by hand. Just load a predefined shader with the <strong>source</strong>
+        command. </p>
+        <pre>
+    sel ..
+    sel shader
+    source shader.n
+</pre>
+        <p>For more information on how shaders work please have a
+        look into <a href="shader.n">shader.n</a> and <a
+        href="../source/shadernodes.txt">shaders.txt</a><br>
+        </p>
+
+        <pre>
+    sel ..
+    sel tex
+    .settexture 0 texture.bmp none
+</pre>
+        <p>The shape should now be textured.</p>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="256" bgcolor="#8F9D9F"><img
+        src="pix2/07.gif" width="137" height="128"><br>
+        </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>8.
+        Watching the scene. </b></font>Now a simple textured and
+        flat shaded object is visible. You can interactively
+        watch the scene. Hold your mouse buttons and drag the
+        mouse to move the camera as described below.<br>
+        <img src="pix2/08.gif" align="left" hspace="0"
+        width="128" height="150"> <br>
+        Right Mouse Button: Tumble <br>
+        <br>
+        Left Mouse Button: Track <br>
+        <br>
+        Middle Mouse Button: Dolly <br>
+        <br clear="all">
+        <br>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="256" bgcolor="#8F9D9F"><img
+        src="pix2/09.jpg" width="147" height="128"><br>
+        <b>Example: light.n</b> </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>9.
+        Lighting. </b></font>Changing a few statements and adding
+        a point light will give us better lighting. First we need
+        to enable lighting in the shader.<pre>
+    .setlightenable true
+    sel ..         
+</pre>
+        <p><font size="2"><em><strong>Note</strong></em><em>: the
+        '</em><em><strong>.</strong></em><em>' at the start of
+        the command, this is used to seperate the script command
+        from the object's name, in this case we mean the current
+        object, although it's not strictly necessary when
+        referring to the current object. To call a script command
+        on an object other than the current one you could type </em><em><strong>/usr/scene/test/shader.setlightenable</strong></em><em>.</em></font></p>
+        <p>We will use a prepared nebula file, to create two
+        color lighting. </p>
+        <pre>
+    get light.n
+</pre>
+        <p>Have a look at <a href="light.n">light.n</a>, to see
+        how the lights were setup.</p>
+        </td>
+    </tr>
+</table>
+</center></div>
+
+<p align="center"><br>
+</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="3" cellspacing="0" width="95%">
+    <tr>
+        <td bgcolor="#727F84">&nbsp;</td>
+        <td bgcolor="#727F84"><b>More Details</b></td>
+    </tr>
+    <tr>
+        <td valign="top" width="256" bgcolor="#8F9D9F">&nbsp; </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>10.
+        Saving your creation. </b></font>Select the object (in
+        this example we are useing absolute path names) you want
+        to save and type: <pre>
+    sel /usr/scene/test
+    .save</pre>
+        <p>This will save the object as <strong>test.n</strong>
+        in the current directory. If you want to save the object
+        with a different name type:</p>
+        <pre>    .saveas object</pre>
+        <p>Now have a look into your current directory. You will
+        find a new file named <b>object.n</b> This is a simple
+        Nebula ASCII file. Use a text editor to examine the
+        Nebula file format. Please note that Nebula uses the same
+        script syntax for online manipulation of scenes, and
+        saving them. Files saved like this can be loaded back
+        into Nebula via <b>get filename </b>. </p>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="256" bgcolor="#8F9D9F"><img
+        src="pix2/10.gif" width="256" height="111"> </td>
+        <td valign="top" bgcolor="#8F9D9F"><font color="#002288"><b>11.
+        Adding a simple animation. </b></font>It is very simple
+        to add some movement to the scene. First we create an
+        interpolator below a n3dnode. Then the interpolator is
+        connected to the Y-Rotation of the n3dnode. Finally we
+        add two keyframes with a rotation of 0 to 360 degrees. <pre>
+    sel /usr/scene/test
+    new nipol rot
+    sel rot
+    .connect ry
+    .addkey1f 0 0
+    .addkey1f 2 360
+    sel ..
+</pre>
+        <p>The object should now rotate. You can add animated
+        values to nearly any parameter, just by changing the <strong>.connect</strong>
+        statement. You can add interpolators to light or material
+        colors, transparency, position, scale etc. </p>
+        </td>
+    </tr>
+</table>
+</center></div>
+
+<ul>
+    <li>For more further learning, tips and details it is
+        recommended to have a look into the files of the
+        TEKDEMOS. These ASCII files are quite well commented.
+        There you can see the integration of TCL/TK and NEBULA,
+        and learn about more advanced options of Nebula. </li>
+</ul>
+
+<p align="center"><font size="1">Copyright © 1998-2001 Radon
+Labs GmbH. All rights reserved. </font></p>
+</body>
+</html>

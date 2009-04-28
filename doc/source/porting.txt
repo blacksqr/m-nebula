@@ -1,0 +1,200 @@
+porting.txt
+===========
+23-Jul-99   floh    created
+16-Dec-00   floh    updated
+
+Rough porting guide to Nebula.
+
+
+======================================================================
+What needs to be done:
+======================================================================
+
+Porting Nebula to a new platform may involve the following steps:
+- modifying the build system
+- porting the kernel
+- implement or port a gfx server
+- implement or port an input server
+- implement or port audio server
+- make sure there's a working Tcl8.x implementation
+
+======================================================================
+Platforms supported:
+======================================================================
+
+Nebula currently runs on the following platforms:
+- x86 Linux 2.x with glibc, XFree86, Mesa
+- Win95/98/2000 with DirectX 8 and optionally OpenGL
+- WinNT with OpenGL
+
+
+======================================================================
+Compilers supported:
+======================================================================
+
+- Linux: gcc 2.9.5, gcc 2.9.6
+- Win32: MS Visual-C 6, MS Visual C++ .NET 
+
+
+======================================================================
+Known problems:
+======================================================================
+
+- There will be endian problems in the bitmap loader code if
+  the host cpu has different endianess then x86.
+
+- The macros that identify a platform in Makefiles and source
+  headers are not very clever.
+  Currently there are only __WIN32__,  __LINUX__, __MACOSX__ for platform
+  and __VC__ and __GNUC__ for compiler identification.
+  __LINUX__ is sometimes used instead of "anything else then WIN32",
+  so there may be some changes needed when defining new platform macros.
+
+
+======================================================================
+Porting the kernel:
+======================================================================
+
+Kernel sources are in 'code/src/kernel' and 'code/inc/kernel'.
+To compile the kernel shared library, do a 'make debug nkernel'.
+
+The Nebula kernel requires the following features supported by
+the host environment for a trivial port:
+
+- ANSI C++ compatibility
+  
+- a realtime clock with at least 1/1000 sec resolution:
+    Win32: QueryPerformanceCounter()
+    Linux: gettimeofday()
+    kernel classes: nTimeServer
+
+- a multithreading system:
+    Win32: Win32-Threads, Mutexes, Events
+    Linux: POSIX threads
+    kernel classes: nThread, nMutex, nEvent
+
+- AF_INET sockets:
+    Win32: winsock 1.x
+    Linux: standard socket calls
+    kernel classes: nIpcClient, nIpcServer
+
+- directory functions:
+    There's a wrapper class for walking filesystem directories,
+    since there's no standard ANSI-C way of doing this.
+    Win32: FindFirstFile(), FindNextFile()...
+    Linux: opendir(), readdir()...
+    kernel classes: nDir
+
+- a dll loader:
+    Win32: LoadLibrary()
+    Linux: dlopen()...
+    kernel functions: n_dllopen(), n_dllclose(), n_dllsymbol()
+
+- A way to detect which path an executable has been
+  started from. The current code is Win32/Linux specific
+  and does some dirty hacks, see
+  'code/src/kernel/nfile_assign.cc/initHomeAssign()' for details
+
+Once the kernel compiles, you can do a first test with the 
+Nebula shell:
+
+> nsh
+/> new nroot test
+/> test.getcmds
+/> test.getversion
+/> test.getclass
+/> exit
+
+
+======================================================================
+Compiling the Nebula class package:
+======================================================================
+
+This should require no porting work:
+
+> make nnebula
+
+When it has compiled test with nsh and create an object of
+a class from the nnebula package:
+
+> nsh
+/> new n3dnode test
+/> test.txyz 1 2 3
+/> test.gett
+/> exit
+
+(this creates a 3d node and translates it to (x=1,y=2,z=3), the
+'gett' command returns the current position).
+
+
+======================================================================
+Porting an gfx server:
+======================================================================
+
+There are currently 2 gfx server classes, nd3dserver sits on top
+of Direct3D 8, nglserver sits on top of OpenGL 1.1 with GLX or WGL
+as the window system interface.
+
+To compile the OpenGL and Direct3D class packages, type:
+
+> make nopengl
+> make ndirect3d
+
+To support a completely new 3d API one has to write 3 classes:
+the gfx server itself (nd3dserver, nglserver), a texture object
+wrapper (nd3dtexture, ngltexture) and a vertex buffer wrapper
+(nd3dvbuffer, nglvbuffer). I would advice not to start a completely
+new implementation, since the gfx server API is in flux.
+
+Fortunately OpenGL is supported on most mainstream platforms, so a
+completely new implementation should not be necessary.
+Instead the nglserver code can be extended to work with more
+window systems.
+
+The main chunk of window system dependent code is in
+'code/src/gfx/ngl_xdisp.cc' for GLX and 'code/src/gfx/ngl_windisp.cc'
+for WGL. There are some other bits and pieces throughout the nglserver
+code inside #ifdef __WIN32__ and #ifdef __LINUX__ statements you
+have to be careful about.
+
+
+======================================================================
+Porting an input server:
+======================================================================
+
+Conceptually, the Nebula input server is a collection point
+for input events. Input events can be fed into the input server
+from anywhere. For instance, the current gfx servers are feeding
+keyboard and mouse input from the window system into the Nebula
+input event queue, because only gfx server has complete control
+over its window.
+Support for specific input devices is best done through subclassing
+ninputserver, unless the implementation would be cleaner or
+more efficient otherwise.
+Currently there are 2 special input servers, the ndxinputserver
+sits on top of DirectInput V6, the nlxinputserver supports
+Linux joystick devices. The latter is much smaller and easier
+to understand, so you should probably use nlxinputserver
+as a starting point (see 'code/src/input/').
+
+
+======================================================================
+Implementing a new script server:
+======================================================================
+
+Writing a new script server is not required to get Nebula running
+on another platform. If the standard scripting language Tcl is not
+supported it may be better to get Tcl running first, since there are
+so many existing Nebula scripts written in Tcl.
+The script server translates between Nebula's internal
+command format and a specific scripting language. Specifically,
+script statements need to be translated into nCmd objects, and
+back. See the ntclserver sources under 'code/src/script/' for
+details.
+Also note that the object persistency mechanism (== object
+serialization) uses the script server as filter to generate
+human readable serialized object files.
+
+---
+EOF
+

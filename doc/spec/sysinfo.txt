@@ -1,0 +1,292 @@
+sysinfo.txt
+===========
+26-Dec-99   floh    created
+
+Nebula servers export loads of status information into the object
+hierarchy which can be queried and manipulated by the user at
+runtime. This file describes the location and contents of most of them.
+
+
+=====================================================================
+Basics:
+=====================================================================
+
+As part of the Nebula startup the kernel server initializes the named
+object hierarchy and creates a few standard server objects which are
+required to get Nebula up and running. Once the kernel has initialized,
+a Tcl startup script is usually launched which create more servers
+required by the script or the application in question.
+
+Each of those server objects must live under its defined name. If a Nebula
+class requires access to one or more servers it will usually do a name
+lookup to obtain a C++ pointer to the server object. Once it has the pointer
+it may invoke c++ methods directly on it. If a required servers is not found
+the client class will usually throw an assertion.
+
+Many server objects export useful status information into the object hierarchy.
+This may include the 3d rendering devices found in the system, or the attached
+input devices with their buttons and axes, etc... This information can be
+queried by other Nebula classes directly, or by the 'human operator' through
+the script interface.
+
+*** NEVER EVER DELETE ANYTHING UNDER '/sys' ***
+
+...or Nebula will get terribly confused. 
+
+
+=====================================================================
+How to access Nebula objects through the script interface
+=====================================================================
+
+Most Nebula classes offer a set of script commands which can be invoked
+through the script interface on the 'currently selected object'. One can
+interactively access objects either through the command line based
+Nebula shell (nsh), or the console which is built into graphical Nebula
+applications. Read the nsh docs (nebula/docs/tools/nsh.txt) to learn how
+script commands are invoked on objects.
+
+Nebula objects can be queried about the script commands they understand.
+To get a list of script commands, do a 'getcmds' on an object. You'll get
+a somewhat cryptic list of command prototypes back. Those command prototypes
+tell you what the name of the commands are, which arguments they expect as
+input and what arguments they will return.
+
+Examples:
+
+s_getname_v
+
+The command name is 'getname', it expects no input arguments (v == void), and
+returns one string argument (s == string).
+
+b_setkey_ifff
+
+The command name is 'setkey', it expects one integer (i==int) and three
+float arguments (f==float) as input, and returns one bool argument.
+
+Please note that more then one return argument is allowed:
+
+fff_getkey_i
+
+This will return three floating point numbers.
+
+These are these supported type tokens:
+
+v   -> void
+i   -> integer
+f   -> float
+s   -> string
+b   -> bool ('true' and 'false')
+o   -> object reference
+
+=====================================================================
+The standard server objects:
+=====================================================================
+
+This lists the server objects which are normally created by
+a Nebula application, and some of their most useful commands.
+Please note that there's also a complete command reference
+in html (its mostly in German though).
+
+---------------------------------------------------------------------
+NAME
+/sys/servers/time
+
+DESC
+Nebula's central time source, created at startup. Time is
+measured in seconds since startup and returned as floats.
+
+USEFUL COMMANDS
+gettime
+settime
+starttime
+stoptime
+
+---------------------------------------------------------------------
+NAME
+/sys/servers/file
+
+DESC
+Connects Nebula to the host filesystem, normally only interesting to
+other Nebula classes.
+
+USEFUL COMMANDS
+none
+
+---------------------------------------------------------------------
+NAME
+/sys/servers/script
+
+DESC
+Implements the scripting mechanism, defines, which scripting language
+Nebula understands.
+
+USEFUL COMMANDS
+none
+
+---------------------------------------------------------------------
+NAME
+/sys/servers/gfx
+
+DESC
+Needed by graphical Nebula applications, defines the 3d rendering
+api, wraps around existing 3d api's like OpenGL or D3D. Please
+note that one cannot render directly through the gfx server by
+using the script interface (this would be to slow anyway). 
+
+USEFUL COMMADS
+setdisplaymode
+getdisplaymode
+opendisplay
+closedisplay
+setviewvolume
+setclearcolor
+
+---------------------------------------------------------------------
+NAME
+/sys/servers/input
+
+DESC
+Manages input devices and feeds input events into Nebula, also
+performs input mapping. Needed by all interactive graphical
+Nebula applications.
+
+USEFUL COMMANDS
+none
+
+---------------------------------------------------------------------
+NAME
+/sys/servers/console
+
+DESC
+Implements the ingame console for graphical nebula applications.
+Also allows to 'watch' debug variables at runtime.
+
+USEFUL COMMANDS
+open
+close
+toggle
+watch
+unwatch
+
+---------------------------------------------------------------------
+NAME
+/sys/servers/math
+
+DESC
+The math server implements a 'virtual cpu' specialized for operations
+on big vertex arrays.
+
+USEFUL COMMANDS
+none
+
+---------------------------------------------------------------------
+NAME
+/sys/servers/sgraph
+
+DESC
+The scene graph server is an optimizing layer between visual
+object hierarchies and the low level gfx server. 
+
+USEFUL COMMANDS
+none
+---------------------------------------------------------------------
+
+
+
+=====================================================================
+The system information database:
+=====================================================================
+
+Most information worth to be queried lives under '/sys/share' in the
+Nebula object hierarchy. Objects in the system database are usually of
+class 'nenv'. 'nenv' objects are like typed environment variables which
+can contain a string (mostly), a number or some other valid datatype. To
+get the contents invoke the '.gets' command on the object (if the
+content type is 'string'). If this fails, try '.gettype', and use one
+of the following access methods based on the returned type:
+
+    string      -> .gets
+    integer     -> .geti
+    float       -> .getf
+    bool        -> .getb
+    object      -> .geto
+
+
+---------------------------------------------------------------------
+/sys/share/assigns
+
+The file server exposes the currently defined assigns here. Assigns
+are 'path aliases', which usually map a symbolic name to an absolute
+filesystem path.
+
+    /sys/share/assigns/home     -- Nebula's home directory
+    /sys/share/assigns/bin      -- Nebula's application directory
+
+---------------------------------------------------------------------
+/sys/share/display
+
+This is where the gfx server lists all valid rendering devices found
+in the host system, including a lot of useful information about them.
+
+Each device is defined by a number, starting at 0 (which is the default
+rendering device). In most cases, there will only be one rendering device.
+The exceptions are Direct3D hosts with a fullscreen 3d card (like the
+older voodoos), or probably a multimonitor configuration. Under OpenGL,
+only one rendering device exists.
+
+Each device gets a directory under /sys/share/display, with the device
+number as directory name.
+
+In the device directory, there's usually a whole bunch of server specific
+information (esp. under D3D, almost all d3d caps are exposed), but here
+are a few standard objects which are identical for the Direct3D and
+the OpenGL server:
+
+    /sys/share/display/*/name       - the driver name
+    /sys/share/display/*/desc       - description or version string
+
+Under
+
+    /sys/share/display/*/modes
+
+all video modes are listed, which the device can render to. Modes are
+numbered, and for each display mode there is a directory.
+
+    /sys/share/display/*/modes/*/name
+
+...contains the display mode descriptor string which is compatible
+with 'setdisplaymode' of the gfx server.
+
+
+---------------------------------------------------------------------
+/sys/share/input
+
+The input server will list all input devices here, along with information
+about their buttons and axes. This is useful if one wants to define
+input mappings and wants to find out what input event names can be used.
+
+The input devices are listed here:
+
+    /sys/share/input/devs
+
+Each device is listed under its name, which is compatible with the
+input mapping mechanism of the input server. Usually, there's
+at least
+
+    /sys/share/input/devs/keyb0
+    /sys/share/input/devs/mouse0
+
+defined, for the systems default keyboard and mouse.
+
+Under
+
+    /sys/share/input/devs/*/channels
+
+all valid 'input channels' of the device are listed, for keyboards, these
+are the names of the supported keys, joysticks and mice also have axes and
+buttons listed. The names are compatible with the input mapping syntax
+again.
+
+=====================================================================
+    EOF
+=====================================================================

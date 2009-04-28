@@ -1,0 +1,396 @@
+coding_tutorial.txt
+===================
+03-Jan-99   floh    created
+
+This file explains how to enhance Nebula by a new visual node class
+which renders a lense flare effect. It's fairly high level though,
+so don't expect complete source code.
+
+*** NOTE ***
+The information in this file if of preliminary nature, details
+may change as Nebula evolves.
+
+=====================================================================
+The Nebula render loop
+=====================================================================
+
+It's useful to know how Nebula renders a scene before trying to write
+new visual node classes. There are 3 classes one needs to deal with for
+rendering, nGfxServer is the low level 3d rendering api, nSceneGraph
+sits on top of the gfx server and optimizes rendering of visual
+hierarchies, nVisNode is the root class of all objects that can be
+grouped into visual hierarchies and know how to render themselves.
+Examples of nVisNode subclasses are nMeshNode (defines geometry to be
+rendered), nTexArrayNode (defines textures), nShaderNode (describes surface
+materials) or n3DNode (groups subobjects into hierarchies and describes
+3d position and orientation). Extending Nebula is usually done by
+subclassing nVisNode or one of it's subclasses.
+
+The vanilla visual hierarchy consists of a n3DNode object at the top,
+and one nMeshNode, nTexArrayNode and nShaderNode object as children. This
+will generate a textured polygonal object that can be positioned, scaled
+and oriented.
+
+The render loop of Nebula roughly looks like this:
+
+(1) BeginScene() is invoked on the scene graph object.
+(2) Attach() is invoked on each visual hierarchy root object
+    that wants to be rendered.
+(3) EndScene() is called on the scene graph object.
+
+Step (2) is called the 'attach pass', because during this pass, visual
+objects attach themselves to the scene. The goal of the attach pass is to
+give the scene graph a complete highlevel description of the current
+frame to be rendered by filling out 'scene graph nodes'. One scene graph
+node contains pointers to objects that want to provide position,
+geometry, texture, material and light source information. Everything
+except positional information is optional. During the Attach() pass,
+every n3DNode in a visual hierarchy allocates a scene graph node from
+the scene graph object and hands it down recursively to its child
+objects. The child objects are now free to fill out the object pointers
+in the scene graph node, so that they can be called back later by the
+scene graph object for actual rendering. Once all child objects are
+handled, the root n3DNode object writes a pointer to itself into the
+scene graph (because it provides the positional information for that
+node) and hands the scene graph node back to the scene graph object.
+
+At the end of the Attach() pass (Step (3)) the scene graph object has a
+complete hierarchy of scene graph nodes with pointers to all objects
+that need to be called back for rendering. Before this happens, the
+scene graph object performs the following steps to render the scene:
+
+(3.1) Transform pass:
+    Each 3d node object is first asked to update its internal
+    state by invoking the Compute() method on it. Any frame
+    specific state change must happen inside Compute(), for
+    instance any type of animation. After the Compute() pass,
+    the resulting 3d matrices are flattened into viewer coordinate
+    space by multiplying each matrix with the parent node's matrix.
+
+(3.2) Light pass:
+    All scene graph nodes that contain light source information
+    are sorted out and the light node is asked to update itself
+    by invoking the Compute() method. Once all lights are updated
+    they are 'rendered' through nGfxServer::SetLight().
+
+(3.3) Sort pass:
+    The remaining nodes are sorted by render priority, texture and
+    opacity. This optimizes texture state change and makes sure
+    that transparent surfaces are rendered correctly.
+
+(3.4) Render pass:
+    For each node, ask material and mesh nodes to update their
+    internal state by invoking Compute() on them. After that,
+    the texture and material are 'rendered' through the gfx server.
+    This triggers a collection of render state changes inside
+    the gfx server. Finally, the mesh node is asked to render
+    itself, which will usually push polygon meshes in form of a
+    vertex buffer into the gfx server.
+    
+That's it for a basic scene graph rendering loop.
+
+
+
+=====================================================================
+Pre-Coding Considerations
+=====================================================================
+
+Our lens flare effect should fulfill the following requirements:
+
+- it can be attached under a n3DNode which basically defines
+  it's position in world space (or better, the position of the
+  light source which would create the lens flare)
+- whenever the n3DNode is in the view volume, a number of
+  alpha blended textured sprites should be rendered along
+  a line between the 3D node's current position and the
+  middle of the screen (add any eye candy here, like
+  rotation of the quads, etc...)
+- the number of flares must be given, and for each flare
+  its relative position on the 'lens flare line', its size
+  and its color need to be defined
+- the flares will use the 'current texture' and 'current material',
+  coming from external nTexArrayNode and nShaderNode objects, that's
+  more flexible and less work than putting texture and material
+  descriptions into the lens flare class itself
+
+Looks like the lens flare class simply needs to dynamically generate
+a few polygons based on its relative position to the viewer. This is
+a very similar task to what the nMeshNode class is performing (the
+difference is that the nMeshNode class loads a static mesh description
+from a .nvx or .n3d file (these are derivatives of the Wavefront OBJ file
+format), instead of generating polygons dynamically).
+
+This is how nMeshNode works (see code/src/node/nmeshnode_main.cc 
+and doc/source/meshnodes.txt) for details):
+
+- one has to provide it a filename that contains a mesh description
+  per nMeshNode::SetFilename(), note that no loading happens
+  at this time, loading is deferred until actual rendering
+  happens
+- inside Attach(), nMeshNode writes a pointer to itself into
+  the scene graph node, so that the scene graph can call it
+  back via Compute()
+- inside Compute(), the mesh description file is loaded on demand:
+    (1) first, an appropriate nMeshLoader is created for the file
+        format being loaded. A nVertexBuffer and nIndexBuffer are 
+        allocated through the gfx server (nGfxServer::FindVertexBuffer(), 
+        nGfxServer::NewVertexBuffer(), nGfxServer::FindIndexBuffer(),
+        nGfxServer::NewIndexBuffer())
+    (2) the nVertexBuffer object is filled with the vertices and
+        primitive lists from the mesh description file
+- also inside Compute(), the pointers to the nVertexBuffer and
+  nIndexBuffer objects and optionally, a nShadowCaster object
+  are written back into the scene graph node, so that the
+  scene graph object can invoke the Render() method on them
+
+
+For our lens flare class (let's call it nLensFlare), the job is very
+similar:
+
+- provide methods to set the required properties
+- inside Attach(), write the 'this' pointer into the scene graph node,
+  so that we will be called back via Compute() from the scene graph
+- inside Compute(), if we already created a private nDynVertexBuffer object,
+  skip this point, otherwise get one from the gfx server, and initialize
+  it according to the number of vertices and primitives we want to
+  generate (this is dependent on the number of circles in the flare).
+  the nIndexBuffer should also be initialized at this point.
+- inside Compute(), fill the nDynVertexBuffer with the vertices and primitives
+  needed to render the lens flare geometry, we get our own position
+  and orientation in viewer space from our scene graph node
+  (remember that the viewer is always at null position in viewer space),
+  this information should suffice to compute the vertices needed
+- write the pointer to our nDynVertexBuffer object into the scene graph node,
+  so that the scene graph can call nDynVertexBuffer::Render() on it
+
+That's the basic outline of the job...
+
+There are a few other standard procedures we need to do for a proper
+Nebula class:
+
+- implement the class initialization code
+- implement the script interface
+- implement the persistency interface
+
+Template files in code/templates/ exist to help you through this process.
+
+=====================================================================
+The source skeleton
+=====================================================================
+(1) create the class header file as 'code/inc/node/nlensflare.h', use
+one of the other nVisNode derived classes as orientation.
+
+Our class definition should look somewhat like that
+
+class N_DLLCLASS nLensFlare : public nVisNode {
+    nAutoRef<nGfxServer> ref_gs;       // we need access to the gfx server
+    nDynVertexBuffer     ref_dynvbuf;  // we fill this vbuffer with vertices
+    nRef<nIndexBuffer>   ref_ibuf;
+    enum {
+        N_MAXFLARES = 16,
+    };
+    int num_flares;
+    nFlareDesc flares[N_MAXFLARES];        
+
+public:
+    nLensFlare();
+    virtual ~nLensFlare();
+
+    virtual bool SaveCmds(nFileServer *);           // writes object status to file
+    virtual bool Attach(nSceneGraph *, nSGNode *);  // attach object to scene
+    virtual bool Compute(nSceneGraph *, nSGNode *); // update internal status
+    
+    virtual void BeginFlares(int num_flares);           // start definition of flares
+    virtual void SetFlareSize(int i, float size);       // set size of flare #i
+    virtual void SetFlarePos(int i, float pos);         // set relative pos of flare #i
+    virtual void SetFlareColor(int i, float r, float g, float b, float a);  // set color of flare #i
+    virtual void EndFlares(void);
+}
+
+Note that I have skipped the nFlareDesc inline class, which simply holds
+all parameters for one flare.
+
+(2) Create the files nlensflare_main.cc, nlensflare_cmds.cc and
+nlensflare_ver.cc under 'code/src/node'.
+
+(3) nlensflare_main.cc use a macro to create the class initialization
+code that registers the class module with the Nebula kernel, the source
+code should declare the functions n_init(), n_fini(), n_new() and
+n_version(). Basically, you need to tell Nebula what the name of the
+class is (nLensFlare), what its parent class is ("nvisnode").
+
+If your class is not scriptable, you can do this with the following:
+
+nNebulaClass(nLensFlare, "nvisnode");
+
+If your class is scriptable, then you should use nNebulaScriptClass:
+
+nNebulaScriptClass(nLensFlare, "nvisnode");
+
+Additionally, for a scriptable class, n_initcmds() will need to be
+implemented.  See code/src/node/nmesheffect_cmds.cc for an example.
+
+(4) nlensflare_ver.cc contains the version string, just cut-copy-paste it
+from another *_ver.cc file and update its contents.
+
+(5) nlensflare_cmds.cc implements the script and persistency interface.
+There is one static routine "n_initcmds()" which should be called back from
+n_init() to register the script command for nLensFlare with the kernel.
+I recommend to export the following commands into the script interface:
+
+v_beginflares_i
+v_setflaresize_if
+v_setflarepos_if
+v_setflarecolor_iffff
+v_endflares
+
+Please notice the similarity with the C++ interface.
+
+There needs to be a static callback function for each script command,
+which does argument translation and calls back the right method for
+that command. Again, have a look at n3dn_cmds.cc for an example.
+
+Finally, the nLensFlare::SaveCmds() method should be implemented
+inside nlensflare_cmds.cc. This method writes out 'the sequence of
+commands that would put a default object of that class into an exact
+clone of the object which wrote the sequence'.
+See n3DNode::SaveCmds() for an example. Basically, we need to write
+out one 'beginflares' with the number of flares, then for each flare
+the commands 'setflaresize', 'setflarepos', 'setflarecolor', and
+finally one 'endflares'. Feeding those commands into the script
+interface should restore our state completely.
+
+(6) nlensflare_main.cc is where the constructor/destructor is defined
+(please note that nRoot derived classes MUST ONLY HAVE THE DEFAULT
+CONSTRUCTOR!), we should also put our Attach(), Compute() and
+the remaining methods in here. The only pitfall is, since we are
+using embedded reference objects, we need to initialize them in
+the constructor's function header:
+
+nLensFlare::nLensFlare()
+    : ref_gs(ks,this),
+      ref_dynvbuf(ks,this)
+{
+    ref_gs = "/sys/servers/gfx";
+    ....
+}
+
+We are using two different refs here, the nAutoRef object 'ref_gs'
+can lookup itself on demand, all we need to do is provide a name
+in the object hierarchy. 'ref_vbuf' is a lower level reference
+object, which we need to initialize with an object pointer directly
+(this will happen later inside nLensFlare::Attach()).
+
+The constructor should clean up private referenced objects:
+
+nLensFlare::~nLensFlare()
+{
+    ...
+}
+
+The gfx server is not owned by us, so we don't care.
+
+=====================================================================
+Implementing Attach()
+=====================================================================
+nLensFlare::Attach() is called if someone wishes us to attach ourselves
+to the current scene. We need to:
+
+    - invoke the method on our superclass nVisNode
+    - create and initialize our embedded nDynVertexBuffer object, if it
+      hasn't happened already
+    - write our own 'this' pointer into the scene graph node
+      so we will be called back to provide a valid nDynVertexBuffer later
+      via nLensFlare::Compute()
+
+bool nLensFlare::Attach(nSceneGraph2* sceneGraph)
+{
+    if (nVisNode::Attach(sg,sgn)) {
+
+        // demand create and initialize vbuffer object from gfx server
+        if (!this->ref_dynvbuf.IsValid()) {
+            this->ref_vbuf.Initialize(...);
+            // TODO: need to initialize vbuffer to correct number
+            // of vertices and primitives...
+
+            nIndexBuffer *ibuf = this->ref_gs->NewIndexBuffer(...);
+            // TODO: need to initialize index buffer with the correct
+            // vertices and geometry types.
+
+            n_assert(ibuf);
+            this->ref_ibuf = ibuf;
+        }
+
+        // write ourself into the scene graph node
+        sceneGraph->AttachVisualNode(this);
+        return true;
+    }
+    return false;
+}
+
+
+=====================================================================
+Implementing Compute()
+=====================================================================
+Compute() is invoked on us by the scene graph to provide a pointer
+to a valid vbuffer which it will render afterwards (we told this
+to the scene graph by attaching our nLensFlare object to sceneGraph
+with AttachVisualNode in nLensFlare::Attach()).
+
+Based on the current modelview matrix (which we can get from the gfx
+server via nGfxServer::GetMatrix() and our own lens flare parameters
+we need to construct vertices and primitive lists which would render
+the lens flare effect and write that into the vbuffer object (ref_dynvbuf).
+Don't forget that you're working in model space, not in world space,
+you may have to fiddle around with the modelview matrix and/or the
+inverted viewer matrix.
+
+Examples of classes that write to vbuffers are:
+
+nMeshCluster  -> skins weighted vertices over animated bone skeleton
+nMeshIpol     -> interpolates between meshes (Quake2 style keyframe animation)
+nMeshfMixer   -> weight mixes between different meshes
+nTerrainNode  -> landscape renderer used for the floating islands in Nomads
+
+When the nDynVertexBuffer object is ready for rendering, we 
+need to provide the scene graph object a pointer to it,
+so that it can render the dynvertexbuffer, we do this by writing the
+pointer the the nDynVertexBuffer object into the scene graph node:
+
+    sceneGraph->SetVertexBuffer(this->ref_dynvbuf.get());
+    sceneGraph->SetIndexBuffer(this->ref_ibuf.get());
+
+=====================================================================
+Integration into the make process
+=====================================================================
+(1) Create the file 'code/src/node/nlensflare.mak', cut-copy-paste
+from some other *.mak file in 'code/src/node' and adjust its contents.
+
+(2) Add the new target 'nlensflare' to code/src/nnebula.mak,
+    under the '/src/node' comment line, add 
+
+nlensflare:
+<TAB>   make -C node -f nlensflare.mak
+
+    Somewhere inside the nnebula dependencies block, add nlensflare.
+
+(3) In file code/src/packages/nnebula.pak add the line
+
+    class nlensflare
+
+    somewhere AFTER 'class nvisnode', because we want the new
+    class to be part of the nnebula class package.
+
+(4) goto 'code/src/', type 'make debug', then 'make nlensflare'
+    to check whether it compiles, fix errors and warnings, then
+    rebuild Nebula completely by doing a 'make'.
+
+=====================================================================
+End Of Story
+=====================================================================
+That's it basically, once you have something on screen, the rest
+should be simple :)
+
+=====================================================================
+EOF
+=====================================================================

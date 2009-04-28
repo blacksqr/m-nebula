@@ -1,0 +1,42 @@
+#--------------------------------------------------------------------
+#   odetests.pak
+#   ============
+#   Collection of Nebulized ODE tests to test the OdePhysics module.
+#
+#   18-Apr-2003   Vadim Macagon created
+#--------------------------------------------------------------------
+#workspace nebodetests
+#--------------------------------------------------------------------
+#nodecompositetest 
+beginmodule nodetest
+  setdir odetests
+  setfiles { nodetest_main nodetest_cmds nodecar nodeground nodecamera
+             nodehingetest nodemeshtest }
+  setheaders { nodetest nodecar nodeground nodecamera nodehingetest
+               nodemeshtest }
+endmodule
+#--------------------------------------------------------------------
+begintarget nodetest
+  settype package
+  setmods { nodetest }
+  setdepends { nodephysics }
+  setlibs_win32 { nkernel.lib nnebula.lib ode_single.lib opcode.lib }
+  setlibs_unix { nkernel nnebula ode opcode }
+endtarget
+#--------------------------------------------------------------------
+beginmodule nodetests
+  setdir odetests
+  setfiles { odetests }
+endmodule
+#--------------------------------------------------------------------
+begintarget odetests
+  settype exe
+  setmods { nodetests }
+  setdepends { nodetest nodephysics }
+  setlibs_win32 { nkernel.lib nnebula.lib }
+  setlibs_unix  { nkernel nnebula }
+endtarget
+#--------------------------------------------------------------------
+#   EOF
+#--------------------------------------------------------------------
+  

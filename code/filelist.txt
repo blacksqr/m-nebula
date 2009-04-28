@@ -1,0 +1,150 @@
+#--------------------------------------------------------------------
+#   public_filelist.txt
+#   ===================
+#   Listet alle Files, die "public" sind, also zur Aufnahme in
+#   das freie Entwickler-Archiv aufgenommen werden.
+#
+#   Syntax:
+#
+#   Jede Zeile die mit "public" enthaelt zuerst den Directory-
+#   Namen relativ zu $nomads_home, danach eine Liste von Patterns,
+#   die die Files beschreiben.
+#
+#   19-Aug-99   floh    updated...
+#   09-Sep-99   floh    makepackage.tcl hat gefehlt!
+#   10-Sep-99   floh    more files missing...
+#   11-Sep-99   floh    + tcl-dlls were missing
+#   03-Dec-99   floh    + Icon-Files verschoben
+#   03-Jan-00   floh    + doc/spec/sysinfo.txt
+#   10-Jan-00   floh    + doc/spec/coding_tutorial.txt
+#   05-Feb-00   floh    + Tcl8.0 stuff -> Tcl8.2
+#   13-Mar-00   floh    + major changes for new build process
+#   19-May-00   floh    + added audio stuff
+#                       + added inc/mathlib
+#   21-Jul-00   floh    + updated
+#   12-Nov-00   floh    + major update
+#   16-Dec-00   floh    + Tcl8.2 -> Tcl8.4, and misc other stuff
+#   09-Jan-01   floh    + nterrain package
+#   13-Feb-01   floh    + added Doxygen stuff
+#   18-Feb-01   floh    + added VStudio registry key files
+#   08-Dec-01   floh    + updated
+#   16-Feb-09   ilya    + Tcl8.4 -> Tcl8.5
+#
+#   (C) 1999,2000 A.Weissflog
+#--------------------------------------------------------------------
+public code             *.mak
+
+public code             filelist.txt
+public code             extfilelist.txt
+
+public code/templates   readme.txt
+public code/templates   *.{cc,h} 
+public code/templates   readme.txt
+
+public code/vstudio     wf*.dsp
+public code/vstudio     nlaunch.dsp
+public code/vstudio     ndirect3d.dsp
+public code/vstudio     ndirect3d8.dsp
+public code/vstudio     gfxserv.dsp
+public code/vstudio     nkernel.dsp
+public code/vstudio     ndxinputserver.dsp
+public code/vstudio     nnebula.dsp
+public code/vstudio     nopengl.dsp
+public code/vstudio     ndsound.dsp
+public code/vstudio     nsh.dsp
+public code/vstudio     ncollide.dsp
+public code/vstudio     nobsolete.dsp
+public code/vstudio     nparticle.dsp
+public code/vstudio     tclnebula.dsp
+public code/vstudio     nterrain.dsp
+public code/vstudio     *.reg
+
+public code/vstudio     nebula.dsw
+public code/vstudio     wftools.dsw
+
+public code/doxycfg     nebula*.cfg
+public code/doxycfg     commondoc.cfg
+
+public code/src             Makefile
+public code/src             cvs.mak
+public code/src             nebula.mak
+
+public code/src             *.{tcl,tc,ico}
+public code/src             nkernel.pak
+public code/src             tools.pak
+public code/src             ndirect3d8.pak
+public code/src             nopengl.pak
+public code/src             wftools.pak
+public code/src             nnebula.pak
+public code/src             ndsound.pak
+public code/src             ncollide.pak
+public code/src             nparticle.pak
+public code/src             nobsolete.pak
+public code/src             nterrain.pak
+public code/src             nebulatests.pak
+public code/src             nopcode.pak
+public code/src             opcode11.pak
+public code/src             dinput8.pak
+
+public code/src/audio       *.{cc,h}
+public code/src/collide     *.{cc,h}
+public code/src/file        *.{cc,h}
+public code/src/gfx         *.{cc,h}
+public code/src/input       *.{cc,h}
+public code/src/kernel      *.{cc,h}
+public code/src/misc        *.{cc,h}
+public code/src/nebulatests *.{cc,h}
+public code/src/node        *.{cc,h}
+public code/src/opcode11    *.{cc,h}
+public code/src/packages    *.cc
+public code/src/particle    *.{cc,h}
+public code/src/script      *.{cc,h}
+public code/src/shadow      *.{cc,h}
+public code/src/tclnebula   *.{cc,h}
+public code/src/tools       *.{cc,h}
+
+public code/inc                 *.h
+public code/inc/anim            *.h
+public code/inc/audio           *.h
+public code/inc/collide         *.h
+public code/inc/file            *.h
+public code/inc/gfx             *.h
+public code/inc/il              *.h
+public code/inc/input           *.h
+public code/inc/kernel          *.h
+public code/inc/math            *.h
+public code/inc/mathlib         *.h
+public code/inc/misc            *.h
+public code/inc/nebulatests     *.h
+public code/inc/node            *.h
+public code/inc/opcode11        *.h
+public code/inc/particle        *.h
+public code/inc/script          *.h
+public code/inc/shadow          *.h
+public code/inc/tclnebula       *.h
+public code/inc/tools           *.h
+
+public code/lib                 readme.txt
+public code/lib/win32_vc_i386   DevIL.lib
+public code/lib/win32_vc_i386   tcl84.lib
+public code/lib/win32_vc_i386   tk84.lib
+public code/lib/win32_vc_i386   zlib.lib
+
+public bin          nsh.tcl
+public bin          makemake.tcl
+public bin          makedsw.tcl
+public bin          makeunix.tcl
+public bin          makedepend.tcl
+public bin          fileutil.tcl
+
+public bin/win32    readme.txt
+public bin/linux    readme.txt
+
+public doc/source               *.txt
+public doc/spec                 sysinfo.txt
+public doc/spec                 coding_tutorial.txt
+public doc/spec                 nebula.txt
+
+#--------------------------------------------------------------------
+#   EOF
+#--------------------------------------------------------------------

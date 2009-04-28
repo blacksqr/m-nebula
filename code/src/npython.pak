@@ -1,0 +1,25 @@
+#--------------------------------------------------------------------
+#    npython.pak
+#    ============
+#    nPythonServer class package definition
+#    (C) 2001 Jason Asbahr
+#	  March 2002 (Andy Miller): Added npythonobject and set python version to 2.2 
+#--------------------------------------------------------------------
+#--------------------------------------------------------------------
+beginmodule npythonserver
+    setdir python
+    setfiles { npythonserver npythonrun npythoncmds npythonobject }
+    setheaders { npythonserver }
+    setversion npython_ver
+endmodule
+#--------------------------------------------------------------------
+begintarget npython
+    settype package
+    setmods       { npythonserver }
+    setdepends    { nnebula }
+    setlibs_win32 { nkernel.lib nnebula.lib kernel32.lib user32.lib python25.lib }
+    setlibs_unix  { nkernel nnebula python25 tk8.4 util }
+endtarget
+#--------------------------------------------------------------------
+# EOF
+#--------------------------------------------------------------------
