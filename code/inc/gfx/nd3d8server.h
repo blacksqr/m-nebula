@@ -146,8 +146,7 @@ protected:
     void adjustWindowForChange();
     void restoreWindow();
     void minimizeWindow();
-    void initDeviceStates();
-    bool testResetDevice();
+    void initDeviceStates();    
     void setView(float clip_left, float clip_right, float clip_bottom, float clip_top, float clip_near, float clip_far);
     void lightGetColor(D3DLIGHT8 *d3dLight, nLight *nebLight);
     void lightGetPos(D3DLIGHT8 *d3dLight, const matrix44& modelView);
@@ -170,10 +169,11 @@ public:
     // NOTE: those members are only public because WinProc
     // must access some of them. Keep your filthy fingers off 
     // them or DIE :)
+	bool testResetDevice(bool reset = false);
     void present();
     char* nextDisplayMode(char* buf, int bufSize);
     char* prevDisplayMode(char* buf, int bufSize);
-
+	
     bool adjustViewport(int w, int h);
     HWND parent_hWnd; 
 

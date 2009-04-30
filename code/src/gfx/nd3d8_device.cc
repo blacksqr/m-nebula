@@ -109,7 +109,8 @@ nD3D8Server::setView(float clip_left,
 /**
     Set proper viewport
 */
-bool nD3D8Server::adjustViewport(int w, int h) {
+bool nD3D8Server::adjustViewport(int w, int h) 
+{
     HRESULT hr;
 
     // initialize the view port
@@ -227,13 +228,13 @@ nD3D8Server::present()
     sleep for a while and return false.
 */
 bool
-nD3D8Server::testResetDevice()
+nD3D8Server::testResetDevice(bool reset)
 {
     n_assert(this->d3d8Dev);
 
     HRESULT hr;
     hr = this->d3d8Dev->TestCooperativeLevel();
-    if (D3DERR_DEVICENOTRESET == hr)
+    if (D3DERR_DEVICENOTRESET == hr || reset)
     {        
         // If we are windowed, read the desktop mode and use the same format for
         // the back buffer
@@ -253,9 +254,8 @@ nD3D8Server::testResetDevice()
         
         this->releaseResources();
         
-        // release all vertex buffer managers (REQUIRED before Reset() if using D3DPOOL_DEFAULT vertex buffers)
-        int i;
-        for (i=0; i<N_NUM_VBTYPES; i++) {
+        // release all vertex buffer managers (REQUIRED before Reset() if using D3DPOOL_DEFAULT vertex buffers)        
+        for (int i = 0; i < N_NUM_VBTYPES; i++) {
              n_delete this->vpoolManager[i];
              this->vpoolManager[i] = NULL;
         }
@@ -544,17 +544,17 @@ nD3D8Server::devOpen()
 */
 bool
 nD3D8Server::devClose()
-{
-    n_assert(this->hWnd);
-    n_assert(this->d3d8);
-    n_assert(this->d3d8Dev);
-    n_assert(this->windowOpen);
-    n_assert(!this->windowMinimized);
+{    
+	n_assert(this->hWnd);
+	n_assert(this->d3d8);
+	n_assert(this->d3d8Dev);
+	n_assert(this->windowOpen);
+	n_assert(!this->windowMinimized);
 
-    // destroy all Nebula resources
-    this->releaseResources();
+	// destroy all Nebula resources
+	this->releaseResources();
 
-    // release all vertex buffer managers
+	// release all vertex buffer managers
     int i;
     for (i=0; i<N_NUM_VBTYPES; i++) {
         if (this->vpoolManager[i]) {
@@ -564,15 +564,15 @@ nD3D8Server::devClose()
     }
 	
 	HRESULT hr;
-    // release any leftover textures in texture stages
-    for (i=0; i<8; i++) {
-        hr = this->d3d8Dev->SetTexture(i,NULL);
-    }
+	// release any leftover textures in texture stages
+	for (i=0; i<8; i++) {
+		hr = this->d3d8Dev->SetTexture(i,NULL);
+	}
 
-    // shutdown the text renderer
-    this->killTextRenderer();
+	// shutdown the text renderer
+	this->killTextRenderer();
 
-    hr = this->d3d8Dev->ResourceManagerDiscardBytes(0);
+	hr = this->d3d8Dev->ResourceManagerDiscardBytes(0);
 
     if (FAILED(hr)) {
         n_printf("nD3D8Server: ResourceManagerDiscardBytes() failed with '%s'!\n", nd3d8_Error(hr));        

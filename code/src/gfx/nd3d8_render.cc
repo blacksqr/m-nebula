@@ -60,9 +60,8 @@ nD3D8Server::BeginScene()
                                  this->d3dClearColor, 1.0f, 0L);
         }
             
-        // kill all lights from previous frame
-        int i;
-        for (i=0; i<nGfxServer::N_MAXLIGHTS; i++) 
+        // kill all lights from previous frame        
+        for (int i = 0; i < nGfxServer::N_MAXLIGHTS; i++) 
         {
             this->d3d8Dev->LightEnable(i,FALSE);
         }

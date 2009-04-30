@@ -58,6 +58,29 @@ nd3d8_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     d3d8->windowMinimized = true;
                 else 
                     d3d8->windowMinimized = false;
+
+
+				if (d3d8->d3d8 && d3d8->d3d8Dev && !d3d8->windowMinimized && d3d8->displayOpen && !d3d8->windowFullscreen)
+				{
+					//d3d8->
+
+					int w = LOWORD(lParam);
+					int h = HIWORD(lParam);
+
+					if (w && h)
+					{						
+						d3d8->disp_w = w;
+						d3d8->disp_h = h;
+						d3d8->renderWidth = w;
+						d3d8->renderHeight = h;
+						d3d8->presentParams.BackBufferWidth = w;
+						d3d8->presentParams.BackBufferHeight = h;
+						d3d8->adjustViewport(w, h);
+						d3d8->testResetDevice(true);	
+						d3d8->BeginScene();
+						d3d8->EndScene();
+					}					
+				}
             }
             break;
 
