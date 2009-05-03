@@ -26,7 +26,7 @@ class nDSoundCluster : public nSoundCluster
 {
 public:
     /// constructor
-    nDSoundCluster(int numPlaybackChannels, int numSampleChannels, IDirectSound8* dSound, IDirectSoundBuffer* dsPrimary);
+    nDSoundCluster(int numPlaybackChannels, ushort numSampleChannels, IDirectSound8* dSound, IDirectSoundBuffer* dsPrimary);
     /// destructor
     ~nDSoundCluster();
     /// configure the sound buffers

@@ -375,12 +375,6 @@ nD3D8Server::Trigger()
 {
     // handle all pending WM's
     MSG msg;
-    if(this->parent_hWnd) {
-        if (PeekMessage(&msg,NULL,WM_SIZE,WM_SIZE,PM_NOREMOVE)) {
-            int w = LOWORD(msg.lParam);
-            int h = HIWORD(msg.lParam);
-        }
-    }
     while (PeekMessage(&msg,this->hWnd,0,0,PM_NOREMOVE))
     {
         if (GetMessage(&msg,this->hWnd,0,0))

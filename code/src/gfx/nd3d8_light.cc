@@ -49,9 +49,9 @@ nD3D8Server::lightGetPos(D3DLIGHT8 *d3dLight, const matrix44& modelView)
 void 
 nD3D8Server::lightGetDir(D3DLIGHT8 *d3dLight, const matrix44& modelView)
 {
-    d3dLight->Direction.x = -modelview.M31;
-    d3dLight->Direction.y = -modelview.M32;
-    d3dLight->Direction.z = -modelview.M33;
+    d3dLight->Direction.x = -modelView.M31;
+    d3dLight->Direction.y = -modelView.M32;
+    d3dLight->Direction.z = -modelView.M33;
 }
 
 //-----------------------------------------------------------------------------

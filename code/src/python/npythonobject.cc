@@ -50,16 +50,16 @@ NebulaObject* NebulaObject_New(nRoot * nebulaObj)
 	// nope, we didn't...
 
 	self = PyObject_New(NebulaObject, &Nebula_Type);   //new reference
-	if (self == NULL)
-		return NULL;
-	self->internal_dict = NULL;
-	self->in_weakreflist = NULL; 
+	if (self == 0)
+		return 0;
+	self->internal_dict = 0;
+	self->in_weakreflist = 0; 
 	self->nebula_object = n_new nRef<nRoot>;
 	n_assert(self->nebula_object);
-	self->nebula_object->initialize(NULL);
+	self->nebula_object->initialize(0);
 	self->nebula_object->set(nebulaObj);
 
-	cObject = PyCObject_FromVoidPtr((void *) nebulaObj, NULL);
+	cObject = PyCObject_FromVoidPtr((void *) nebulaObj, 0);
 	NebulaObject_SetAttr(self, "__nebobject__", cObject);
 	Py_XDECREF(cObject);
 
@@ -73,50 +73,44 @@ NebulaObject* NebulaObject_New(nRoot * nebulaObj)
 */
 const char * NebulaObject_GetPath( NebulaObject * self )
 {
-	n_assert(NULL != self);
-	if (self->internal_dict != NULL) {
+	n_assert(0 != self);
+	if (self->internal_dict != 0) {
 		PyObject * path = PyDict_GetItemString(self->internal_dict,
 			"__nebobject_path__");
-		if ( path != NULL && PyString_Check(path) )
+		if ( path != 0 && PyString_Check(path) )
 			return ( PyString_AS_STRING(path) );
 		else
 			n_warn("__nebobject_path__ didn't return a valid path\n");
 	}
 	else
-		n_warn ("internal dictionary is NULL\n");
-	return NULL;
+		n_warn ("internal dictionary is 0\n");
+	return 0;
 }
-
-
-
-
 
 /**
 @brief Retrieve a pointer to the Nebula object from within the Python
 Object.
 */
-nRoot * NebulaObject_GetPointer( NebulaObject * self )
+nRoot * NebulaObject_GetPointer( NebulaObject* self )
 {
-	n_assert(NULL != self);
+	n_assert(0 != self);
 
 	if (!self->nebula_object->isvalid()) {
 		PyErr_SetString(PyExc_Exception, "Invalid pointer no nebula object!\n");
-		return NULL;
+		return 0;
 	}
 
 	n_assert(self->nebula_object->isvalid());
 	return self->nebula_object->get();
-
-	return NULL;
 }
 
 /**
 @brief Delete the real Nebula object pointed to by the python object
 */
-PyObject* NebulaObject_Delete(NebulaObject *self, PyObject* /*args*/)
+PyObject* NebulaObject_Delete(NebulaObject* self, PyObject* /*args*/)
 {
-	PyObject * results = NULL;
-	n_assert(NULL != self);
+	PyObject * results = 0;
+	n_assert(0 != self);
 
 	nRoot * o = NebulaObject_GetPointer(self);
 	if (o) {
@@ -127,7 +121,7 @@ PyObject* NebulaObject_Delete(NebulaObject *self, PyObject* /*args*/)
 		results =   Py_None;
 	}
 	else
-		n_warn("NebulaObject_GetPointer returned NULL\n");
+		n_warn("NebulaObject_GetPointer returned 0\n");
 
 	return results;
 }
@@ -137,22 +131,22 @@ PyObject* NebulaObject_Delete(NebulaObject *self, PyObject* /*args*/)
 */
 void NebulaObject_Dealloc(NebulaObject *self)
 {
-	n_assert(NULL!=self);
+	n_assert(0!=self);
 
-	if (self->in_weakreflist != NULL)
+	if (self->in_weakreflist != 0)
 		PyObject_ClearWeakRefs((PyObject *) self);
 
     //nRoot *neb_object = NebulaObject_GetPointer(self);
 
 	// check for the existance of "deletenebula" in the dictionary
-	if (self->internal_dict != NULL) {
+	if (self->internal_dict != 0) {
 		PyObject *v = PyDict_GetItemString(self->internal_dict,
 			"__deletenebula__");
-		if (v != NULL)
-			NebulaObject_Delete(self, NULL);
+		if (v != 0)
+			NebulaObject_Delete(self, 0);
 		Py_XDECREF(self->internal_dict);
 	} else
-		n_warn("Internal Dictionary is NULL\n");
+		n_warn("Internal Dictionary is 0\n");
 
 
 	if (self->nebula_object)
@@ -167,11 +161,11 @@ nebula object as well.
 */
 PyObject * NebulaObject_SetAutoDel(NebulaObject *self, PyObject * /*args*/)
 {
-	PyObject * results = NULL;
-	n_assert(NULL!=self);
+	PyObject * results = 0;
+	n_assert(0!=self);
 	// Set an entry in the dictionary as a flag to delete the Nebula object
 	// when the python object goes out of scope (gets deleted)
-	if (self->internal_dict != NULL) {
+	if (self->internal_dict != 0) {
 		PyObject *obj = PyInt_FromLong(1l);  // this could be anything
 		NebulaObject_SetAttr(self,"__deletenebula__",obj);
 		Py_XDECREF(obj);
@@ -179,22 +173,22 @@ PyObject * NebulaObject_SetAutoDel(NebulaObject *self, PyObject * /*args*/)
 		results = Py_None;
 	}
 	else
-		n_warn("Internal Dictionary is NULL\n");
+		n_warn("Internal Dictionary is 0\n");
 	return results;
 }
 
 
 // only one method defined...
 PyMethodDef Nebula_methods[] = {
-	{"_SetAutoDel_",  (PyCFunction)NebulaObject_SetAutoDel,  METH_VARARGS, NULL},
-	{NULL,      NULL, 0, NULL}    /* sentinel */
+	{"_SetAutoDel_",  (PyCFunction)NebulaObject_SetAutoDel,  METH_VARARGS, 0},
+	{0,      0, 0, 0}    /* sentinel */
 };
 
 
 /**
 @brief Handle a call to the object.
 
-If functionname =! NULL then we know we are really inside an OPCODE loop
+If functionname =! 0 then we know we are really inside an OPCODE loop
 in the interpreter and need to call into Nebula. Makes the object
 stateful for one internal interpreter cycle.
 */
@@ -203,26 +197,26 @@ PyObject* NebulaObject_Call(NebulaObject *self,
 	PyObject * /*kw*/)
 {
 	PyObject * results;
-	n_assert(NULL!=self);
+	n_assert(0!=self);
 	// This should have been set previously by getattro call:
-	if ( self->functionname != NULL ) {
+	if ( self->functionname != 0 ) {
 		int res;
 		res = NebulaObject_CallPObjectFunction(self,
 			PyString_AsString(self->functionname),
 			args, &results);
 		if (res == 0) {
 			Py_XDECREF(self->functionname);
-			self->functionname = NULL;
+			self->functionname = 0;
 			return results;
 		} else {
 			n_warn("CallPObjectFunction failed in Nebula_Call");
 		}
 		Py_DECREF(self->functionname);
-		self->functionname = NULL;
+		self->functionname = 0;
 	}
 	else
-		n_error("functionname is NULL (should have been set previously)\n");
-	return NULL;
+		n_error("functionname is 0 (should have been set previously)\n");
+	return 0;
 }
 
 
@@ -243,8 +237,8 @@ the function  name in the object and pass a pointer back.
 */
 PyObject * NebulaObject_GetAttrO(NebulaObject *self, PyObject *name)
 {
-	n_assert (NULL != self);
-	n_assert (NULL != name);
+	n_assert (0 != self);
+	n_assert (0 != name);
 	self->functionname = name;
 	Py_INCREF(self);  // needed as we are using ourselves for the function call
 	Py_INCREF(self->functionname);   // need to do this one..
@@ -319,8 +313,8 @@ int NebulaObject_CallPObjectFunction( NebulaObject *self, char *name,
 	PyObject * args,
 	PyObject ** returndata )
 {
-	n_assert (NULL != self);
-	n_assert (NULL != name);
+	n_assert (0 != self);
+	n_assert (0 != name);
 
 	PyObject * commandArgs;
 	int  results = -1;
@@ -329,10 +323,10 @@ int NebulaObject_CallPObjectFunction( NebulaObject *self, char *name,
 	attribute or internal method */
 
 	// first we look for the attribute in the internal dictionary
-	if (self->internal_dict != NULL) {
+	if (self->internal_dict != 0) {
 		// If we've already saved this somewhere along the way...
 		PyObject *v = PyDict_GetItemString(self->internal_dict, name);
-		if (v != NULL) {
+		if (v != 0) {
 			*returndata = PyTuple_New(1);
 			Py_INCREF (v); // need to keep access to temp for a while
 			PyTuple_SetItem(*returndata, 0, v);
@@ -345,15 +339,15 @@ int NebulaObject_CallPObjectFunction( NebulaObject *self, char *name,
 	}
 	else {
 		PyErr_SetString(PyExc_Exception,
-			("Problem: internal dictionary is NULL"));
-		n_warn("Internal dictionary is NULL");
+			("Problem: internal dictionary is 0"));
+		n_warn("Internal dictionary is 0");
 		return -1; // we should already have a dictionary
 	}
 
 	// not in dictionary so call method as defined in methods listed above...
 	PyObject *v = Py_FindMethod(Nebula_methods, (PyObject *)self, name);
 	//returns new reference
-	if (v != NULL) {
+	if (v != 0) {
 		*returndata = PyObject_CallObject(v,args);   //lets call it
 		Py_DECREF(v);
 		return 0;
@@ -363,7 +357,7 @@ int NebulaObject_CallPObjectFunction( NebulaObject *self, char *name,
 	// finally we assume it's a Nebula attribute and continue
 
 	// lets lookup the attribute to see if we have already saved a pointer to it
-	if ( args == NULL ) { // just a function call so create a new empty tuple
+	if ( args == 0 ) { // just a function call so create a new empty tuple
 		commandArgs = PyTuple_New(0);
 	}
 	else {
@@ -391,15 +385,15 @@ Needed as the "default" setattr calls the nebula object.
 */
 extern int  NebulaObject_SetAttr(NebulaObject *self, char *name, PyObject *v)
 {
-	n_assert ( NULL != self);
-	n_assert ( NULL != name);
+	n_assert ( 0 != self);
+	n_assert ( 0 != name);
 
-	if (self->internal_dict == NULL) {
+	if (self->internal_dict == 0) {
 		self->internal_dict = PyDict_New();
-		if (self->internal_dict == NULL)
+		if (self->internal_dict == 0)
 			n_error ("Couldn't create a dictionary\n");
 	}
-	if (v == NULL) {
+	if (v == 0) {
 		int rv = PyDict_DelItemString(self->internal_dict, name);
 		if (rv < 0)
 			PyErr_SetString(PyExc_AttributeError,
@@ -411,10 +405,12 @@ extern int  NebulaObject_SetAttr(NebulaObject *self, char *name, PyObject *v)
 	}
 }
 
-static int neb_dict_length(NebulaObject *mp) {
-	assert(mp->internal_dict != NULL);
+static int neb_dict_length(NebulaObject *mp) 
+{
+	assert(mp->internal_dict != 0);
 	nRoot * o = NebulaObject_GetPointer(mp);
-	if (o) {
+	if (o) 
+	{
 		nRoot *self = (nRoot *) o;
 
 		int num_children = 0;
@@ -425,20 +421,21 @@ static int neb_dict_length(NebulaObject *mp) {
 				num_children++;
 		}
 		return num_children;
-	} else {
-		n_warn("NebulaObject_GetPointer returned NULL\n");
+	} 
+	else 
+	{
+		n_warn("NebulaObject_GetPointer returned 0\n");
 		return 0;
 	}
-	return 0;
 }
 
 static PyObject *neb_dict_subscript(NebulaObject *mp, register PyObject *key) {
-	assert(mp->internal_dict != NULL);
+	assert(mp->internal_dict != 0);
 	assert(key);
 	if (!PyString_Check(key))  {
 		PyErr_Format(PyExc_KeyError,
 			"key must be string type and not %s", key->ob_type->tp_name);
-		return NULL;
+		return 0;
 	}
 
 	char * keystr = PyString_AS_STRING(key);
@@ -452,7 +449,7 @@ static PyObject *neb_dict_subscript(NebulaObject *mp, register PyObject *key) {
 		return PyErr_Format(PyExc_KeyError,
 			"key error ( '%s' not found )", keystr);
 	} else {
-		n_warn("NebulaObject_GetPointer returned NULL\n");
+		n_warn("NebulaObject_GetPointer returned 0\n");
 		return 0;
 	}
 }
@@ -479,7 +476,7 @@ static char nebula_object_doc[] =
 PyTypeObject Nebula_Type = {
 	/* The ob_type field must be initialized in the module init function
 	* to be portable to Windows without using C++. */
-	PyObject_HEAD_INIT(NULL)
+	PyObject_HEAD_INIT(0)
 	0,       /*ob_size*/
 	"Nebula",      /*tp_name*/
 	sizeof(NebulaObject),   /*tp_basicsize*/
@@ -540,17 +537,17 @@ typedef struct {
 static PyObject *nebiter_new(NebulaObject *nebobj) {
 	nebiterobject *nebi;
 	nebi = PyObject_NEW(nebiterobject, &PyNebIter_Type);
-	if (nebi == NULL)
-		return NULL;
+	if (nebi == 0)
+		return 0;
 	Py_INCREF(nebobj);
 	nebi->ni_nebulaobject = nebobj;
 	nebi->current_pos = 0;
 
-	nebi->cur_obj = NULL;
+	nebi->cur_obj = 0;
 	nRoot *temp = NebulaObject_GetPointer(nebobj);
 	if (!temp) {
 		PyErr_SetString(PyExc_Exception, "pointer to nebula object is null!");
-		return NULL;
+		return 0;
 	}
 	nebi->cur_obj = temp->GetHead();
 	return (PyObject *)nebi;
@@ -561,25 +558,28 @@ static void nebiter_dealloc(nebiterobject *nebi) {
 	PyObject_DEL(nebi);
 }
 
-static PyObject *nebiter_next(nebiterobject *nebi, PyObject* /*args*/) {
-	if (!nebi->cur_obj) {
+static PyObject* nebiter_next(nebiterobject *nebi, PyObject* /*args*/) {
+	if (!nebi->cur_obj) 
+	{
 		PyErr_SetObject(PyExc_StopIteration, Py_None);
-		return NULL;
-	} else {
-		if (nebi->current_pos == 0) {
+		return 0;
+	} 
+	else 
+	{
+		if (nebi->current_pos == 0) 
+		{
 			nebi->current_pos++;
 			return (PyObject *)NebulaObject_New(nebi->cur_obj);
 		}
 		nebi->cur_obj = nebi->cur_obj->GetSucc();
-		if (!nebi->cur_obj ) {
+		if (!nebi->cur_obj ) 
+		{
 			PyErr_SetObject(PyExc_StopIteration, Py_None);
-			return NULL;
+			return 0;
 		}
 		nebi->current_pos++;
 		return (PyObject *)NebulaObject_New(nebi->cur_obj);
 	}
-	PyErr_SetObject(PyExc_StopIteration, Py_None);
-	return NULL;
 }
 
 static PyObject *nebiter_getiter(PyObject *it) {
@@ -590,33 +590,37 @@ static PyObject *nebiter_getiter(PyObject *it) {
 static PyMethodDef nebiter_methods[] = {
 	{"next",  (PyCFunction)nebiter_next, METH_VARARGS,
 	"it.next() -- get the next value, or raise StopIteration"},
-	{NULL,    NULL}   /* sentinel */
+	{0,    0}   /* sentinel */
 };
 
-static PyObject *nebiter_iternext(nebiterobject *nebi) {
-	if (!nebi->cur_obj) {
+static PyObject *nebiter_iternext(nebiterobject *nebi) 
+{
+	if (!nebi->cur_obj) 
+	{
 		PyErr_SetObject(PyExc_StopIteration, Py_None);
-		return NULL;
-	} else {
-		if (nebi->current_pos == 0) {
+		return 0;
+	} 
+	else 
+	{
+		if (nebi->current_pos == 0) 
+		{
 			nebi->current_pos++;
 			return (PyObject *)NebulaObject_New(nebi->cur_obj);
 		}
 		nebi->cur_obj = nebi->cur_obj->GetSucc();
-		if (!nebi->cur_obj ) {
+		if (!nebi->cur_obj ) 
+		{
 			PyErr_SetObject(PyExc_StopIteration, Py_None);
-			return NULL;
+			return 0;
 		}
 		nebi->current_pos++;
 		return (PyObject *)NebulaObject_New(nebi->cur_obj);
 	}
-	PyErr_SetObject(PyExc_StopIteration, Py_None);
-	return NULL;
 }
 
-
 // Nebula Iterator type
-PyTypeObject PyNebIter_Type = {
+PyTypeObject PyNebIter_Type = 
+{
 	PyObject_HEAD_INIT(&PyType_Type)
 	0,          /* ob_size */
 	"nebula-iterator",      /* tp_name */

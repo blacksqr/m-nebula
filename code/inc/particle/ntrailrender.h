@@ -95,9 +95,9 @@ private:
     /// a dynamic vertex buffer where the vertices go
     nDynVertexBuffer dynVBuf;
     /// number of quads that fit into dynVB
-    int numQuads;
+    ushort numQuads;
     /// the currently rendered quad
-    int curQuad;
+    ushort curQuad;
     /// the current vertex buffer to render to (returned by dynVB)
     nVertexBuffer* curVBuf;
     /// tmp pointer to vertex coordinates

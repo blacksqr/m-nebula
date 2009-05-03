@@ -34,8 +34,6 @@ public:
     /// load scriptlet from a tcl file
     virtual bool ParseFile(const char* file);
 
-    /// contains this class' type information.
-    static nClass* clazz;
     /// nKernelServer dependency.
     static nKernelServer* kernelServer;
 

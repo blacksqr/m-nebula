@@ -111,7 +111,13 @@ public:
     static nClass* local_cl;
 
 protected:
+	void write_select_statement(nFile *, nRoot *, nRoot *);
+
+protected:
 	strings_v		extensions; ///< extensions list
+
+	long			indent_level;
+    stl_string		indent_buf;
 
 private:
     bool			quitRequested;
@@ -169,6 +175,15 @@ nScriptServer::SelectMethod
 nScriptServer::GetSelectMethod() const
 {
     return this->selMethod;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void nScriptServer::write_select_statement(nFile *, nRoot *, nRoot *)
+{
+	n_error("write_select_statement: pure virtual function called\n");
 }
 
 //------------------------------------------------------------------------------

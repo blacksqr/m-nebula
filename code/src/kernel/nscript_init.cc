@@ -70,11 +70,13 @@ nScriptServer::~nScriptServer()
 
 
 nScriptServer::nScriptServer() :
+	indent_level(0),
     quitRequested(false),
     failOnError(false)
 {
 	this->extensions.clear();
     SetSelectMethod(SELCOMMAND);
+    this->indent_buf.clear();
 }
 //--------------------------------------------------------------------
 //  Run()

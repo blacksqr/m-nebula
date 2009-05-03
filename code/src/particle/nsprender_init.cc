@@ -35,7 +35,7 @@ bool N_EXPORT n_init(nClass *cl, nKernelServer *ks)
     int i;
     for (i = 0; i < nSpriteRender::REFQUADS; i++)
     {
-        float rad = (float(i) / float(nSpriteRender::REFQUADS)) * 2.0f * N_PI;
+        float rad = (float(i) / float(nSpriteRender::REFQUADS)) * 2.0f * (float)N_PI;
         tform.ident();
         tform.rotate_z(rad);
         nSpriteRender::refVertices[i*4 + 0] = tform * v0;

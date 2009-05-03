@@ -357,17 +357,22 @@ char *nRoot::GetRelPath(nRoot *other, char *buf, long sizeof_buf)
     n_assert(sizeof_buf > 0);
 
     buf[0] = 0;
-    if (other == this->GetParent()) {
+    if (other == this->GetParent()) 
+	{
 
         // special case optimize: other is parent of this
         n_strcat(buf,"..",sizeof_buf);
 
-    } else if (other->GetParent() == this) {
+    } 
+	else if (other->GetParent() == this) 
+	{
 
         // special case optimize: this is parent of other
         n_strcat(buf,other->GetName(),sizeof_buf);
 
-    } else {
+    } 
+	else 
+	{
 
         // normal case
         nList this_hier;

@@ -117,16 +117,16 @@ nPointEmitter::Compute(nSceneGraph2 *sceneGraph)
                 {
                     a = this->icone1 + (a * (this->ocone1 - this->icone1));
                 }
-                b *= 2.0f * N_PI;
+                b *= 2.0f * (float)N_PI;
 
                 // construct a 3d vector in modelspace from the pseudo-random 
                 // angles:
                 // a is rotation around the xz plane,
                 // b is rotation around y
-                float cos_a = float(cos(a));
-                float sin_a = float(sin(a));
-                float cos_b = float(cos(b));
-                float sin_b = float(sin(b));
+                float cos_a = n_cos(a);
+                float sin_a = n_sin(a);
+                float cos_b = n_cos(b);
+                float sin_b = n_sin(b);
                 dir.x = sin_a * sin_b;
                 dir.y = cos_a;
                 dir.z = sin_a * cos_b;

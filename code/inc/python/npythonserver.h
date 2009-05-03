@@ -42,14 +42,14 @@
 
 //--------------------------------------------------------------------
 class nFileServer2;
-class nPythonServer : public nScriptServer {
+class nPythonServer : public nScriptServer 
+{
 public:
-    static nClass *local_cl;
-    static nKernelServer *kernelServer;
+    
+    static nKernelServer* kernelServer;
     nAutoRef<nFileServer2> refFileServer;
-    static nPythonServer *Instance;
-
-
+    
+    static nPythonServer* Instance;
 public:
     nPythonServer();
     virtual ~nPythonServer();
@@ -81,11 +81,9 @@ public:
     bool is_standalone_python;
     PyObject *callback;   // Callback for Trigger() function
 
-private:
-    void write_select_statement(nFile *, nRoot *, nRoot *);
+protected:
+    virtual void write_select_statement(nFile *, nRoot *, nRoot *);
 
-    long indent_level;
-    char indent_buf[N_MAXPATH];
     bool print_error;
     PyObject *nmodule;
     PyObject *main_module;

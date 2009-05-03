@@ -26,18 +26,17 @@ extern "C" {
 	extern PyObject *CreatedObjectsList_weak_refs_;
 	extern PyObject *CreatedObjectsList_weakref_callback_;
 
-
-
-	PyObject* GetReturnableObject(NebulaObject* pyobj, nRoot* /* nebobj */ ) {
+	PyObject* GetReturnableObject(NebulaObject* pyobj, nRoot* /* nebobj */ ) 
+	{
 		return (PyObject *) pyobj;
 	}
 
-
-
-	PyObject* CreatedObjectsList_weakref_callback(PyObject * /*self*/, PyObject *args) {
-		PyObject *results = NULL;
-		PyObject *weak_ref = NULL;
-		if (PyArg_ParseTuple(args, "O:ref", &weak_ref)) {
+	PyObject* CreatedObjectsList_weakref_callback(PyObject * /*self*/, PyObject *args) 
+	{
+		PyObject *results = 0;
+		PyObject *weak_ref = 0;
+		if (PyArg_ParseTuple(args, "O:ref", &weak_ref)) 
+		{
 
 			PyObject *int_ptr = PyDict_GetItem(CreatedObjectsList_weak_refs_, weak_ref);
 			if (!int_ptr)
@@ -49,7 +48,9 @@ extern "C" {
 			Py_INCREF(Py_None);
 			results = Py_None;
 
-		} else {
+		} 
+		else 
+		{
 			PyErr_SetString(PyExc_Exception, "weakref callbacks error");
 		}
 		return results;
@@ -57,18 +58,18 @@ extern "C" {
 
 
 	NebulaObject *CreatedObjectsList_GetObject(nRoot* real_neb_obj) {
-		if (!real_neb_obj) return NULL;
+		if (!real_neb_obj) return 0;
 		n_assert(real_neb_obj);
 
 		PyObject *ptr_as_int = (PyObject *)PyInt_FromLong((long)real_neb_obj);
 		PyObject *weak_ref = PyDict_GetItem(CreatedObjectsList_, ptr_as_int);
-		if (weak_ref == NULL) {
+		if (weak_ref == 0) {
 			Py_DECREF(ptr_as_int);
-			return NULL;
+			return 0;
 		}
 
-		NebulaObject *nebula_wrapper = NULL;//, *arg_out;
-		if ( (nebula_wrapper = (NebulaObject *)PyObject_CallObject(weak_ref, NULL)) == NULL) {
+		NebulaObject *nebula_wrapper = 0;//, *arg_out;
+		if ( (nebula_wrapper = (NebulaObject *)PyObject_CallObject(weak_ref, 0)) == 0) {
 			n_assert("error getting wrapper nebula object from weakref\n");
 		}
 
@@ -76,7 +77,7 @@ extern "C" {
 			PyDict_DelItem(CreatedObjectsList_, ptr_as_int);
 			PyDict_DelItem(CreatedObjectsList_weak_refs_, weak_ref);
 			Py_DECREF(ptr_as_int);
-			return NULL;
+			return 0;
 		}
 
 		Py_DECREF(ptr_as_int);
@@ -101,21 +102,6 @@ extern "C" {
 		return res;
 	}
 
-	int CreatedObjectsList_DeleteObject(nRoot* real_neb_obj) {
-		return 0;
-		if (!real_neb_obj) return 0;
-		n_assert(real_neb_obj);
-		PyObject *ptr_as_int = (PyObject *)PyInt_FromLong((long)real_neb_obj);
-		if (PyDict_GetItem(CreatedObjectsList_, ptr_as_int)) {
-			int res = PyDict_DelItem(CreatedObjectsList_, ptr_as_int);
-			Py_DECREF(ptr_as_int);
-			return res;
-		}
-		return -1;
-	}
-
-
-
 	//--------------------------------------------------------------------
 	//  pythoncmd_New()
 	//  Create an object by class name, and name it by object name.
@@ -125,24 +111,27 @@ extern "C" {
 	{
 		char *class_name;
 		char *object_name;
-		NebulaObject * rv = NULL;
-		nRoot *o;
+		NebulaObject * rv = 0;
+		nRoot* o = 0;
 
 		// Extract two strings from the Python args object
 		// Also, ":<desc>" for a descriptive error if an exception is raised.
-		if(PyArg_ParseTuple(args, "ss:New", &class_name, &object_name)) {
+		if (PyArg_ParseTuple(args, "ss:New", &class_name, &object_name)) 
+		{
 			// this function creates the new object and returns a pointer to it..
 			o = nPythonServer::kernelServer->NewNoFail(class_name, object_name);
-			if (o) {
+			if (o) 
+			{
 				// Create the new python object and save some "interesting" info
 				// in its dictionary
 				rv = NebulaObject_New(o);
 			}
-			else {
+			else 
+			{
 				PyErr_Format(PyExc_Exception,
 					"NEW: Unable to create a NebulaObject or type %s",
 					class_name);
-				return NULL;
+				return 0;
 			}
 		}
 		return GetReturnableObject(rv, o);
@@ -159,7 +148,7 @@ extern "C" {
 	PyObject* pythoncmd_Delete( PyObject * /*self*/, PyObject *args)
 	{
 		char *object_name;
-		PyObject *results = NULL;
+		PyObject *results = 0;
 
 		// Extract a string from the Python args object
 		// Also, ":<desc>" for a descriptive error if an exception is raised.
@@ -188,17 +177,17 @@ extern "C" {
 	PyObject* pythoncmd_Sel_(PyObject *args, bool set_cwd) {
 		char *object_name;
 		nRoot *object;
-		NebulaObject * res_neb = NULL;
+		NebulaObject * res_neb = 0;
 
 		// Extract  a string from the Python args object
 		// Also, ":<desc>" for  a descriptive error if an exception is raised.
 		if (PyArg_ParseTuple(args, "")) {
 			nRoot *o = nPythonServer::kernelServer->GetCwd();
 			res_neb = NebulaObject_New(o);
-			if (res_neb == NULL) {
+			if (res_neb == 0) {
 				PyErr_SetString(PyExc_Exception,
 					"SEL: Unable to create a NebulaObject");
-				// XXX: No return NULL here? - NULL returned by the last return operator in function
+				// XXX: No return 0 here? - 0 returned by the last return operator in function
 
 			} else
 				return GetReturnableObject(res_neb, o);
@@ -211,23 +200,23 @@ extern "C" {
 				if (set_cwd)
 					nPythonServer::kernelServer->SetCwd(o);
 				res_neb = NebulaObject_New(o);
-				if (res_neb == NULL) {
+				if (res_neb == 0) {
 					PyErr_SetString(PyExc_Exception,
 						"SEL: Unable to create a NebulaObject");
-					return NULL;
+					return 0;
 				}
 			}
 			else {
 				PyErr_SetString(PyExc_Exception,
 					"SEL: Unable to select path (perhaps it doesn't exist)");
-				return NULL;
+				return 0;
 			}
 			return GetReturnableObject(res_neb, o);
 		}
 		else {
 			// wasn't a "string" argument - assume a nebulaobject
 			PyErr_Clear();
-			PyObject * tempo = NULL;
+			PyObject * tempo = 0;
 			if (PyArg_ParseTuple(args, "O:sel", &tempo)) {
 				object = NebulaObject_GetPointer((NebulaObject*)tempo);
 				if (object) {
@@ -244,7 +233,7 @@ extern "C" {
 					else {
 						PyErr_SetString(PyExc_Exception,
 							"Couldn't CWD to object(nPythonServer::kernelServer->SetCwd)");
-						// XXX: No return NULL here?
+						// XXX: No return 0 here?
 					}
 				}
 				else {
@@ -257,14 +246,16 @@ extern "C" {
 					"Couldn't extract a pointer to the object (PyArg_ParseTuple(args,O:sel..)");
 			}
 		}// else
-		return NULL;
+		return 0;
 	}
 
-	PyObject* pythoncmd_Sel( PyObject * /*self*/, PyObject *args) {
+	PyObject* pythoncmd_Sel( PyObject * /*self*/, PyObject *args) 
+	{
 		return pythoncmd_Sel_(args, true);
 	}
 
-	PyObject* pythoncmd_Lookup( PyObject * /*self*/, PyObject *args) {
+	PyObject* pythoncmd_Lookup( PyObject * /*self*/, PyObject *args) 
+	{
 		return pythoncmd_Sel_(args, false);
 	}
 
@@ -313,10 +304,10 @@ extern "C" {
 			nRoot *o = nPythonServer::kernelServer->GetCwd();
 			if (o) {
 				NebulaObject *res_neb = NebulaObject_New(o);
-				if (res_neb == NULL) {
+				if (res_neb == 0) {
 					PyErr_SetString(PyExc_Exception,
 						"SEL: Unable to create a NebulaObject");
-					return NULL;
+					return 0;
 				}
 				results = GetReturnableObject(res_neb, o);
 			} else {
@@ -340,7 +331,7 @@ extern "C" {
 
 	PyObject* pythoncmd_Dir( PyObject * /*self*/, PyObject *args)
 	{
-		PyObject *results = NULL;
+		PyObject *results = 0;
 
 		{
 			// No args, but ":<desc>" for a descriptive error if exception is raised.
@@ -376,7 +367,7 @@ extern "C" {
 	PyObject* pythoncmd_Get( PyObject * /*self*/, PyObject *args)
 	{
 		char *filename;
-		PyObject *results = NULL;
+		PyObject *results = 0;
 
 		{
 			// Extract a filename string from the Python args object
@@ -520,7 +511,7 @@ extern "C" {
 						arg_ok = true;
 					else
 						n_printf("could not lookup '%s' as object!\n", o_name);
-					// o is NULL
+					// o is 0
 					arg->SetO(o);
 				}
 				else if (NebulaObject_Check(temp)) {
@@ -528,11 +519,11 @@ extern "C" {
 					if (o)
 						arg_ok = true;
 					else
-						n_printf("Got a NULL within a NebulaObject!\n");
+						n_printf("Got a 0 within a NebulaObject!\n");
 					arg->SetO(o);
 				}
 				else if (temp == Py_None) {
-					arg->SetO(NULL);
+					arg->SetO(0);
 					arg_ok = true;
 				}
 			}
@@ -562,7 +553,7 @@ extern "C" {
 
 	PyObject* _putOutSingleArg(nArg *arg)
 	{
-		PyObject *result = NULL;
+		PyObject *result = 0;
 
 		switch (arg->GetType()) {
 	case nArg::ARGTYPE_INT:
@@ -653,7 +644,7 @@ extern "C" {
 	PyObject* _putOutArgs(nCmd *cmd)
 	{
 		nArg *arg;
-		PyObject *result = NULL;
+		PyObject *result = 0;
 
 		int num_args = cmd->GetNumOutArgs();
 		cmd->Rewind();
@@ -698,8 +689,8 @@ extern "C" {
 		char *dot;
 
 		PyObject *commandString;
-		PyObject *commandArgs = NULL;
-		PyObject *results = NULL;
+		PyObject *commandArgs = 0;
+		PyObject *results = 0;
 
 		{
 			// Get the command name from the first element of the args tuple
@@ -723,11 +714,11 @@ extern "C" {
 					*dot = '\0';
 					obj_name = cmd;
 					if (obj_name == dot)
-						obj_name = NULL;
+						obj_name = 0;
 					command_name = dot + 1;
 				}
 				else {
-					obj_name = NULL;
+					obj_name = 0;
 					command_name = cmd;
 				}
 
@@ -759,7 +750,7 @@ extern "C" {
 								PyErr_Format(PyExc_Exception,
 									"Broken input args, object '%s', command '%s'",
 									o->GetName(), command_name);
-								results = NULL;
+								results = 0;
 							}
 							else if (o->Dispatch(ncmd)) {
 								// let object handle the command
@@ -772,7 +763,7 @@ extern "C" {
 								PyErr_Format(PyExc_Exception,
 									"Dispatch error, object '%s', command '%s'",
 									o->GetName(), command_name);
-								results = NULL;
+								results = 0;
 							}
 							// In any case, cleanup the cmd object
 							cmd_proto->RelCmd(ncmd);
@@ -782,27 +773,27 @@ extern "C" {
 							PyErr_Format(PyExc_AttributeError,
 								"Unknown command, object '%s', command '%s'",
 								o->GetName(), command_name);
-							results = NULL;
+							results = 0;
 						}
 					}
 					else {
 						// Unable to acquire current object
 						// Set appropriate exception
 						PyErr_SetString(PyExc_Exception, "Unable to acquire current object.");
-						results = NULL;
+						results = 0;
 					}
 				}
 				else {
-					// command is NULL
+					// command is 0
 					PyErr_SetString(PyExc_Exception, "No command.");
-					results = NULL;
+					results = 0;
 				}
 			}
 			else {
 				// Unable to acquire command string
 				// Set appropriate exception
 				PyErr_SetString(PyExc_Exception, "Unable to acquire command string.");
-				results = NULL;
+				results = 0;
 			}
 		}
 		// Clean up
@@ -820,7 +811,7 @@ extern "C" {
 
 	PyObject* pythoncmd_Exit( PyObject * /*self*/, PyObject *args)
 	{
-		PyObject* results = NULL;
+		PyObject* results = 0;
 
 		{
 			// No args, but set ":<desc>" for a descriptive error if an exception
@@ -851,7 +842,7 @@ extern "C" {
 
 	PyObject* pythoncmd_Puts( PyObject * /*self*/, PyObject *args)
 	{
-		PyObject *results = NULL;
+		PyObject *results = 0;
 		char     *outputString;
 
 		{
@@ -870,7 +861,7 @@ extern "C" {
 	//--------------------------------------------------------------------
 	PyObject* pythoncmd_Exists( PyObject * /*self*/, PyObject *args)
 	{
-		PyObject *results = NULL;
+		PyObject *results = 0;
 		char     *objectName;
 
 		{
@@ -894,17 +885,20 @@ extern "C" {
 
 	PyObject* pythoncmd_Nprint( PyObject * /*self*/, PyObject *args)
 	{
-		PyObject *results = NULL;
+		PyObject *results = 0;
 		char     *text;
 
-		if(PyArg_ParseTuple(args, "s:nprint", &text)) {
+		if (PyArg_ParseTuple(args, "s:nprint", &text)) 
+		{
 			n_printf("%s", text);
 			Py_INCREF(Py_None);
 			results = Py_None;
 		}
 		else
+		{
 			// Set exception.  Obviously, this situation could pose a problem.  :)
 			PyErr_SetString(PyExc_IOError, "Unable to output text!");
+		}
 
 		return results;
 	}
@@ -918,13 +912,13 @@ extern "C" {
 
 	PyObject* pythoncmd_SetTrigger( PyObject * /*self*/, PyObject *args)
 	{
-		PyObject *results = NULL;
+		PyObject *results = 0;
 		PyObject *temp;
 
 		if(PyArg_ParseTuple(args, "O:setTrigger", &temp)) {
 			if (!PyCallable_Check(temp)) {
 				PyErr_SetString(PyExc_TypeError, "parameter must be callable");
-				return NULL;
+				return 0;
 			}
 			Py_XINCREF(temp);  // Add a reference to the new callback
 			Py_XDECREF(nPythonServer::Instance->callback);  // And dispose of the old

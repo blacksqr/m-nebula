@@ -36,18 +36,8 @@
 
 //--------------------------------------------------------------------
 class nFileServer2;
-class nTclServer : public nScriptServer {
-public:
-    static nClass *local_cl;
-    static nKernelServer *kernelServer;
-        
-    nAutoRef<nFileServer2> refFileServer;
-    Tcl_Interp *interp;
-    long indent_level;
-    char indent_buf[N_MAXPATH];
-    bool print_error;
-    bool is_standalone_tcl;
-
+class nTclServer : public nScriptServer 
+{
 public:
     nTclServer();
     virtual ~nTclServer();
@@ -78,10 +68,17 @@ public:
 
     virtual void InitAsExtension(Tcl_Interp *);
 
+public:    
+    static nKernelServer* kernelServer;
 
+public:
+    nAutoRef<nFileServer2> refFileServer;
+    Tcl_Interp *interp;    
+    bool		print_error;
+    bool		is_standalone_tcl;
 
-private:
-    void write_select_statement(nFile *, nRoot *, nRoot *);
+protected:
+    virtual void write_select_statement(nFile *, nRoot *, nRoot *);
     void link_to_interp(Tcl_Interp *, bool);
     void unlink_from_interp(Tcl_Interp *, bool);
 };

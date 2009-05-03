@@ -22,8 +22,6 @@ LONG
 WINAPI 
 nd3d8_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    LONG retval = 1;
-
     // user data of windows contains 'this' pointer
     nD3D8Server *d3d8 = (nD3D8Server *) GetWindowLong(hWnd,0);
 

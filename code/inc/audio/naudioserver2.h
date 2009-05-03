@@ -115,7 +115,7 @@ protected:
 
     int uniqueId;
     int modeDevice;
-    int modeBitsPerSample;
+    ushort modeBitsPerSample;
     int modeSamplesPerSec;
     int modeChannels;
     nSpeakerConfig modeSpeakerConfig;

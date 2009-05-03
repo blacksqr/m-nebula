@@ -247,8 +247,10 @@ bool nD3D8Texture::createTextureIL(const char* name, int imgId, long maxw, long 
 	if (maxw > 0 && newW > maxw) newW = maxw;
 	if (maxh > 0 && newH > maxh) newH = maxh;    
     
-    if ((imgWidth != newW) || (imgHeight != newH)) {
-        if (!iluScale(newW, newH, 1)) {
+    if ((imgWidth != newW) || (imgHeight != newH)) 
+	{
+        if (!iluScale(newW, newH, 1)) 
+		{
             n_printf("nGlTexture: iluScale() failed with '%s'\n", iluErrorString(ilGetError()));
             return false;
         }
@@ -259,14 +261,14 @@ bool nD3D8Texture::createTextureIL(const char* name, int imgId, long maxw, long 
 
     int numMipLevels = 1;
     int numLevels    = 1;
-    if (this->gen_mipmaps) { 
+    if (this->gen_mipmaps) 
+	{ 
             iluBuildMipmaps();
             numMipLevels = D3DX_DEFAULT;
             numLevels    = ilGetInteger(IL_NUM_MIPMAPS) + 1;
     }
 
     // get relevant image data
-	ILint imgFormat = ilGetInteger(IL_IMAGE_FORMAT);
     this->SetWidth(imgWidth);
     this->SetHeight(imgHeight);
     this->SetBytesPerPixel(dstBytesPerPixel);
@@ -294,7 +296,8 @@ bool nD3D8Texture::createTextureIL(const char* name, int imgId, long maxw, long 
         // need to rebind original image before selecting 
         // mipmap level (is this a design bug in OpenIL?)
         ilBindImage(imgId);
-        if (!ilActiveMipmap(curLevel)) {
+        if (!ilActiveMipmap(curLevel)) 
+		{
             n_printf("nD3D8Texture: ilActiveMipmap() failed with '%s'\n", iluErrorString(ilGetError()));
             return false;
         }

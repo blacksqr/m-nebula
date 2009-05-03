@@ -243,7 +243,8 @@ public:
 
 	GLenum GetFrameBufferType(nFrameBufferType bt) const
 	{
-		switch(bt) {
+		switch(bt) 
+		{
 		case N_BUFFER_FRONT:
 			return GL_FRONT;
 		case N_BUFFER_BACK:
@@ -252,6 +253,7 @@ public:
 			return (this->aux_buff_num ? GL_AUX0 : GL_BACK);
 		default:
 			n_assert("incorrect buffer type" && false);
+			return GL_BACK;
 			break;
 		}
 	}

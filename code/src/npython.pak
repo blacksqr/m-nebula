@@ -10,7 +10,6 @@ beginmodule npythonserver
     setdir python
     setfiles { npythonserver npythonrun npythoncmds npythonobject }
     setheaders { npythonserver }
-    setversion npython_ver
 endmodule
 #--------------------------------------------------------------------
 begintarget npython

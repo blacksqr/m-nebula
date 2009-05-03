@@ -345,7 +345,7 @@ nD3D8Server::devOpen()
     // get format specifiers for display and zbuffer
     D3DFORMAT dispFormat;
     D3DFORMAT zbufFormat;
-    bool      tryWbuffer;
+    bool      tryWbuffer = false;
     if (this->windowFullscreen)
     {
         // in fullscreen mode, both formats are already available
@@ -610,7 +610,7 @@ nD3D8Server::ShowCursor()
         this->cursor[this->currentCursor].GetHotspot(xHotspot, yHotspot);
         n_assert(tex);
 
-        IDirect3DTexture8* d3dTex = tex->GetD3DTexture();
+        IDirect3DTexture8* d3dTex = (IDirect3DTexture8*)tex->GetD3DTexture();
         n_assert(d3dTex);
 
         // get IDirect3DSurface8 interface

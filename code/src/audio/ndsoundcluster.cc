@@ -10,7 +10,7 @@
 /**
 */
 nDSoundCluster::nDSoundCluster(int numPlaybackChannels,
-                               int numSampleChannels,
+                               ushort numSampleChannels,
                                IDirectSound8* dSound,
                                IDirectSoundBuffer* dsPrimary) 
 :
@@ -18,8 +18,7 @@ nDSoundCluster::nDSoundCluster(int numPlaybackChannels,
     numBuffers(numPlaybackChannels)
 { 
     this->soundBuffers = new nDSoundBuffer2[this->numBuffers];
-    int i;
-    for (i = 0; i < this->numBuffers; i++)
+    for (int i = 0; i < this->numBuffers; i++)
     {
         this->soundBuffers[i].Initialize(numSampleChannels, dSound, dsPrimary);
     }

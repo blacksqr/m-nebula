@@ -6,6 +6,8 @@
 #include "kernel/nscriptserver.h"
 #include "script/nscriptlet.h"
 
+nNebulaScriptClass(nScriptlet, "nroot");
+
 //------------------------------------------------------------------------------
 /**
 */

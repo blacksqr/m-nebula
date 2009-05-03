@@ -133,7 +133,7 @@ nDSoundBuffer2::GetSoundObject()
 /**
 */
 void
-nDSoundBuffer2::Initialize(int numChannels, IDirectSound8* dSound, IDirectSoundBuffer* primary)
+nDSoundBuffer2::Initialize(ushort numChannels, IDirectSound8* dSound, IDirectSoundBuffer* primary)
 {
     n_assert(dSound);
     n_assert(primary);
@@ -264,8 +264,6 @@ nDSoundBuffer2::ReadStreamData(int offset, int numBytes, bool crossFade)
     void* ptr2 = 0;
     DWORD bytes1 = 0;
     DWORD bytes2 = 0;
-    DWORD bytes1Written = 0;
-    DWORD bytes2Written = 0;
     hr = this->dsBuf8->Lock(offset, numBytes, &ptr1, &bytes1, &ptr2, &bytes2, 0);
     if (FAILED(hr))
     {

@@ -62,9 +62,7 @@ public:
 
     /// execute the scriptlet
     virtual const char* Run();
-
-    /// contains this class' type information.
-    static nClass* clazz;
+    
     /// nKernelServer dependency.
     static nKernelServer* kernelServer;
 
