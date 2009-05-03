@@ -340,7 +340,8 @@ void nGlPixelShader::emit_texture_states(nGlServer *gs, nTextureUnit& tu)
 	if (!this->GetActiveProgram())
 	{
 		// tex gen mode
-		switch(tu.coord_src) {
+		switch(tu.coord_src) 
+		{
 			case N_TCOORDSRC_UV0:
 			case N_TCOORDSRC_UV1:
 			case N_TCOORDSRC_UV2:

@@ -32,7 +32,7 @@ public:
     /// destructor
     ~nDSoundBuffer2();
     /// initialize the object
-    void Initialize(int numChannels, IDirectSound8* dSound, IDirectSoundBuffer* primary);
+    void Initialize(ushort numChannels, IDirectSound8* dSound, IDirectSoundBuffer* primary);
     /// attach a sound object
     void AttachSoundObject(const nSound2& obj);
     /// update sound object attributes

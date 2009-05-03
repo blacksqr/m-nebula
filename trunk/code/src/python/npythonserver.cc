@@ -18,28 +18,18 @@
 
 
 // Initialize static members to NULL
-nClass *nPythonServer::local_cl        = NULL;
-nKernelServer *nPythonServer::kernelServer       = NULL;
-nPythonServer *nPythonServer::Instance = NULL;
+nPythonServer* nPythonServer::Instance = 0;
 
-
-extern char *npythonserver_version;
+nNebulaClass(nPythonServer, "nscriptserver");
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
 	PyObject *CreatedObjectsList_;
 	PyObject *CreatedObjectsList_weak_refs_;
 	PyObject *CreatedObjectsList_weakref_callback_;
-
-	// Nebula class interface
-	extern bool N_EXPORT n_init(nClass *, nKernelServer *);
-	extern void N_EXPORT n_fini(void);
-	extern N_EXPORT void *n_create(void);
-	extern N_EXPORT char *n_version(void);
-
+	
 	// Python "Nebula type" and error object
 	extern N_EXPORT PyTypeObject Nebula_Type;
 	extern PyObject *Npy_ErrorObject;
@@ -149,40 +139,7 @@ extern "C" {
 #endif
 
 
-//--------------------------------------------------------------------
-//  n_init()
-//--------------------------------------------------------------------
-bool N_EXPORT n_init(nClass *cl, nKernelServer *ks)
-{
-	nPythonServer::local_cl = cl;
-	nPythonServer::kernelServer       = ks;
-	ks->AddClass("nscriptserver",cl);
-	return true;
-}
 
-//--------------------------------------------------------------------
-//  n_fini()
-//--------------------------------------------------------------------
-void N_EXPORT n_fini(void)
-{
-	nPythonServer::kernelServer->RemClass(nPythonServer::local_cl);
-}
-
-//--------------------------------------------------------------------
-//  n_create()
-//--------------------------------------------------------------------
-void *n_create(void)
-{
-	return new nPythonServer;
-}
-
-//--------------------------------------------------------------------
-//  n_version()
-//--------------------------------------------------------------------
-N_EXPORT char *n_version(void)
-{
-	return npythonserver_version;
-}
 
 
 //--------------------------------------------------------------------
@@ -192,9 +149,7 @@ N_EXPORT char *n_version(void)
 nPythonServer::nPythonServer() :
 refFileServer(kernelServer, this)
 {
-	this->refFileServer        = "/sys/servers/file2";
-	this->indent_level         = 0;
-	this->indent_buf[0]        = 0;
+	this->refFileServer        = "/sys/servers/file2";	
 
 	// Store a handy refernece to this instance
 	nPythonServer::Instance = this;
@@ -211,8 +166,6 @@ refFileServer(kernelServer, this)
 		// Explicitly initialize Nebula extensions
 		initnpython();
 	}
-
-
 
 	// Store a handy reference to the nebula module
 	this->nmodule = PyImport_ImportModule("npython");
@@ -318,11 +271,11 @@ nPythonServer::EndWrite(nFile* file)
 // TODO: Refactor indent logic as part of the object API wrapping phase.
 //       For now, simply zero out any indention.
 //--------------------------------------------------------------------
-static void _indent(long /*i*/, char *buf)
+static void _indent(long /*i*/, stl_string& buf)
 {
 	//long j;
 
-	buf[0] = '\0';  // Cancel out the indent buffer
+	buf.clear();  // Cancel out the indent buffer
 
 	//buf[0] = 0;
 	//for (j=0; j<i; j++) strcat(buf,"  ");
@@ -346,7 +299,7 @@ bool nPythonServer::WriteComment(nFile *file, const char *str)
 //  Write the statement to select an object after its creation
 //  statement.
 //--------------------------------------------------------------------
-void nPythonServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
+void nPythonServer::write_select_statement(nFile* file, nRoot* o, nRoot* owner)
 {
 	switch (this->GetSelectMethod()) {
 
@@ -355,7 +308,7 @@ void nPythonServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
 			char relpath[N_MAXPATH];
 			_indent(++this->indent_level, this->indent_buf);
 			owner->GetRelPath(o, relpath, sizeof(relpath));
-			file->PutS(this->indent_buf);
+			file->PutS(this->indent_buf.c_str());
 			file->PutS("__NDobj = sel('");
 			file->PutS(relpath);
 			file->PutS("')\n");
@@ -382,7 +335,7 @@ bool nPythonServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
 
 	// NOTE: Generated in the form of a function call
 	char buf[N_MAXPATH];
-	sprintf(buf, "\n%s__NDobj = new('%s','%s')\n#sel(__NDobj)\n", this->indent_buf, o_class, o_name);
+	sprintf(buf, "\n%s__NDobj = new('%s','%s')\n#sel(__NDobj)\n", this->indent_buf.c_str(), o_class, o_name);
 	file->PutS(buf);
 
 	// write select object statement
@@ -436,7 +389,7 @@ bool nPythonServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
 	char relpath[N_MAXPATH];
 	_indent(--this->indent_level, this->indent_buf);
 	o->GetRelPath(owner, relpath, sizeof(relpath));
-	file->PutS(this->indent_buf);
+	file->PutS(this->indent_buf.c_str());
 	file->PutS("__NDobj = sel('");
 	file->PutS(relpath);
 	file->PutS("')\n");
@@ -455,7 +408,7 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
 	n_assert(name);
 	nArg *arg;
 	char buf[N_MAXPATH];
-	sprintf(buf,"%s__NDobj.%s(",this->indent_buf,name);
+	sprintf(buf,"%s__NDobj.%s(", this->indent_buf.c_str(), name);
 	file->PutS(buf);
 
 	cmd->Rewind();

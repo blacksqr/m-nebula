@@ -5,6 +5,7 @@
 #include "kernel/nfileserver2.h"
 #include "script/ntclscriptlet.h"
 
+nNebulaScriptClass(nTclScriptlet, "nscriptlet");
 //------------------------------------------------------------------------------
 /**
 */

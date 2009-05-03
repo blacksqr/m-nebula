@@ -432,11 +432,7 @@ nD3D8PixelShader::emit_texture_states(
     used.
 */
 void 
-nD3D8PixelShader::emit_fbuffer_blend_op(
-    nD3D8Server *gs,
-    int stage,
-    nPSI& color_op,
-    nPSI& alpha_op)
+nD3D8PixelShader::emit_fbuffer_blend_op( nD3D8Server *gs, int stage, nPSI& color_op, nPSI& alpha_op)
 {
     IDirect3DDevice8 *dev = gs->d3d8Dev;
 

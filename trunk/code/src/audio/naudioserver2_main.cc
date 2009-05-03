@@ -113,7 +113,7 @@ nAudioServer2::SetMode(const char* modeStr)
     str = this->GetModeTag(modeStr, "bps", buf, sizeof(buf));
     if (str)
     {
-        this->modeBitsPerSample = atoi(str);
+        this->modeBitsPerSample = (ushort)atoi(str);
     }
 
     // samples per second...

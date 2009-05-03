@@ -134,8 +134,6 @@ nTclServer::nTclServer() :
     this->refFileServer     = "/sys/servers/file2";
     this->print_error       = false;
     this->is_standalone_tcl = true;
-    this->indent_level      = 0;
-    this->indent_buf[0]     = 0;
 
     // initialize data internal to TCL to make encodings work.
     stl_string path;
@@ -258,11 +256,10 @@ nTclServer::EndWrite(nFile* file)
 //  _indent()
 //  04-Nov-98   floh    created
 //--------------------------------------------------------------------
-static void _indent(long i, char *buf)
+static void _indent(long i, stl_string& buf)
 {
-    long j;
-    buf[0] = 0;
-    for (j=0; j<i; j++) strcat(buf,"\t");
+    buf.clear();
+    for (long j = 0; j < i; j++) buf += "\t";
 }
 
 //--------------------------------------------------------------------
@@ -295,7 +292,7 @@ void nTclServer::write_select_statement(nFile* file, nRoot *o, nRoot *owner)
             _indent(++this->indent_level, this->indent_buf);
             owner->GetRelPath(o, relpath, sizeof(relpath));
             
-            file->PutS(this->indent_buf);
+            file->PutS(this->indent_buf.c_str());
             file->PutS("sel ");
             file->PutS(relpath);
             file->PutS("\n");
@@ -322,7 +319,7 @@ bool nTclServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
     const char *o_class = o->GetClass()->GetName();
     _indent(this->indent_level,this->indent_buf);
 
-    file->PutS(this->indent_buf);
+    file->PutS(this->indent_buf.c_str());
     file->PutS("new ");
     file->PutS(o_class);
     file->PutS(" ");
@@ -388,7 +385,7 @@ bool nTclServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
     _indent(--this->indent_level, this->indent_buf);
     o->GetRelPath(owner, relpath, sizeof(relpath));
 
-    file->PutS(this->indent_buf);
+    file->PutS(this->indent_buf.c_str());
     file->PutS("sel ");
     file->PutS(relpath);
     file->PutS("\n");
@@ -418,7 +415,7 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
     nArg *arg;
 
     // write the command name
-    file->PutS(this->indent_buf);
+    file->PutS(this->indent_buf.c_str());
     file->PutS(".");
     file->PutS(name);
 

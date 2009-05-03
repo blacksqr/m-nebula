@@ -598,7 +598,6 @@ HRESULT CD3DFont::Render3DText( TCHAR* strText, DWORD dwFlags )
 
     // Fill vertex buffer
     FONT3DVERTEX* pVertices;
-    DWORD         dwVertex       = 0L;
     DWORD         dwNumTriangles = 0L;
     m_pVB->Lock( 0, 0, (BYTE**)&pVertices, D3DLOCK_DISCARD );
 

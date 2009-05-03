@@ -63,11 +63,15 @@ long act_y = 0;
 //-------------------------------------------------------------------
 void handleInput(nConServer *con, nInputEvent *ie)
 {
+	static bool gfxWatch = false;
     if (ie->IsDisabled()) return;
-    switch (ie->GetType()) {
+
+	switch (ie->GetType()) 
+	{
         case N_INPUT_KEY_DOWN:
             {
-                switch (ie->GetKey()) {
+			switch (ie->GetKey()) 
+			{
                     case N_KEY_ESCAPE:  con->Toggle(); break;
                     case N_KEY_LEFT:    cur_left=true; break;
                     case N_KEY_RIGHT:   cur_right=true; break;
@@ -83,13 +87,23 @@ void handleInput(nConServer *con, nInputEvent *ie)
             
         case N_INPUT_KEY_UP:
             {
-                switch (ie->GetKey()) {
+			switch (ie->GetKey()) 
+			{
                     case N_KEY_LEFT:    cur_left=false; break;
                     case N_KEY_RIGHT:   cur_right=false; break;
                     case N_KEY_UP:      cur_up=false; break;
                     case N_KEY_DOWN:    cur_down=false; break;
                     case N_KEY_CONTROL: ctrl=false; break;
                     case N_KEY_SHIFT:   shift=false; break;
+			case N_KEY_F1:
+				{
+					gfxWatch = !gfxWatch;
+					if (gfxWatch)
+						con->Watch("gfx*");
+					else
+						con->Unwatch();
+				}
+				break;
                     default: break;    
                 }
             }
@@ -99,7 +113,8 @@ void handleInput(nConServer *con, nInputEvent *ie)
             {
                 old_x = act_x = ie->GetAbsXPos();
                 old_y = act_y = ie->GetAbsYPos();
-                switch (ie->GetButton()) {
+			switch (ie->GetButton()) 
+			{
                     case 0:  lmb=true; break;
                     case 1:  rmb=true; break;
                     case 2:  mmb=true; break;
@@ -111,7 +126,8 @@ void handleInput(nConServer *con, nInputEvent *ie)
             {
                 old_x = act_x = ie->GetAbsXPos();
                 old_y = act_y = ie->GetAbsYPos();
-                switch (ie->GetButton()) {
+			switch (ie->GetButton()) 
+			{
                     case 0:  lmb=false; break;
                     case 1:  rmb=false; break;
                     case 2:  mmb=false; break;
@@ -145,8 +161,8 @@ void handleViewer(void)
         if (cur_right) ry += 0.025f;
     } else {
         if (ctrl) {
-            if (cur_up)    ty -= 0.1f;
-            if (cur_down)  ty += 0.1f;
+			if (cur_up)    ty += 0.1f;
+			if (cur_down)  ty -= 0.1f;
         } else {
             if (cur_up)    tz -= 0.1f;
             if (cur_down)  tz += 0.1f;
@@ -155,8 +171,8 @@ void handleViewer(void)
         }
     }
     if (rmb) {
-        ry += ((float)(old_x-act_x)) * 0.01f;
-        rx += ((float)(old_y-act_y)) * 0.01f;
+		ry -= ((float)(old_x-act_x)) * 0.01f;
+		rx -= ((float)(old_y-act_y)) * 0.01f;
     }
     if (lmb) {
         tz += ((float)(old_y-act_y) * 0.1f);
@@ -166,8 +182,11 @@ void handleViewer(void)
     if (normalize) {
         Rx.ident();
         Ry.ident();
+		Rx.rotate_x(n_deg2rad(180.0f));
+		Ry.rotate_y(n_deg2rad(180.0f));
+
         V.ident();
-        vector3 t(0.0f,2.5f,0.0f);
+		vector3 t(0.0f, -2.5f, 10.0f);
         V.translate(t);
         normalize = false;
     }
@@ -248,8 +267,8 @@ int main(int argc, const char** argv)
 
     // hier geht's los
     V.ident();
-    vector3 t(0.0f,2.5f,0.0f);
-    V.translate(t);
+	normalize = true;
+	handleViewer();
     nEvent sleeper;
     nKernelServer* ks       = new nKernelServer(argc, argv);
 
@@ -272,7 +291,7 @@ int main(int argc, const char** argv)
     nParticleServer *part   = (nParticleServer *)   ks->New("nparticleserver",      "/sys/servers/particle");
     nSpecialFxServer *fx    = (nSpecialFxServer *)  ks->New("nspecialfxserver",     "/sys/servers/specialfx");
     nAnimServer* anim       = (nAnimServer*)        ks->New("nanimserver",          "/sys/servers/anim");
-    nPrimitiveServer *prim  = (nPrimitiveServer *)  ks->New("nprimitiveserver",     "/sys/primitive");
+	nPrimitiveServer *prim  = (nPrimitiveServer *)  ks->New("nprimitiveserver",     "/sys/servers/primitive");
     n3DNode *root           = (n3DNode *)           ks->New("n3dnode",              "/usr/scene");
 
 	if (arg_cmd[0]) {
@@ -333,8 +352,7 @@ int main(int argc, const char** argv)
                 }
                 if (gfx->BeginScene())
                 {
-                    matrix44 vwr;
-                    vwr = V;
+					matrix44 vwr(V);					
                     vwr.invert_simple();
 
                     // trigger particle server
@@ -355,14 +373,16 @@ int main(int argc, const char** argv)
                     }
 
                     // render grid
-                    if (grid) {
+					if (grid) 
+					{
                         gfx->SetMatrix(N_MXM_MODELVIEW,vwr);
-                        prim->SetColor(0.5f,1.0f,0.5f,1.0f);
+						prim->SetColor(.5f, .5f, .5f, 1.0f);
                         prim->WirePlane(20,1);
                     }
 
                     // trigger collide server?
-                    if (cs) {
+					if (cs) 
+					{
                         nCollideContext *cc = cs->GetDefaultContext();
                         cc->Collide();
                         cc->Visualize(gfx, prim);

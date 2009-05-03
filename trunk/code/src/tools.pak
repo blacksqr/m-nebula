@@ -81,10 +81,8 @@ endtarget
 begintarget nremoteshell
     settype exe
     setmods { nremoteshell ipcclientstub }
-    setdepends {
-        nkernel
-    }
-    setlibs_win32  { wsock32.lib nkernel.lib }
+    setdepends { nkernel nnebula }
+    setlibs_win32  { ws2_32.lib nkernel.lib }
     setlibs_unix   { nkernel }
     setlibs_macosx { nkernel }
 endtarget

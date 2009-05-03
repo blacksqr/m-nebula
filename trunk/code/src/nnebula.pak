@@ -212,21 +212,18 @@ beginmodule ntclserver
     setdir script
     setfiles { ntclserver ntclrun ntclcmds }
     setheaders { ntclserver }
-    setversion ntcl_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nscriptlet
     setdir script
-    setfiles { nscriptlet_init nscriptlet_main nscriptlet_cmds }
+    setfiles { nscriptlet_main nscriptlet_cmds }
     setheaders { nscriptlet }
-    setversion nscriptlet_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule ntclscriptlet
     setdir script
-    setfiles { ntclscriptlet_init ntclscriptlet_main ntclscriptlet_cmds }
+    setfiles { ntclscriptlet_main ntclscriptlet_cmds }
     setheaders { ntclscriptlet }
-    setversion ntclscriptlet_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nconserver
@@ -619,7 +616,7 @@ begintarget nnebula
     }
     setdepends { nkernel }
     setlibs_win32  { nkernel.lib kernel32.lib user32.lib tcl85.lib ws2_32.lib zlib.lib ogg_static.lib vorbis_static.lib vorbisfile_static.lib }
-    setlibs_unix   { nkernel m tcl8.4 ogg vorbis vorbisfile }
+    setlibs_unix   { nkernel m tcl8.5 ogg vorbis vorbisfile }
     setlibs_macosx { nkernel m ogg vorbis vorbisfile }
     setframeworks_macosx { Tcl IL ILU }
 endtarget

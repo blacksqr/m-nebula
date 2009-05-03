@@ -97,8 +97,8 @@ void nSpriteRender::begin_render(nPixelShader *ps, nTextureArray *ta)
     }
 
     // compute "lookup table spin" from original spin
-    this->spinRef = (this->spin / (2.0f*N_PI)) * float(REFQUADS);
-    this->spinAccelRef = (this->spin_accel / (2.0f*N_PI)) * float(REFQUADS);
+    this->spinRef = (this->spin / (2.0f*(float)N_PI)) * float(REFQUADS);
+    this->spinAccelRef = (this->spin_accel / (2.0f*(float)N_PI)) * float(REFQUADS);
 }
 
 //-------------------------------------------------------------------
