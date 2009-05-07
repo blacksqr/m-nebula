@@ -462,10 +462,11 @@ public:
     /// get scale as t_vec3
     t_vec3 get_scale(void) const 
     {
-        t_vec3 v1(M11,M21,M31);
-        t_vec3 v2(M12,M22,M32);
-        t_vec3 v3(M13,M23,M33);        
-        return t_vec3(v1.len(), v2.len(), v3.len());
+        return t_vec3(
+			ntype(this->x_component()), 
+			ntype(this->y_component()),
+			ntype(this->z_component())
+		);
     }
 
     /// compute matrix determinant
@@ -870,10 +871,11 @@ public:
     /// return the position component as 3d vector
     t_vec3 get_scale(void) const 
     {
-        t_vec3 v1(M11,M12,M13);
-        t_vec3 v2(M21,M22,M23);
-        t_vec3 v3(M31,M32,M33);
-        return t_vec3(v1.len(),v2.len(),v3.len());
+        return t_vec3(
+			ntype(this->x_component()),
+			ntype(this->y_component()),
+			ntype(this->z_component())
+			);
     }
 
     /// Rotate about the global X axis.

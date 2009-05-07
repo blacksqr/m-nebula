@@ -43,8 +43,8 @@ extern "C" {
 	extern PyObject* pythoncmd_Get(PyObject *self, PyObject *args);
 	extern PyObject* pythoncmd_GetCwdObject( PyObject * /*self*/, PyObject *args);
 	extern PyObject* pythoncmd_Exit(PyObject *self, PyObject *args);
-	extern PyObject* pythoncmd_Connect(PyObject *self, PyObject *args);
-	extern PyObject* pythoncmd_Disconnect(PyObject *self, PyObject *args);
+	//extern PyObject* pythoncmd_Connect(PyObject *self, PyObject *args);
+	//extern PyObject* pythoncmd_Disconnect(PyObject *self, PyObject *args);
 	extern PyObject* pythoncmd_Server(PyObject *self, PyObject *args);
 	extern PyObject* pythoncmd_Set(PyObject *self, PyObject *args);
 	extern PyObject* pythoncmd_Puts(PyObject *self, PyObject *args);

@@ -44,7 +44,7 @@ public:
     
     virtual bool Run(const char *, const char*&);
     virtual bool RunScript(const char *, const char*&);
-	virtual bool RunScriptFS(const char *, const char*&);
+    virtual bool RunScriptFS(const char *, const char*&);
     virtual bool RunCommand(nCmd *);
     virtual char* Prompt(char *, int);
     
@@ -56,16 +56,16 @@ public:
     virtual bool WriteCmd(nFile *, nCmd *);
     virtual bool WriteEndObject(nFile *, nRoot *, nRoot *);
     virtual bool EndWrite(nFile *);
-
-	/// get script command parameters begin symbols
-	virtual const char* GetCmdParamBegin() const { return " "; }
-	/// get script command parameters delimiter
-	virtual const char* GetCmdParamDelim() const { return " "; }
-	/// get script command parameters end symbols
-	virtual const char* GetCmdParamEnd() const { return ""; }
+    
+    /// get script command parameters begin symbols
+    virtual const char* GetCmdParamBegin() const { return " "; }
+    /// get script command parameters delimiter
+    virtual const char* GetCmdParamDelim() const { return " "; }
+    /// get script command parameters end symbols
+    virtual const char* GetCmdParamEnd() const { return ""; }
     
     virtual bool Trigger(void);
-
+    
     virtual void InitAsExtension(Tcl_Interp *);
 
 public:    

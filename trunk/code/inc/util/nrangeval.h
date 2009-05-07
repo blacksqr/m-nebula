@@ -2,15 +2,9 @@
 #define N_RANGEVAL_H
 //------------------------------------------------------------------------------
 /**
-A stack template class.
-
-(C) 2002 RadonLabs GmbH
+	Class nRangeVal - ranged value with auto mapping
+	created 6-May-2009 Insightec, Inc -by Ilya Kliot
 */
-#ifndef N_TYPES_H
-#include "kernel/ntypes.h"
-#endif
-
-
 template<class TYPE> class nRangeVal
 {	
 public:
