@@ -412,6 +412,13 @@ inline ntype n_normangle(ntype a)
 
 //------------------------------------------------------------------------------
 /**
+    inverse value
+*/
+template <typename ntype>
+inline ntype n_inv(const ntype& f) { return (n_neqz(f) ? NT_ONE / f : f);}
+
+//------------------------------------------------------------------------------
+/**
     Get angular distance.
 */
 template <typename ntype> 

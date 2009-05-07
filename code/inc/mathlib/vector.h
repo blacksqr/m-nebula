@@ -91,6 +91,7 @@ public:
 	//--- by index access operator  -----------------------------------
 	ntype& operator[](size_t i)			{ return v[i]; }
 	ntype  operator[](size_t i) const	{ return v[i]; }
+		   operator ntype()		const	{ return this->len(); }
 
     //-- misc -------------------------------------------------------    
     ntype len_squared(void) const	{ return n_sqr(x) + n_sqr(y); }
@@ -103,10 +104,7 @@ public:
 			this->self_div(l);        
     }
 
-	ntype distance(const t_vector2& o)
-	{
-		return t_vector2(*this - o).len();
-	}
+	ntype distance(const t_vector2& o) { return t_vector2(*this - o).len(); }
 
 	ntype theta(void) const 
 	{
@@ -219,6 +217,7 @@ public:
 	//--- by index access operator  -----------------------------------
 	ntype& operator[](size_t i)			{ return v[i]; }
 	ntype  operator[](size_t i) const	{ return v[i]; }
+		   operator ntype()		const	{ return this->len(); }
 	//-- misc -------------------------------------------------------    
     ntype len_squared(void) const	{ return n_sqr(x) + n_sqr(y) + n_sqr(z); }
 	ntype len(void) const			{ return n_sqrt(this->len_squared()); }
@@ -231,10 +230,7 @@ public:
 		return *this;
     }
 
-	ntype distance(const t_vector3& o) const
-	{
-		return t_vector3(*this - o).len();
-	}
+	ntype distance(const t_vector3& o) const { return t_vector3(*this - o).len(); }
 
     //--- fuzzy comparison -----------------------------------
 	bool fuz_eq(const t_vector3& o, ntype tol = NT_TOL) const { return t_vector3(*this - o).len_squared() < tol; }
@@ -330,6 +326,7 @@ public:
 	//--- by index access operator  -----------------------------------
 	ntype& operator[](size_t i)			{ return v[i]; }
 	ntype  operator[](size_t i) const	{ return v[i]; }
+		   operator ntype()		const	{ return this->len(); }
 	//-- misc -------------------------------------------------------    
     ntype len_squared(void) const	{ return n_sqr(x) + n_sqr(y) + n_sqr(z) + n_sqr(w); }
 	ntype len(void) const			{ return n_sqrt(this->len_squared()); }
@@ -342,10 +339,7 @@ public:
 		return *this;
     }
 
-	ntype distance(const t_vector4& o) const
-	{
-		return t_vector4(*this - o).len();
-	}
+	ntype distance(const t_vector4& o) const { return t_vector4(*this - o).len(); }
 
     //--- fuzzy comparison -----------------------------------
 	bool fuz_eq(const t_vector4& o, ntype tol = NT_TOL) const { return t_vector4(*this - o).len_squared() < tol; }
