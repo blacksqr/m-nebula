@@ -4,12 +4,12 @@
  * [http://code.google.com/p/m-nebula m-nebula] - based on Nebula 1 from [http://radonlabs.de Radon Labs] has [http://code.google.com/p/m-nebula/source/browse/trunk/doc/source/license.txt own license]
  * [http://tcl.tk/ Tcl] - scripting, version 8.5 is in use, [http://www.tcl.tk/software/tcltk/license.html free license]
  * [http://openil.sourceforge.net/ DevIL] - image processing, version 1.7.5 is in use, [http://openil.sourceforge.net/license.php license LGPL 2.1]
-  * Libpng - for .png support, license
-  * Zlib - for compression, license
+  * [http://www.libpng.org/pub/png/libpng.html Libpng] - for .png support, [http://www.libpng.org/pub/png/src/libpng-LICENSE.txt license]
+  * [http://www.gzip.org/zlib Zlib] - for compression, [http://www.zlib.net/zlib_license.html license]
   * Libjpeg - for .jpg support, a sort of license 
   * Libtiff - for .tif support, license
   * Libmng - for .mng support, license
   * Little CMS - for colour profiles, MIT license
   * JasPer - for JPEG 2000 support, MIT license
  * FTGL - fonts rendering, version 2.1.2 (modified) is in use, license is MIT or LGPL
-FreeType2 - version 2.3.4 is in use, license is BSD or GPL
+  * FreeType2 - version 2.3.4 is in use, license is BSD or GPL
