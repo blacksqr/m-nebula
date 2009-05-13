@@ -1,4 +1,4 @@
-#Those libraries and projects made [http://code.google.com/p/m-nebula http://code.google.com/p/m-nebula/logo?logo_id=1241947550]  project possible.
+#Those libraries and projects made [http://code.google.com/p/m-nebula http://code.google.com/p/m-nebula/logo?logo_id=1241947550&nonsense=something_that_ends_with.png]  project possible.
 
 
 m-nebula- Based on Nebula 1 from [http://radonlabs.de Radon Labs] has [http://code.google.com/p/m-nebula/source/browse/trunk/doc/source/license.txt own license]
