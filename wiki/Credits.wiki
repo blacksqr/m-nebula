@@ -1,3 +1,4 @@
+#labels Featured,Credits,License
 ===Those libraries and projects made the [http://code.google.com/p/m-nebula http://code.google.com/p/m-nebula/logo?logo_id=1241947550&nonsense=something_that_ends_with.png]  project possible.===
 
  * [http://code.google.com/p/m-nebula m-nebula] - based on Nebula 1 from [http://radonlabs.de Radon Labs] has [http://code.google.com/p/m-nebula/source/browse/trunk/doc/source/license.txt own license]
@@ -10,5 +11,5 @@
   * [http://www.libmng.com/ Libmng] - for .mng support, [http://www.libmng.com/license.html license]
   * [http://www.littlecms.com/ Little CMS] - for colour profiles, [http://www.opensource.org/licenses/mit-license.php MIT] [http://www.littlecms.com/faq.htm license]
   * [http://www.ece.uvic.ca/~mdadams/jasper/ JasPer] - for JPEG 2000 support, [http://www.opensource.org/licenses/mit-license.php MIT] [http://www.ece.uvic.ca/~mdadams/jasper/#faq license]
- * FTGL - fonts rendering, version 2.1.2 (modified) is in use, license is MIT or LGPL
-  * FreeType2 - version 2.3.4 is in use, license is BSD or GPL
+ * [http://ftgl.wiki.sourceforge.net/ FTGL] - fonts rendering, version 2.1.2 is in use, license is [http://www.opensource.org/licenses/mit-license.php MIT] or [http://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License LGPL]
+  * [http://www.freetype.org/index2.html FreeType2] - version 2.3.4 is in use, [http://www.freetype.org/license.html license] is [http://www.freetype.org/FTL.TXT BSD] or [http://www.freetype.org/GPL.TXT GPL]
