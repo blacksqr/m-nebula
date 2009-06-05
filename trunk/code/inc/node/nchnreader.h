@@ -48,7 +48,6 @@ public:
     /// get connect definition
     void GetConnect(int index, const char*& cmdName, const char*& chnName);
 
-    static nClass* clazz;
     static nKernelServer* kernelServer;
 
 protected:

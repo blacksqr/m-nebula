@@ -923,6 +923,11 @@ static void n_setclearbuffer(void* o, nCmd* cmd)
 	if (str2enum(cmd->In()->GetS(), clean_table, sizeof(clean_table), eCmd))
 	{
 		self->SetClearBuffer(eCmd, cmd->In()->GetB());
+	} 
+	else
+	{
+		cmd->Rewind();
+		n_printf("Incorrect buffer name %s\n", cmd->In()->GetS());		
 	}
 }
 

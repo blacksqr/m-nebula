@@ -3,9 +3,18 @@
 //  nterrain_main.cc
 //  (C) 2000 A.Weissflog
 //-------------------------------------------------------------------
+#include "kernel/ntimeserver.h"
 #include "gfx/nscenegraph2.h"
 #include "terrain/nterrainnode.h"
 
+nNebulaScriptClass(nTerrainNode, "nvisnode");
+
+
+std::vector<float> quadsquare::sin_lookup;
+std::vector<float> quadsquare::cos_lookup;
+
+nProfiler* nTerrainNode::p_update = 0;
+nProfiler* nTerrainNode::p_render = 0;
 //-------------------------------------------------------------------
 //  nTerrainNode()
 //  23-Mar-00   floh    created
@@ -14,10 +23,10 @@
 //-------------------------------------------------------------------
 nTerrainNode::nTerrainNode()
 : ref_ibuf(this),
-  dyn_vb(ks,this),
-  ref_gs(ks,this),
-  refSceneGraph(ks,this),
-  refFile(ks, this)
+  dyn_vb(kernelServer,this),
+  ref_gs(kernelServer,this),
+  refSceneGraph(kernelServer,this),
+  refFile(kernelServer, this)
 {
     this->ref_gs = "/sys/servers/gfx";
     this->refSceneGraph = "/sys/servers/sgraph2";
@@ -58,12 +67,38 @@ nTerrainNode::nTerrainNode()
     this->root_corner_data.level = 15;
     this->root_corner_data.xorg = 0;
     this->root_corner_data.zorg = 0;
-    for (i=0; i<4; i++) {
+    for (i = 0; i < 4; i++) 
+	{
         this->root_corner_data.verts[i] = &(this->root_vertices[i]);
     }
     this->root_node = NULL;
     this->fp = NULL;
     this->num_tris = 0;
+}
+
+void nTerrainNode::Initialize()
+{	
+	if (this->GetClass()->GetRef() == 1)
+	{
+		// initialize the sincos lookup-table
+		quadsquare::sin_lookup.resize(quadsquare::LOOKUP_ENTRIES+1);
+		quadsquare::cos_lookup.resize(quadsquare::LOOKUP_ENTRIES+1);
+
+		float a = 0.0f;
+		float da = (2.0f*(nReal)N_PI)/float(quadsquare::LOOKUP_ENTRIES);
+
+		for (int i = 0; i <= quadsquare::LOOKUP_ENTRIES; i++) 
+		{
+			quadsquare::sin_lookup[i] = n_sin(a);
+			quadsquare::cos_lookup[i] = n_cos(a);
+			a += da;
+		}
+
+		// initialize profilers
+		nTerrainNode::p_update = kernelServer->ts->NewProfiler("terr_update");
+		nTerrainNode::p_render = kernelServer->ts->NewProfiler("terr_render");		
+	}	
+	nVisNode::Initialize();
 }
 
 //-------------------------------------------------------------------
@@ -74,6 +109,21 @@ nTerrainNode::~nTerrainNode()
 {
     if (this->root_node)    this->root_node->Release(this);
     if (this->quad_pool)    delete[] this->quad_pool;
+
+	if (this->GetClass()->GetRef() == 1)
+	{
+		kernelServer->ts->ReleaseProfiler(nTerrainNode::p_update);
+		kernelServer->ts->ReleaseProfiler(nTerrainNode::p_render);
+
+		if (!quadsquare::sin_lookup.empty()) 
+		{
+			quadsquare::sin_lookup.clear();			
+		}
+		if (!quadsquare::cos_lookup.empty()) 
+		{
+			quadsquare::cos_lookup.clear();
+		}
+	}	
 }
 
 //-------------------------------------------------------------------

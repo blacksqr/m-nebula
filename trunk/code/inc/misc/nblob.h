@@ -21,10 +21,10 @@
 #define N_DEFINES nBlob
 #include "kernel/ndefdllclass.h"
 //--------------------------------------------------------------------
-class N_DLLCLASS nBlob : public nRoot {
+class N_DLLCLASS nBlob : public nRoot 
+{
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 private:
     void *blob;
     int size;

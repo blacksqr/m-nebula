@@ -90,9 +90,14 @@ public:
          @name Initialize/Cleanup
     */
     //@{
-    virtual void Initialize(void);
+	/** 
+		Will be called by the kernel after the object has been    
+		constructed and linked into the name space.
+	*/
+	virtual void Initialize(void) {}
     virtual bool Release(void);
-    long AddRef(void);
+	/// Increment the reference count. - 08-Oct-98   floh    created
+    long AddRef(void) { return ++this->ref_count; }
     long GetRefCount(void);
     void SetFlags(int);
     void UnsetFlags(int);
@@ -147,7 +152,7 @@ public:
     //const char* GetFullName(char *buf, long sizeof_buf) const;
 	const stl_string& GetFullName();
 
-    char* GetRelPath(nRoot *other, char *buf, long sizeof_buf);
+    const char* GetRelPath(nRoot* other, stl_string& rel_path);
     nRoot* Find(const char *str);
     void AddHead(nRoot *n);
     void AddTail(nRoot *n);

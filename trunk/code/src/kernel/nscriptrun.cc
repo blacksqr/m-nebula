@@ -18,12 +18,6 @@
      - 31-Oct-98   floh    uebernommen aus nTclServer
 */
 //--------------------------------------------------------------------
-bool nScriptServer::RunCommand(nCmd *)
-{
-    n_error("nScriptServer::RunCommand(): pure virtual function called!");
-    return FALSE;
-}
-
 bool nScriptServer::WriteComment(nFile*, const char*)
 {
     n_error("nScriptServer::WriteComment(): pure virtual function called!");

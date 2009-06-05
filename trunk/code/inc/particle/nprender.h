@@ -30,8 +30,10 @@
 //  Particle attributes that can be animated over the particles
 //  lifetime.
 //--------------------------------------------------------------------
-struct nPAttrs {
-    enum {
+struct nPAttrs 
+{
+    enum 
+	{
         N_SIZE   = 0,
         N_BOUNCE = 1,
         N_RED    = 2,
@@ -48,7 +50,8 @@ struct nPAttrs {
 
 //--------------------------------------------------------------------
 class nPEmitter;
-class N_DLLCLASS nPRender : public nAnimNode {
+class N_DLLCLASS nPRender : public nAnimNode 
+{
 protected:
     int   i_num_keys;
     float f_num_keys;
@@ -75,28 +78,16 @@ public:
            stretch(false)
     {
         this->SetFlags(N_FLAG_SAVEUPSIDEDOWN);
-    };
+    }
     virtual ~nPRender();
     virtual bool SaveCmds(nPersistServer *);
 
-    void  SetSpin(float f) {
-        this->spin = n_deg2rad(f);
-    };
-    float GetSpin(void) {
-        return n_rad2deg(this->spin);
-    };
-    void  SetSpinAccel(float f) {
-        this->spin_accel = n_deg2rad(f);
-    };
-    float GetSpinAccel(void) {
-        return n_rad2deg(this->spin_accel);
-    };
-    void SetStretch(bool b) {
-        this->stretch = b;
-    };
-    bool GetStretch(void) {
-        return this->stretch;
-    };
+    void  SetSpin(float f) { this->spin = n_deg2rad(f); }
+    float GetSpin(void) { return n_rad2deg(this->spin); }
+    void  SetSpinAccel(float f) { this->spin_accel = n_deg2rad(f); }
+    float GetSpinAccel(void) { return n_rad2deg(this->spin_accel); }
+    void  SetStretch(bool b) { this->stretch = b; }
+    bool  GetStretch(void) { return this->stretch; }
 
     virtual void BeginKeys(int num);
     virtual void SetKey(int i, float size, float bounce, float r, float g, float b, float a);
@@ -105,7 +96,7 @@ public:
     virtual void GetKey(int i, float& size, float& bounce, float& r, float& g, float& b, float& a);
 
     virtual void SetEmitter(const char *name);
-    virtual char *GetEmitter(char *buf, int size);
+    virtual const char* GetEmitter(stl_string& relpath);
 protected:
     void getParticleAttrs(float rel_age, nPAttrs& pa);
 };

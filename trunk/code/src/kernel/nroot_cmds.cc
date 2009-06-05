@@ -572,8 +572,8 @@ static void n_getfullname(void *o, nCmd *cmd)
 static void n_getrelpath(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
-    char buf[N_MAXPATH];
-    cmd->Out()->SetS(self->GetRelPath((nRoot *)cmd->In()->GetO(),buf,sizeof(buf)));
+    stl_string relpath;
+    cmd->Out()->SetS(self->GetRelPath((nRoot *)cmd->In()->GetO(), relpath));
 }
 
 //------------------------------------------------------------------------------

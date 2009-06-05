@@ -77,8 +77,7 @@ public:
 	/// Compute time according to reptype
 	float ComputeTime(float t, float min_t, float max_t) const;
 
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
 protected:
     nRepType repType;

@@ -24,7 +24,7 @@
 	//!	\see		StoreDwords
 	//!	\see		CopyMemory
 	//!	\see		MoveMemory
-	inline_ void ZeroMemory(void* addr, udword size)					{ n_memset(addr, 0, size);		}
+	inline void ZeroMemory(void* addr, udword size)					{ memset(addr, 0, size);		}
 
 	//!	Fills a buffer with a given byte.
 	//!	\param		addr	[in] buffer address
@@ -34,7 +34,7 @@
 	//!	\see		ZeroMemory
 	//!	\see		CopyMemory
 	//!	\see		MoveMemory
-	inline_ void FillMemory(void* dest, udword size, ubyte val)			{ n_memset(dest, val, size);		}
+	inline void FillMemory(void* dest, udword size, ubyte val)			{ memset(dest, val, size);		}
 
 	//!	Fills a buffer with a given dword.
 	//!	\param		addr	[in] buffer address
@@ -45,7 +45,7 @@
 	//!	\see		CopyMemory
 	//!	\see		MoveMemory
 	//!	\warning	writes nb*4 bytes !
-	inline_ void StoreDwords(udword* dest, udword nb, udword value)
+	inline void StoreDwords(udword* dest, udword nb, udword value)
 	{
 		// The asm code below **SHOULD** be equivalent to one of those C versions
 		// or the other if your compiled is good: (checked on VC++ 6.0)
@@ -79,7 +79,7 @@
 	//!	\see		FillMemory
 	//!	\see		StoreDwords
 	//!	\see		MoveMemory
-	inline_ void CopyMemory(void* dest, const void* src, udword size)	{ memcpy(dest, src, size);		}
+	inline void CopyMemory(void* dest, const void* src, udword size)	{ memcpy(dest, src, size);		}
 
 	//!	Moves a buffer.
 	//!	\param		addr	[in] destination buffer address
@@ -89,7 +89,7 @@
 	//!	\see		FillMemory
 	//!	\see		StoreDwords
 	//!	\see		CopyMemory
-	inline_ void MoveMemory(void* dest, const void* src, udword size)	{ memmove(dest, src, size);		}
+	inline void MoveMemory(void* dest, const void* src, udword size)	{ memmove(dest, src, size);		}
 
 	#define SIZEOFOBJECT		sizeof(*this)									//!< Gives the size of current object. Avoid some mistakes (e.g. "sizeof(this)").
 	//#define CLEAROBJECT		{ n_memset(this, 0, SIZEOFOBJECT);	}			//!< Clears current object. Laziness is my business. HANDLE WITH CARE.

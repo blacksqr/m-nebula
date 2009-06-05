@@ -8,6 +8,8 @@
 #include "gfx/nchannelset.h"
 #include "node/nweighttree.h"
 
+nNebulaScriptClass(nWeightTree, "nvisnode");
+
 //-------------------------------------------------------------------
 //  nWeightTree()
 //  03-Jul-99   floh    created

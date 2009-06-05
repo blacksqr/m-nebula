@@ -5,10 +5,12 @@
 //-------------------------------------------------------------------
 #include "misc/nmathserver.h"
 #include "mathlib/nmath.h"
+#include "kernel/nkernelserver.h"
 
 #include <stdlib.h>
 #include <time.h>
 
+nNebulaScriptClass(nMathServer, "nroot");
 //-------------------------------------------------------------------
 /**
     - 21-Jun-99   floh    created

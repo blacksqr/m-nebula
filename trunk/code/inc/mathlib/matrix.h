@@ -69,6 +69,8 @@ public:
     t_matrix33() { this->ident(); }
 	/// copy
 	t_matrix33(const t_matrix33& m1) { this->set(m1); }
+	/// copy
+	t_matrix33(const t_matrix44<ntype>& m1) { this->set(m1); }
 	/// from axis
     t_matrix33(const t_vec3& v0, const t_vec3& v1, const t_vec3& v2) { this->set(v0, v1, v2); }
 	/// from array

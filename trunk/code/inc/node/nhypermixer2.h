@@ -75,8 +75,7 @@ public:
     /// get connection definition
     void GetConnect(int index, const char*& tarObjPath, const char*& tarObjCmd, const char*& srcObjPath, const char*& srcObjCmd);
 
-    static nClass *clazz;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
 protected:
     /// validate object pointers

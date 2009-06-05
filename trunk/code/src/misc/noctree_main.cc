@@ -7,7 +7,7 @@
 #include "gfx/ngfxserver.h"
 #include "misc/noctree.h"
 #include "gfx/nprimitiveserver.h"
-
+nNebulaScriptClass(nOctree, "nroot");
 //-------------------------------------------------------------------
 /**
     - 31-May-99   floh    created
@@ -565,7 +565,7 @@ void nOctree::Visualize(nGfxServer *gs)
     if (this->visualize) {
         n_assert(this->tree_root);
         nPrimitiveServer *prim;
-        prim = (nPrimitiveServer *)this->ks->Lookup("/sys/servers/primitive");
+        prim = (nPrimitiveServer *)this->kernelServer->Lookup("/sys/servers/primitive");
         if (prim) {
             prim->EnableLighting(false);
             prim->Begin(N_PTYPE_LINE_LIST);

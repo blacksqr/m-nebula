@@ -80,7 +80,7 @@ public:
     /// constructor
     nIpcServer(const char* portName);
     /// destructor
-    ~nIpcServer();
+    virtual ~nIpcServer();
     /// poll connections for new messages, call this frequently!
     bool Poll();
     /// get next message

@@ -133,8 +133,8 @@ nTclServer::nTclServer() :
 {
     this->refFileServer     = "/sys/servers/file2";
     this->print_error       = false;
-    this->is_standalone_tcl = true;
-
+    this->is_standalone_tcl = true;    
+//*
     // initialize data internal to TCL to make encodings work.
     stl_string path;
     kernelServer->GetFileServer2()->ManglePath("home:bin/tcl/tcl8.5", path);
@@ -143,7 +143,9 @@ nTclServer::nTclServer() :
         std::replace(path.begin(), path.end(), '/', '\\');
     #endif
     Tcl_FindExecutable(path.c_str());
-
+/*/
+	Tcl_FindExecutable(kernelServer->GetArgv(0));
+//*/
     // create interpreter
     this->interp  = Tcl_CreateInterp();
     n_assert(this->interp);
@@ -257,7 +259,7 @@ nTclServer::EndWrite(nFile* file)
 //  04-Nov-98   floh    created
 //--------------------------------------------------------------------
 static void _indent(long i, stl_string& buf)
-{
+{    
     buf.clear();
     for (long j = 0; j < i; j++) buf += "\t";
 }
@@ -284,18 +286,19 @@ bool nTclServer::WriteComment(nFile *file, const char *str)
 //--------------------------------------------------------------------
 void nTclServer::write_select_statement(nFile* file, nRoot *o, nRoot *owner)
 {
-    switch (this->GetSelectMethod()) {
-
-        case SELCOMMAND:
+    switch (this->GetSelectMethod()) 
+	{
+		case SELCOMMAND:
             // get relative path from owner to o and write select statement
-            char relpath[N_MAXPATH];
-            _indent(++this->indent_level, this->indent_buf);
-            owner->GetRelPath(o, relpath, sizeof(relpath));
-            
-            file->PutS(this->indent_buf.c_str());
-            file->PutS("sel ");
-            file->PutS(relpath);
-            file->PutS("\n");
+			{
+				stl_string relpath;
+				_indent(++this->indent_level, this->indent_buf);          
+	            
+				file->PutS(this->indent_buf.c_str());
+				file->PutS("sel ");
+				file->PutS(owner->GetRelPath(o, relpath));
+				file->PutS("\n");
+			}
             break;
 
         case NOSELCOMMAND:
@@ -317,7 +320,7 @@ bool nTclServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
 
     // write generic 'new' statement
     const char *o_class = o->GetClass()->GetName();
-    _indent(this->indent_level,this->indent_buf);
+    _indent(this->indent_level, this->indent_buf);
 
     file->PutS(this->indent_buf.c_str());
     file->PutS("new ");
@@ -381,15 +384,13 @@ bool nTclServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
     n_assert(o);
 
     // get relative path from owner to o and write select statement
-    char relpath[N_MAXPATH];
-    _indent(--this->indent_level, this->indent_buf);
-    o->GetRelPath(owner, relpath, sizeof(relpath));
+    stl_string relpath;
+    _indent(--this->indent_level, this->indent_buf);    
 
     file->PutS(this->indent_buf.c_str());
     file->PutS("sel ");
-    file->PutS(relpath);
+    file->PutS(o->GetRelPath(owner, relpath));
     file->PutS("\n");
-
     return true;
 }
 

@@ -7,6 +7,7 @@
 #include "gfx/nchannelcontext.h"
 #include "node/nflipflop.h"
 
+nNebulaScriptClass(nFlipFlop, "nvisnode");
 //-------------------------------------------------------------------
 //  nFlipFlop()
 //  09-Dec-98   floh    created

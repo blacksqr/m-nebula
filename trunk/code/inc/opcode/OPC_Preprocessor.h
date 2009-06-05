@@ -112,7 +112,7 @@
 		#pragma inline_depth( 255 )
 		#pragma intrinsic(memcmp)
 		#pragma intrinsic(memcpy)
-		#pragma intrinsic(n_memset)
+		#pragma intrinsic(memset)
 		#pragma intrinsic(strcat)
 		#pragma intrinsic(strcmp)
 		#pragma intrinsic(strcpy)

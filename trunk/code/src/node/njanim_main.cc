@@ -8,7 +8,7 @@
 #include "gfx/nchannelcontext.h"
 #include "node/njoint2.h"
 #include "node/njointanim.h"
-
+nNebulaScriptClass(nJointAnim, "nanimnode");
 //--------------------------------------------------------------------
 //  nJointAnim()
 //  12-Jul-99   floh    created
@@ -27,7 +27,7 @@ nJointAnim::nJointAnim() :
     r_res(0),
     in_state(N_JA_INSIDE_NONE),
     jointPointersDirty(false),
-    refJointRoot(ks, this)
+    refJointRoot(kernelServer, this)
 {
     // empty
 }
@@ -57,7 +57,7 @@ void nJointAnim::Initialize(void)
 {
     // register as depend node on parent
     nVisNode *p = (nVisNode *) this->GetParent();
-    if (p && p->IsA(ks->FindClass("nvisnode"))) 
+    if (p && p->IsA(kernelServer->FindClass("nvisnode"))) 
     {
         p->DependsOn(this);
     }

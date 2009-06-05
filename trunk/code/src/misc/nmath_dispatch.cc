@@ -3,7 +3,8 @@
 //  nmath_dispatch.cc
 //  (C) 1999 A.Weissflog
 //-------------------------------------------------------------------
-
+#include "kernel/npersistserver.h"
+#include "misc/nmathserver.h"
 //------------------------------------------------------------------------------
 /**
     @scriptclass
@@ -31,3 +32,8 @@
     weigh exactly (and profile eventually) which method to use. 
 */
 
+void n_initcmds(nClass *cl)
+{
+	cl->BeginCmds();
+	cl->EndCmds();
+}

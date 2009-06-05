@@ -65,6 +65,10 @@ public:
 	//-- normalized quaternion -------------------------------------
 	t_quaternion operator~() const { ntype l = magnitude(); return (l > NT_ZERO ? (*this)*(NT_ONE/l) : *this); }
 
+	//--- by index access operator  -----------------------------------
+	ntype& operator[](size_t i)			{ return v[i]; }
+	ntype  operator[](size_t i) const	{ return v[i]; }
+
 	//-- binary update operators ----------------------------------------------
 	t_quaternion& operator+=(const t_quaternion& q) { this->self_add(q); return *this; }
     t_quaternion& operator-=(const t_quaternion& q) { this->self_sub(q); return *this; }

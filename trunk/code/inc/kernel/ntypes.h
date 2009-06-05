@@ -91,7 +91,7 @@ inline bool n_getbit(int bit, int bits)	  { return ((bits & bit) != 0);}
 #define n_ltoa(val,buf,radix) sprintf(buf,"%ld",val);
 #define	n_inline static inline
 #else
-#define n_stricmp stricmp
+#define n_stricmp _stricmp
 #define n_ltoa _ltoa
 #define	n_inline inline
 #endif

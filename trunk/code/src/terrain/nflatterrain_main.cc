@@ -3,9 +3,14 @@
 //  nflatterrain_main.cc
 //  (C) 2000 A.Weissflog
 //-------------------------------------------------------------------
+#include "kernel/ntimeserver.h"
 #include "gfx/nscenegraph2.h"
 #include "terrain/nflatterrainnode.h"
 
+nNebulaScriptClass(nFlatTerrainNode, "nvisnode");
+
+nProfiler *nFlatTerrainNode::p_update = 0;
+nProfiler *nFlatTerrainNode::p_render = 0;
 //-------------------------------------------------------------------
 /**
     23-Mar-00   floh    created
@@ -13,10 +18,10 @@
 //-------------------------------------------------------------------
 nFlatTerrainNode::nFlatTerrainNode()
 : ref_ibuf(this),
-  dyn_vb(ks,this),
-  ref_gs(ks,this),
-  ref_sceneGraph(ks,this),
-  refFile(ks, this)
+  dyn_vb(kernelServer,this),
+  ref_gs(kernelServer,this),
+  ref_sceneGraph(kernelServer,this),
+  refFile(kernelServer, this)
 {
 	this->ref_sceneGraph = "/sys/servers/sgraph2";
     this->ref_gs = "/sys/servers/gfx";
@@ -28,19 +33,19 @@ nFlatTerrainNode::nFlatTerrainNode()
     this->static_error = 8.0f;
     this->uv_scale = 1.0f;
     this->radius = 10.0f;
-    this->quad_pool   = NULL;
-    this->free_quads  = NULL;
+    this->quad_pool   = 0;
+    this->free_quads  = 0;
     this->render_pass = 0;
 
-//    this->tmp_sgnode_ptr = NULL;
+//    this->tmp_sgnode_ptr = 0;
     this->num_triangles = 0;
     this->cur_vertex = 0;
     this->cur_triangle = 0;
-    this->cur_vb = NULL;
+    this->cur_vb = 0;
 
     this->stride = 0;
-    this->coord = NULL;
-    this->norm  = NULL;
+    this->coord = 0;
+    this->norm  = 0;
     n_memset(this->uv,0,sizeof(this->uv));
 
     this->in_render = false;
@@ -53,8 +58,8 @@ nFlatTerrainNode::nFlatTerrainNode()
     for (i=0; i<4; i++) {
         this->root_vertices[i].y  = 0;
     }
-    this->root_corner_data.parent = NULL;
-    this->root_corner_data.square = NULL;
+    this->root_corner_data.parent = 0;
+    this->root_corner_data.square = 0;
     this->root_corner_data.child_index = 0;
     this->root_corner_data.level = 15;
     this->root_corner_data.xorg = 0;
@@ -62,15 +67,25 @@ nFlatTerrainNode::nFlatTerrainNode()
     for (i=0; i<4; i++) {
         this->root_corner_data.verts[i] = &(this->root_vertices[i]);
     }
-    this->root_node = NULL;
-    this->fp = NULL;
+    this->root_node = 0;
+    this->fp = 0;
     this->num_tris = 0;
 
     for (i=0; i<4; i++) {
-        this->neighbors[i] = NULL;
+        this->neighbors[i] = 0;
     }
 
-    this->e_weld = this->s_weld = NULL;
+    this->e_weld = this->s_weld = 0;	
+}
+
+void nFlatTerrainNode::Initialize()
+{
+	if (this->GetClass()->GetRef() == 1)
+	{
+		nFlatTerrainNode::p_update = kernelServer->ts->NewProfiler("flatter_update");
+		nFlatTerrainNode::p_render = kernelServer->ts->NewProfiler("flatter_render");
+	}
+	nVisNode::Initialize();
 }
 
 //-------------------------------------------------------------------
@@ -82,6 +97,12 @@ nFlatTerrainNode::~nFlatTerrainNode()
 {
     if (this->root_node) this->root_node->Release(this);
     if (this->quad_pool) delete[] this->quad_pool;
+
+	if (this->GetClass()->GetRef() == 1)
+	{
+		kernelServer->ts->ReleaseProfiler(nFlatTerrainNode::p_update);
+		kernelServer->ts->ReleaseProfiler(nFlatTerrainNode::p_render);
+	}
 }
 
 //-------------------------------------------------------------------

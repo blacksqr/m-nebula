@@ -8,6 +8,8 @@
 #include "node/nchnreader.h"
 #include "node/nchannelconnect.h"
 
+
+nNebulaScriptClass(nChnReader, "nvisnode");
 //------------------------------------------------------------------------------
 /**
 */

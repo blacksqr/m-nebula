@@ -18,26 +18,27 @@
 #include "audio/naudioserver2.h"
 #include "kernel/nremoteserver.h"
 
+nNebulaScriptClass(nObserver, "nroot");
 //-------------------------------------------------------------------
 /**
     - 20-Jul-99   floh    created
 */
 //-------------------------------------------------------------------
 nObserver::nObserver()
-         :  ref_gs(ks, this),
-            ref_is(ks, this),
-            ref_ss(ks, this),
-            ref_sg(ks, this),
-            ref_chn(ks, this),
-            ref_fx(ks, this),
-            ref_con(ks, this),
-            ref_ps(ks, this),
-            ref_as(ks, this),
-            ref_prim(ks, this),
-            ref_scene(ks, this),
-            ref_camera(ks, this),
-            ref_lookat(ks, this),
-            ref_remoteServer(ks, this)
+         :  ref_gs(kernelServer, this),
+            ref_is(kernelServer, this),
+            ref_ss(kernelServer, this),
+            ref_sg(kernelServer, this),
+            ref_chn(kernelServer, this),
+            ref_fx(kernelServer, this),
+            ref_con(kernelServer, this),
+            ref_ps(kernelServer, this),
+            ref_as(kernelServer, this),
+            ref_prim(kernelServer, this),
+            ref_scene(kernelServer, this),
+            ref_camera(kernelServer, this),
+            ref_lookat(kernelServer, this),
+            ref_remoteServer(kernelServer, this)
 {
     this->ref_gs     = "/sys/servers/gfx";
     this->ref_is     = "/sys/servers/input";
@@ -153,8 +154,8 @@ bool nObserver::GetGrid(void)
 //-------------------------------------------------------------------
 bool nObserver::Start(void)
 {
-    ks->ts->EnableFrameTime();
-    ks->ts->ResetTime();
+    kernelServer->ts->EnableFrameTime();
+    kernelServer->ts->ResetTime();
 
     this->timeChannel       = this->ref_chn->GenChannel("time");
     this->globalTimeChannel = this->ref_chn->GenChannel("gtime");
@@ -189,7 +190,7 @@ bool nObserver::Start(void)
 void nObserver::Stop(void)
 {
     this->stop_requested = true;
-    ks->ts->DisableFrameTime();
+    kernelServer->ts->DisableFrameTime();
 }
 
 //-------------------------------------------------------------------
@@ -203,7 +204,7 @@ void nObserver::Stop(void)
 //-------------------------------------------------------------------
 void nObserver::StartSingleStep(void)
 {
-    ks->ts->ResetTime();
+    kernelServer->ts->ResetTime();
 
     this->timeChannel       = this->ref_chn->GenChannel("time");
     this->globalTimeChannel = this->ref_chn->GenChannel("gtime");
@@ -289,7 +290,7 @@ void nObserver::render_frame(float time)
 {
     nGfxServer     *gs =  this->ref_gs.get();
     nConServer     *con = this->ref_con.get();
-    nAudioServer2* as2 = (nAudioServer2*) ks->Lookup("/sys/servers/audio");
+    nAudioServer2* as2 = (nAudioServer2*) kernelServer->Lookup("/sys/servers/audio");
 
     this->handle_input();
 
@@ -358,9 +359,9 @@ bool nObserver::trigger(void)
     if (!this->ref_ss->Trigger()) return false;
     this->ref_remoteServer->Trigger();
 
-    ks->Trigger();
-    ks->ts->Trigger();
-    double time = ks->ts->GetFrameTime();
+    kernelServer->Trigger();
+    kernelServer->ts->Trigger();
+    double time = kernelServer->ts->GetFrameTime();
     this->ref_is->Trigger(time);
     this->render_frame((float)time);
     return true;

@@ -649,10 +649,13 @@ void nGlPixelShader::emit_pass_no_multitexture(nPixelShaderDesc& psd, nGlServer 
 	this->emit_texture_states(gs, psd.tunit[pass]);
 
 	// emit the current render pass
-	if (0==pass) {
+	if (0==pass) 
+	{
 		if (!this->GetActiveProgram())
 			this->emit_blend_op(psd.color_op[pass],psd.alpha_op[pass],gs);
-	} else {
+	} 
+	else 
+	{
 		this->emit_fbuffer_blend_op(psd.color_op[pass], psd.alpha_op[pass], gs);
 	}
 }
@@ -972,7 +975,8 @@ void nGlPixelShader::EndRender(void)
 	//if (glActiveTextureARB) glActiveTextureARB(GL_TEXTURE0_ARB);
 
 	// + 21-Jan-2003 Ilya from EdLanda patch
-	for (int i=0; i<gs->num_texture_units; i++) {
+	for (int i=0; i<gs->num_texture_units; i++) 
+	{
 		if (glActiveTextureARB) glActiveTextureARB(GLenum(GL_TEXTURE0_ARB + i));
 
 		bool enable_3d = this->GetShaderDesc()->tunit[i].enable_3d && (glTexImage3DEXT != 0);		

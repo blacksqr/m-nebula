@@ -77,8 +77,7 @@ protected:
     int globalTimeChannel;
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     nObserver();
     virtual ~nObserver();

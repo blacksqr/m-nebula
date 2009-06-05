@@ -7,10 +7,9 @@
 #--------------------------------------------------------------------
 beginmodule nflatterrainnode
     setdir terrain
-    setfiles { nflatterrain_init nflatterrain_main nflatterrain_render nflatterrain_map
+    setfiles { nflatterrain_main nflatterrain_render nflatterrain_map
                nflatterrain_wavefront nflatterrain_cmds flat_quadtree }
     setheaders { nflatterrainnode flat_quadtree }
-    setversion nflatterrain_ver
 endmodule
 
 #--------------------------------------------------------------------

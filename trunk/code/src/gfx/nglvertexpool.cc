@@ -172,14 +172,7 @@ void nGlVertexPool::RenderBubble(nVertexBubble *vb,
 
 	// get vertex component pointers
 	float *bp = this->base_ptr + vb_start*this->stride4;	
-/*
-	if (glGenBuffersARB)
-	{
-	}
-	else
-	{
-	}
-*/
+
 	// define pointer to vertex array components
 	if (this->vtype & N_VT_COORD) 
 	{

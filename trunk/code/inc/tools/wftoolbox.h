@@ -25,10 +25,10 @@ class wfToolbox {
 
     // needed by smooth(): contains for each vertex a list
     // of face indices which reference this vertex
-    nArray< nArray<int> > connect_array;
+    std::vector< std::vector<int> > connect_array;
 
     // needed by smooth(): the face normals for each vertex
-    nArray<vector3> face_normals;
+    std::vector<vector3> face_normals;
 
 public:
 //-------------------------------------------------------------------
@@ -50,16 +50,16 @@ void clean(wfObject& src,   // source object (complete)
            float ctol)      // tolerance for colors
 {
     // check v components for redundancies
-    nArray<int> v_maptable(5000, 5000);
-    nArray<wfCoord>::iterator v0;
-    for (v0=src.v_array.Begin(); v0!=src.v_array.End(); v0++) {
+    std::vector<int> v_maptable(5000, 5000);
+    std::vector<wfCoord>::iterator v0;
+    for (v0=src.v_array.begin(); v0!=src.v_array.end(); v0++) {
 
         // see if the component already exists in the target
-        nArray<wfCoord>::iterator v1;
+        std::vector<wfCoord>::iterator v1;
         int i1;
         bool exists = false;
-        for (i1=0,v1=dst.v_array.Begin(); v1!=dst.v_array.End(); i1++,v1++) {
-            if (v1->v.isequal(v0->v,vtol)) {
+        for (i1=0,v1=dst.v_array.begin(); v1!=dst.v_array.end(); i1++,v1++) {
+            if (v1->v.fuz_eq(v0->v,vtol)) {
                 // v1 is a copy of v0, break!
                 exists = true;
                 break;
@@ -69,141 +69,141 @@ void clean(wfObject& src,   // source object (complete)
         // push the vertex index on the mapping table, if it was
         // not redundant, the last loop fell through, otherwise,
         // it broke on the redundant vertex
-        v_maptable.PushBack(i1);
+        v_maptable.push_back(i1);
 
         // if it was a new unique vertex, we will have to push
         // it into the dest component array
         if (!exists) {
-            dst.v_array.PushBack(*v0);
+            dst.v_array.push_back(*v0);
         }
     }
-    fprintf(stderr,"-> v's reduced from %d to %d\n",src.v_array.Size(),dst.v_array.Size());
+    fprintf(stderr,"-> v's reduced from %d to %d\n",src.v_array.size(),dst.v_array.size());
 
     // check vn components for redundancies
-    nArray<int> vn_maptable(5000, 5000);
-    nArray<vector3>::iterator vn0;
-    for (vn0=src.vn_array.Begin(); vn0!=src.vn_array.End(); vn0++) {
-        nArray<vector3>::iterator vn1;
+    std::vector<int> vn_maptable(5000, 5000);
+    std::vector<vector3>::iterator vn0;
+    for (vn0=src.vn_array.begin(); vn0!=src.vn_array.end(); vn0++) {
+        std::vector<vector3>::iterator vn1;
         int i1;
         bool exists = false;
-        for (i1=0,vn1=dst.vn_array.Begin(); vn1!=dst.vn_array.End(); i1++,vn1++) {
-            if (vn1->isequal(*vn0,vntol)) {
+        for (i1=0,vn1=dst.vn_array.begin(); vn1!=dst.vn_array.end(); i1++,vn1++) {
+            if (vn1->fuz_eq(*vn0,vntol)) {
                 // v1 is a copy of v0, break!
                 exists = true;
                 break;
             }
         }
-        vn_maptable.PushBack(i1);
+        vn_maptable.push_back(i1);
         if (!exists) {
-            dst.vn_array.PushBack(*vn0);
+            dst.vn_array.push_back(*vn0);
         }
     }
-    fprintf(stderr,"-> vn's reduced from %d to %d\n",src.vn_array.Size(),dst.vn_array.Size());
+    fprintf(stderr,"-> vn's reduced from %d to %d\n",src.vn_array.size(),dst.vn_array.size());
 
     // check vt components for redundancies
-    nArray<int> vt_maptable(5000, 5000);
-    nArray<vector2>::iterator vt0;
-    for (vt0=src.vt_array.Begin(); vt0!=src.vt_array.End(); vt0++) {
-        nArray<vector2>::iterator vt1;
+    std::vector<int> vt_maptable(5000, 5000);
+    std::vector<vector2>::iterator vt0;
+    for (vt0=src.vt_array.begin(); vt0!=src.vt_array.end(); vt0++) {
+        std::vector<vector2>::iterator vt1;
         int i1;
         bool exists = false;
-        for (i1=0,vt1=dst.vt_array.Begin(); vt1!=dst.vt_array.End(); i1++,vt1++) {
-            if (vt1->isequal(*vt0,vttol)) {
+        for (i1=0,vt1=dst.vt_array.begin(); vt1!=dst.vt_array.end(); i1++,vt1++) {
+            if (vt1->fuz_eq(*vt0,vttol)) {
                 // v1 is a copy of v0, break!
                 exists = true;
                 break;
             }
         }
-        vt_maptable.PushBack(i1);
+        vt_maptable.push_back(i1);
         if (!exists) {
-            dst.vt_array.PushBack(*vt0);
+            dst.vt_array.push_back(*vt0);
         }
     }
-    fprintf(stderr,"-> vt's reduced from %d to %d\n",src.vt_array.Size(),dst.vt_array.Size());
+    fprintf(stderr,"-> vt's reduced from %d to %d\n",src.vt_array.size(),dst.vt_array.size());
 
     // check vt1 components for redundancies
-    nArray<int> vt1_maptable(5000, 5000);
-    nArray<vector2>::iterator vt10;
-    for (vt10=src.vt1_array.Begin(); vt10!=src.vt1_array.End(); vt10++) {
-        nArray<vector2>::iterator vt11;
+    std::vector<int> vt1_maptable(5000, 5000);
+    std::vector<vector2>::iterator vt10;
+    for (vt10=src.vt1_array.begin(); vt10!=src.vt1_array.end(); vt10++) {
+        std::vector<vector2>::iterator vt11;
         int i1;
         bool exists = false;
-        for (i1=0,vt11=dst.vt1_array.Begin(); vt11!=dst.vt1_array.End(); i1++,vt11++) {
-            if (vt11->isequal(*vt10,vttol)) {
+        for (i1=0,vt11=dst.vt1_array.begin(); vt11!=dst.vt1_array.end(); i1++,vt11++) {
+            if (vt11->fuz_eq(*vt10,vttol)) {
                 // v1 is a copy of v0, break!
                 exists = true;
                 break;
             }
         }
-        vt1_maptable.PushBack(i1);
+        vt1_maptable.push_back(i1);
         if (!exists) {
-            dst.vt1_array.PushBack(*vt10);
+            dst.vt1_array.push_back(*vt10);
         }
     }
-    fprintf(stderr,"-> vt1's reduced from %d to %d\n",src.vt1_array.Size(),dst.vt1_array.Size());
+    fprintf(stderr,"-> vt1's reduced from %d to %d\n",src.vt1_array.size(),dst.vt1_array.size());
 
     // check vt2 components for redundancies
-    nArray<int> vt2_maptable(5000, 5000);
-    nArray<vector2>::iterator vt20;
-    for (vt20=src.vt2_array.Begin(); vt20!=src.vt2_array.End(); vt20++) {
-        nArray<vector2>::iterator vt21;
+    std::vector<int> vt2_maptable(5000, 5000);
+    std::vector<vector2>::iterator vt20;
+    for (vt20=src.vt2_array.begin(); vt20!=src.vt2_array.end(); vt20++) {
+        std::vector<vector2>::iterator vt21;
         int i1;
         bool exists = false;
-        for (i1=0,vt21=dst.vt2_array.Begin(); vt21!=dst.vt2_array.End(); i1++,vt21++) {
-            if (vt21->isequal(*vt20,vttol)) {
+        for (i1=0,vt21=dst.vt2_array.begin(); vt21!=dst.vt2_array.end(); i1++,vt21++) {
+            if (vt21->fuz_eq(*vt20,vttol)) {
                 // v1 is a copy of v0, break!
                 exists = true;
                 break;
             }
         }
-        vt2_maptable.PushBack(i1);
+        vt2_maptable.push_back(i1);
         if (!exists) {
-            dst.vt2_array.PushBack(*vt20);
+            dst.vt2_array.push_back(*vt20);
         }
     }
-    fprintf(stderr,"-> vt2's reduced from %d to %d\n",src.vt2_array.Size(),dst.vt2_array.Size());
+    fprintf(stderr,"-> vt2's reduced from %d to %d\n",src.vt2_array.size(),dst.vt2_array.size());
 
     // check vt3 components for redundancies
-    nArray<int> vt3_maptable(5000, 5000);
-    nArray<vector2>::iterator vt30;
-    for (vt30=src.vt3_array.Begin(); vt30!=src.vt3_array.End(); vt30++) {
-        nArray<vector2>::iterator vt31;
+    std::vector<int> vt3_maptable(5000, 5000);
+    std::vector<vector2>::iterator vt30;
+    for (vt30=src.vt3_array.begin(); vt30!=src.vt3_array.end(); vt30++) {
+        std::vector<vector2>::iterator vt31;
         int i1;
         bool exists = false;
-        for (i1=0,vt31=dst.vt3_array.Begin(); vt31!=dst.vt3_array.End(); i1++,vt31++) {
-            if (vt31->isequal(*vt30,vttol)) {
+        for (i1=0,vt31=dst.vt3_array.begin(); vt31!=dst.vt3_array.end(); i1++,vt31++) {
+            if (vt31->fuz_eq(*vt30,vttol)) {
                 // v1 is a copy of v0, break!
                 exists = true;
                 break;
             }
         }
-        vt3_maptable.PushBack(i1);
+        vt3_maptable.push_back(i1);
         if (!exists) {
-            dst.vt3_array.PushBack(*vt30);
+            dst.vt3_array.push_back(*vt30);
         }
     }
-    fprintf(stderr,"-> vt3's reduced from %d to %d\n",src.vt3_array.Size(),dst.vt3_array.Size());
+    fprintf(stderr,"-> vt3's reduced from %d to %d\n",src.vt3_array.size(),dst.vt3_array.size());
 
     // check rgba components for redundancies
-    nArray<int> c_maptable(5000, 5000);
-    nArray<vector4>::iterator c0;
-    for (c0=src.c_array.Begin(); c0!=src.c_array.End(); c0++) {
-        nArray<vector4>::iterator c1;
+    std::vector<int> c_maptable(5000, 5000);
+    std::vector<vector4>::iterator c0;
+    for (c0=src.c_array.begin(); c0!=src.c_array.end(); c0++) {
+        std::vector<vector4>::iterator c1;
         int i1;
         bool exists = false;
-        for (i1=0,c1=dst.c_array.Begin(); c1!=dst.c_array.End(); i1++,c1++) {
-            if (c1->isequal(*c0,ctol)) {
+        for (i1=0,c1=dst.c_array.begin(); c1!=dst.c_array.end(); i1++,c1++) {
+            if (c1->fuz_eq(*c0,ctol)) {
                 // v1 is a copy of v0, break!
                 exists = true;
                 break;
             }
         }
-        c_maptable.PushBack(i1);
+        c_maptable.push_back(i1);
         if (!exists) {
-            dst.c_array.PushBack(*c0);
+            dst.c_array.push_back(*c0);
         }
     }
-    fprintf(stderr,"-> c's reduced from %d to %d\n",src.c_array.Size(),dst.c_array.Size());
+    fprintf(stderr,"-> c's reduced from %d to %d\n",src.c_array.size(),dst.c_array.size());
 
     // handle faces: for each source face, generate a target face
     // with the src->dst mapped indices, do not add identical
@@ -212,30 +212,30 @@ void clean(wfObject& src,   // source object (complete)
     // if any face points don't have texture coordinates assigned,
     // but the number of texture coordinates is greater 0,
     // assign the first texture coordinate to the point
-    nArray<wfFace>::iterator f_src;
-    for (f_src=src.f_array.Begin(); f_src!=src.f_array.End(); f_src++) {
+    std::vector<wfFace>::iterator f_src;
+    for (f_src=src.f_array.begin(); f_src!=src.f_array.end(); f_src++) {
         wfFace f_dst;
 
-        nArray<wfPoint>::iterator p_src;
-        for (p_src=f_src->points.Begin(); p_src!=f_src->points.End(); p_src++) {
+        std::vector<wfPoint>::iterator p_src;
+        for (p_src=f_src->points.begin(); p_src!=f_src->points.end(); p_src++) {
 
             // fill p1 with remapped indices
             wfPoint p_dst;
             if (p_src->v_index != -1)
             {
-                p_dst.v_index = v_maptable.At(p_src->v_index);
+                p_dst.v_index = v_maptable.at(p_src->v_index);
             }
 
 			// uv index 0
             if (p_src->vt_index != -1)
             {
-                p_dst.vt_index = vt_maptable.At(p_src->vt_index);
+                p_dst.vt_index = vt_maptable.at(p_src->vt_index);
             }
             else
             {
                 // FIX: if no texture assigned, but texture coordinates
                 // exist, map to first texture coordinate
-                if (src.vt_array.Size() > 0)
+                if (src.vt_array.size() > 0)
                 {
                     p_dst.vt_index = 0;
                 }
@@ -244,13 +244,13 @@ void clean(wfObject& src,   // source object (complete)
 			// uv index 1
             if (p_src->vt1_index != -1)
             {
-                p_dst.vt1_index = vt1_maptable.At(p_src->vt1_index);
+                p_dst.vt1_index = vt1_maptable.at(p_src->vt1_index);
             }
             else
             {
                 // FIX: if no texture assigned, but texture coordinates
                 // exist, map to first texture coordinate
-                if (src.vt1_array.Size() > 0)
+                if (src.vt1_array.size() > 0)
                 {
                     p_dst.vt1_index = 0;
                 }
@@ -259,13 +259,13 @@ void clean(wfObject& src,   // source object (complete)
 			// uv index 2
             if (p_src->vt2_index != -1)
             {
-                p_dst.vt2_index = vt2_maptable.At(p_src->vt2_index);
+                p_dst.vt2_index = vt2_maptable.at(p_src->vt2_index);
             }
             else
             {
                 // FIX: if no texture assigned, but texture coordinates
                 // exist, map to first texture coordinate
-                if (src.vt2_array.Size() > 0)
+                if (src.vt2_array.size() > 0)
                 {
                     p_dst.vt2_index = 0;
                 }
@@ -274,47 +274,47 @@ void clean(wfObject& src,   // source object (complete)
 			// uv index 3
             if (p_src->vt3_index != -1)
             {
-                p_dst.vt3_index = vt3_maptable.At(p_src->vt3_index);
+                p_dst.vt3_index = vt3_maptable.at(p_src->vt3_index);
             }
             else
             {
                 // FIX: if no texture assigned, but texture coordinates
                 // exist, map to first texture coordinate
-                if (src.vt3_array.Size() > 0)
+                if (src.vt3_array.size() > 0)
                 {
                     p_dst.vt3_index = 0;
                 }
             }
             if (p_src->vn_index != -1)
             {
-                p_dst.vn_index = vn_maptable.At(p_src->vn_index);
+                p_dst.vn_index = vn_maptable.at(p_src->vn_index);
             }
             if (p_src->c_index != -1)
             {
-                p_dst.c_index = c_maptable.At(p_src->c_index);
+                p_dst.c_index = c_maptable.at(p_src->c_index);
             }
 
             // see if f1 already contains a point with identical
             // v index, if so, drop p1, otherwise add to face
-            nArray<wfPoint>::iterator p;
+            std::vector<wfPoint>::iterator p;
             bool ignore = false;
-            for (p=f_dst.points.Begin(); p!=f_dst.points.End(); p++) {
+            for (p=f_dst.points.begin(); p!=f_dst.points.end(); p++) {
                 if (p_dst.v_index == p->v_index) {
                     ignore = true;
                 }
             }
             if (!ignore) {
-                f_dst.points.PushBack(p_dst);
+                f_dst.points.push_back(p_dst);
             }
         }
 		f_dst.validUVsets = f_src->validUVsets;
 
         // if number of points in dest surface > 2, add, otherwise ignore
-        if (f_dst.points.Size() > 2) {
-            dst.f_array.PushBack(f_dst);
+        if (f_dst.points.size() > 2) {
+            dst.f_array.push_back(f_dst);
         }
     }
-    fprintf(stderr, "-> f's reduced from %d to %d\n",src.f_array.Size(),dst.f_array.Size());
+    fprintf(stderr, "-> f's reduced from %d to %d\n",src.f_array.size(),dst.f_array.size());
 };
 
 //-------------------------------------------------------------------
@@ -327,25 +327,25 @@ public:
 void flatten(wfObject& src, wfObject& dst) {
 
     // for each face in the src object...
-    nArray<wfFace>::iterator f_src;
+    std::vector<wfFace>::iterator f_src;
     int points_reused = 0;
-    for (f_src=src.f_array.Begin(); f_src!=src.f_array.End(); f_src++) 
+    for (f_src=src.f_array.begin(); f_src!=src.f_array.end(); f_src++) 
     {
         // the destination face
         wfFace f_dst;
 
         // for each point in the src face...
-        nArray<wfPoint>::iterator p_src;
-        for (p_src=f_src->points.Begin(); p_src!=f_src->points.End(); p_src++) 
+        std::vector<wfPoint>::iterator p_src;
+        for (p_src=f_src->points.begin(); p_src!=f_src->points.end(); p_src++) 
         {
             // see if there already exists an identical vertex in the dst object
-            nArray<wfCoord>::iterator v_dst   = dst.v_array.Begin();
-            nArray<vector3>::iterator vn_dst  = dst.vn_array.Begin();
-            nArray<vector2>::iterator vt_dst  = dst.vt_array.Begin();
-            nArray<vector2>::iterator vt1_dst = dst.vt1_array.Begin();
-            nArray<vector2>::iterator vt2_dst = dst.vt2_array.Begin();
-            nArray<vector2>::iterator vt3_dst = dst.vt3_array.Begin();
-            nArray<vector4>::iterator c_dst   = dst.c_array.Begin();
+            std::vector<wfCoord>::iterator v_dst   = dst.v_array.begin();
+            std::vector<vector3>::iterator vn_dst  = dst.vn_array.begin();
+            std::vector<vector2>::iterator vt_dst  = dst.vt_array.begin();
+            std::vector<vector2>::iterator vt1_dst = dst.vt1_array.begin();
+            std::vector<vector2>::iterator vt2_dst = dst.vt2_array.begin();
+            std::vector<vector2>::iterator vt3_dst = dst.vt3_array.begin();
+            std::vector<vector4>::iterator c_dst   = dst.c_array.begin();
             int dst_index = 0;
 
             // get the original vertex components block
@@ -356,16 +356,16 @@ void flatten(wfObject& src, wfObject& dst) {
             vector2 vt2_src;
             vector2 vt3_src;
             vector4 c_src;
-            if (p_src->v_index != -1)   v_src   = src.v_array.At(p_src->v_index);
-            if (p_src->vn_index != -1)  vn_src  = src.vn_array.At(p_src->vn_index);
-            if (p_src->vt_index != -1)  vt_src  = src.vt_array.At(p_src->vt_index);
-            if (p_src->vt1_index != -1) vt1_src = src.vt1_array.At(p_src->vt1_index);
-            if (p_src->vt2_index != -1) vt2_src = src.vt2_array.At(p_src->vt2_index);
-            if (p_src->vt3_index != -1) vt3_src = src.vt3_array.At(p_src->vt3_index);
-            if (p_src->c_index != -1)   c_src   = src.c_array.At(p_src->c_index);
+            if (p_src->v_index != -1)   v_src   = src.v_array.at(p_src->v_index);
+            if (p_src->vn_index != -1)  vn_src  = src.vn_array.at(p_src->vn_index);
+            if (p_src->vt_index != -1)  vt_src  = src.vt_array.at(p_src->vt_index);
+            if (p_src->vt1_index != -1) vt1_src = src.vt1_array.at(p_src->vt1_index);
+            if (p_src->vt2_index != -1) vt2_src = src.vt2_array.at(p_src->vt2_index);
+            if (p_src->vt3_index != -1) vt3_src = src.vt3_array.at(p_src->vt3_index);
+            if (p_src->c_index != -1)   c_src   = src.c_array.at(p_src->c_index);
 
             bool all_equal = false;
-            for (; v_dst!=dst.v_array.End(); v_dst++) 
+            for (; v_dst!=dst.v_array.end(); v_dst++) 
             {
                 bool v_equal  = true;
                 bool vn_equal = true;
@@ -376,14 +376,14 @@ void flatten(wfObject& src, wfObject& dst) {
                 bool c_equal  = true;
                 if (p_src->v_index != -1) 
                 {
-                    if (!v_src.v.isequal(v_dst->v,0.0001f)) 
+                    if (!v_src.v.fuz_eq(v_dst->v,0.0001f)) 
                     {
                         v_equal = false;
                     }
                 }
                 if (p_src->vn_index != -1) 
                 {
-                    if (!vn_src.isequal(*vn_dst,0.0001f)) 
+                    if (!vn_src.fuz_eq(*vn_dst,0.0001f)) 
                     {
                         vn_equal = false;
                     }
@@ -391,28 +391,28 @@ void flatten(wfObject& src, wfObject& dst) {
 
                 if (p_src->vt_index != -1) 
                 {
-                    if (!vt_src.isequal(*vt_dst,0.0001f)) 
+                    if (!vt_src.fuz_eq(*vt_dst,0.0001f)) 
                     {
                         vt_equal = false;
                     }
                 }
                 if (p_src->vt1_index != -1) 
                 {
-                    if (!vt1_src.isequal(*vt1_dst,0.0001f)) 
+                    if (!vt1_src.fuz_eq(*vt1_dst,0.0001f)) 
                     {
                         vt1_equal = false;
                     }
                 }
                 if (p_src->vt2_index != -1) 
                 {
-                    if (!vt2_src.isequal(*vt2_dst,0.0001f)) 
+                    if (!vt2_src.fuz_eq(*vt2_dst,0.0001f)) 
                     {
                         vt2_equal = false;
                     }
                 }
                 if (p_src->vt3_index != -1) 
                 {
-                    if (!vt3_src.isequal(*vt3_dst,0.0001f)) 
+                    if (!vt3_src.fuz_eq(*vt3_dst,0.0001f)) 
                     {
                         vt3_equal = false;
                     }
@@ -420,7 +420,7 @@ void flatten(wfObject& src, wfObject& dst) {
 
                 if (p_src->c_index != -1) 
                 {
-                    if (!c_src.isequal(*c_dst,0.0001f)) 
+                    if (!c_src.fuz_eq(*c_dst,0.0001f)) 
                     {
                         c_equal = false;
                     }
@@ -433,12 +433,12 @@ void flatten(wfObject& src, wfObject& dst) {
                     break;
                 }
 
-                if (vn_dst) vn_dst++;
-                if (vt_dst) vt_dst++;
-                if (vt1_dst) vt1_dst++;
-                if (vt2_dst) vt2_dst++;
-                if (vt3_dst) vt3_dst++;
-                if (c_dst)  c_dst++;
+                if (vn_dst != dst.vn_array.end()) vn_dst++;
+                if (vt_dst != dst.vt_array.end()) vt_dst++;
+                if (vt1_dst != dst.vt1_array.end()) vt1_dst++;
+                if (vt2_dst != dst.vt2_array.end()) vt2_dst++;
+                if (vt3_dst != dst.vt3_array.end()) vt3_dst++;
+                if (c_dst != dst.c_array.end())  c_dst++;
                 dst_index++;
             }
 
@@ -446,13 +446,13 @@ void flatten(wfObject& src, wfObject& dst) {
             // destination object
             if (!all_equal) 
             {
-                if (p_src->v_index != -1)  dst.v_array.PushBack(v_src);
-                if (p_src->vn_index != -1) dst.vn_array.PushBack(vn_src);
-                if (p_src->vt_index != -1) dst.vt_array.PushBack(vt_src);
-                if (p_src->vt1_index != -1) dst.vt1_array.PushBack(vt1_src);
-                if (p_src->vt2_index != -1) dst.vt2_array.PushBack(vt2_src);
-                if (p_src->vt3_index != -1) dst.vt3_array.PushBack(vt3_src);
-                if (p_src->c_index != -1)  dst.c_array.PushBack(c_src);
+                if (p_src->v_index != -1)  dst.v_array.push_back(v_src);
+                if (p_src->vn_index != -1) dst.vn_array.push_back(vn_src);
+                if (p_src->vt_index != -1) dst.vt_array.push_back(vt_src);
+                if (p_src->vt1_index != -1) dst.vt1_array.push_back(vt1_src);
+                if (p_src->vt2_index != -1) dst.vt2_array.push_back(vt2_src);
+                if (p_src->vt3_index != -1) dst.vt3_array.push_back(vt3_src);
+                if (p_src->c_index != -1)  dst.c_array.push_back(c_src);
             }
 
             // create a new point and append to the destination face
@@ -465,24 +465,24 @@ void flatten(wfObject& src, wfObject& dst) {
             if (p_src->vt3_index != -1) p_dst.vt3_index = dst_index;
             if (p_src->c_index != -1)  p_dst.c_index  = dst_index;
 
-            f_dst.points.PushBack(p_dst);
+            f_dst.points.push_back(p_dst);
 
         } // for each point in src_face
 
 		f_dst.validUVsets = f_src->validUVsets;
         // append new face to target object
-        dst.f_array.PushBack(f_dst);
+        dst.f_array.push_back(f_dst);
     }
 
     // fix indices in winged edges
-    nArray<wfWingedEdge>::iterator we_src;
-    for (we_src = src.we_array.Begin(); we_src != src.we_array.End(); we_src++)
+    std::vector<wfWingedEdge>::iterator we_src;
+    for (we_src = src.we_array.begin(); we_src != src.we_array.end(); we_src++)
     {
         // get the referenced coords in the src
-        vector3& v0  = src.v_array.At(we_src->v0).v;
-        vector3& v1  = src.v_array.At(we_src->v1).v;
-        vector3& vp0 = src.v_array.At(we_src->vp0).v;
-        vector3& vp1 = src.v_array.At(we_src->vp1).v;
+        vector3& v0  = src.v_array.at(we_src->v0).v;
+        vector3& v1  = src.v_array.at(we_src->v1).v;
+        vector3& vp0 = src.v_array.at(we_src->vp0).v;
+        vector3& vp1 = src.v_array.at(we_src->vp1).v;
 
         // find corresponding coords in the dest
         int dst_v0i  = -1;
@@ -490,33 +490,33 @@ void flatten(wfObject& src, wfObject& dst) {
         int dst_vp0i = -1;
         int dst_vp1i = -1;
         int i;
-        for (i = 0; i < dst.v_array.Size(); i++)
+        for (i = 0; i < dst.v_array.size(); i++)
         {
-            if (v0.isequal(dst.v_array.At(i).v, 0.0001f))
+            if (v0.fuz_eq(dst.v_array.at(i).v, 0.0001f))
             {
                 dst_v0i = i;
                 break;
             }
         }
-        for (i = 0; i < dst.v_array.Size(); i++)
+        for (i = 0; i < dst.v_array.size(); i++)
         {
-            if (v1.isequal(dst.v_array.At(i).v, 0.0001f))
+            if (v1.fuz_eq(dst.v_array.at(i).v, 0.0001f))
             {
                 dst_v1i = i;
                 break;
             }
         }
-        for (i = 0; i < dst.v_array.Size(); i++)
+        for (i = 0; i < dst.v_array.size(); i++)
         {
-            if (vp0.isequal(dst.v_array.At(i).v, 0.0001f))
+            if (vp0.fuz_eq(dst.v_array.at(i).v, 0.0001f))
             {
                 dst_vp0i = i;
                 break;
             }
         }
-        for (i = 0; i < dst.v_array.Size(); i++)
+        for (i = 0; i < dst.v_array.size(); i++)
         {
-            if (vp1.isequal(dst.v_array.At(i).v, 0.0001f))
+            if (vp1.fuz_eq(dst.v_array.at(i).v, 0.0001f))
             {
                 dst_vp1i = i;
                 break;
@@ -527,7 +527,7 @@ void flatten(wfObject& src, wfObject& dst) {
         if ((dst_v0i != -1) && (dst_v1i != -1) && (dst_vp0i != -1) && (dst_vp1i != -1))
         {
             wfWingedEdge we(dst_v0i, dst_v1i, dst_vp0i, dst_vp1i);
-            dst.we_array.PushBack(we);
+            dst.we_array.push_back(we);
         }
     }
 
@@ -552,8 +552,8 @@ void transform(wfObject& src, const vector3& t, const vector3& r, const vector3&
     m.translate(t.x,t.y,t.z);
 
     // transform coords
-    nArray<wfCoord>::iterator v;
-    for (v=src.v_array.Begin(); v!=src.v_array.End(); v++) 
+    std::vector<wfCoord>::iterator v;
+    for (v=src.v_array.begin(); v!=src.v_array.end(); v++) 
     {
         vector3 v1 = m * v->v;
         v->v = v1;
@@ -565,8 +565,8 @@ void transform(wfObject& src, const vector3& t, const vector3& r, const vector3&
     m.rotate_x(r.x);
     m.rotate_y(r.y);
     m.rotate_z(r.z);
-    nArray<vector3>::iterator vn;
-    for (vn=src.vn_array.Begin(); vn!=src.vn_array.End(); vn++) 
+    std::vector<vector3>::iterator vn;
+    for (vn=src.vn_array.begin(); vn!=src.vn_array.end(); vn++) 
     {
         vector3 v1 = m * (*vn);
         v1.norm();
@@ -593,28 +593,28 @@ void triangulate(wfObject& src, wfObject&dst)
     dst.c_array  = src.c_array;
 
     // for each source face...
-    nArray<wfFace>::iterator f_src;
-    for (f_src=src.f_array.Begin(); f_src<src.f_array.End(); f_src++) {
+    std::vector<wfFace>::iterator f_src;
+    for (f_src=src.f_array.begin(); f_src<src.f_array.end(); f_src++) {
 
         // ignore it if it has less then 3 points (this normally should
         // not happen)
-        if (f_src->points.Size() > 2) 
+        if (f_src->points.size() > 2) 
         {
             // get the first 3 points, and loop through the rest...
-            nArray<wfPoint>::iterator p0_src = f_src->points.Begin();
-            nArray<wfPoint>::iterator p1_src = p0_src+1;
-            nArray<wfPoint>::iterator p2_src = p1_src+1;
-            for (;p2_src!=f_src->points.End();) 
+            std::vector<wfPoint>::iterator p0_src = f_src->points.begin();
+            std::vector<wfPoint>::iterator p1_src = p0_src+1;
+            std::vector<wfPoint>::iterator p2_src = p1_src+1;
+            for (;p2_src!=f_src->points.end();) 
             {
                 // a new destination face (triangle!)
                 wfFace f_dst;
-                f_dst.points.PushBack(*p0_src);
-                f_dst.points.PushBack(*p1_src);
-                f_dst.points.PushBack(*p2_src);
+                f_dst.points.push_back(*p0_src);
+                f_dst.points.push_back(*p1_src);
+                f_dst.points.push_back(*p2_src);
 
                 // add the face to the dst object
 				f_dst.validUVsets = f_src->validUVsets;
-                dst.f_array.PushBack(f_dst);
+                dst.f_array.push_back(f_dst);
 
                 // advance to next triangle within source face
                 p1_src = p2_src;
@@ -622,7 +622,7 @@ void triangulate(wfObject& src, wfObject&dst)
             }
         }
     }
-    fprintf(stderr, "face count: before=%d after triang=%d\n", src.f_array.Size(), dst.f_array.Size());
+    fprintf(stderr, "face count: before=%d after triang=%d\n", src.f_array.size(), dst.f_array.size());
 };
 
 //--------------------------------------------------------------------
@@ -634,21 +634,21 @@ void triangulate(wfObject& src, wfObject&dst)
 private:
 void build_face_normals(wfObject& src)
 {
-    face_normals.Clear();
+    face_normals.clear();
 
     // for each face...
-    nArray<wfFace>::iterator f_src;
+    std::vector<wfFace>::iterator f_src;
     vector3 normal;
         vector3 d[3];
         vector3 n[3];
         float l[3];
         int i;
-    for (f_src=src.f_array.Begin(); f_src!=src.f_array.End(); f_src++) 
+    for (f_src=src.f_array.begin(); f_src!=src.f_array.end(); f_src++) 
     {
-        assert(f_src->points.Size() >= 3);
-        const vector3& v0 = src.v_array.At(f_src->points.At(0).v_index).v;
-        const vector3& v1 = src.v_array.At(f_src->points.At(1).v_index).v;
-        const vector3& v2 = src.v_array.At(f_src->points.At(2).v_index).v;
+        assert(f_src->points.size() >= 3);
+        const vector3& v0 = src.v_array.at(f_src->points.at(0).v_index).v;
+        const vector3& v1 = src.v_array.at(f_src->points.at(1).v_index).v;
+        const vector3& v2 = src.v_array.at(f_src->points.at(2).v_index).v;
 
         // we're trying all 3 combinations and pick the most
         // accurate result
@@ -671,7 +671,7 @@ void build_face_normals(wfObject& src)
         else if (l[1] > l[2])           normal=n[1];
         else                            normal=n[2];
         normal.norm();
-        face_normals.PushBack(normal);
+        face_normals.push_back(normal);
     }
 }
 
@@ -687,41 +687,41 @@ private:
 void build_connect_array(wfObject& src)
 {
     build_face_normals(src);
-    connect_array.Clear();
+    connect_array.clear();
 
     // for each vertex, find all faces which reference this vertex
     int i;
-    int vnum = src.v_array.Size();
+    int vnum = src.v_array.size();
     for (i=0; i<vnum; i++) 
     {
-        nArray<wfFace>::iterator f_src;
-        nArray<int> f_array(5000, 5000);
+        std::vector<wfFace>::iterator f_src;
+        std::vector<int> f_array(5000, 5000);
         int fnum;
-        for (fnum=0,f_src=src.f_array.Begin(); f_src!=src.f_array.End(); f_src++,fnum++) 
+        for (fnum=0,f_src=src.f_array.begin(); f_src!=src.f_array.end(); f_src++,fnum++) 
         {
-            nArray<wfPoint>::iterator p_src;
-            for (p_src=f_src->points.Begin(); p_src!=f_src->points.End(); p_src++) 
+            std::vector<wfPoint>::iterator p_src;
+            for (p_src=f_src->points.begin(); p_src!=f_src->points.end(); p_src++) 
             {
                 if (i==p_src->v_index) {
                     // drop any faces which are coplanar with an already
                     // collected face!
-                    nArray<int>::iterator fi;
+                    std::vector<int>::iterator fi;
                     bool drop_face = false;
-                    for (fi=f_array.Begin(); fi!=f_array.End(); fi++) 
+                    for (fi=f_array.begin(); fi!=f_array.end(); fi++) 
                     {
-                        vector3 v0 = face_normals.At(fnum);
-                        vector3 v1 = face_normals.At(*fi);
-                        if (v0.isequal(v1,0.001f)) 
+                        vector3 v0 = face_normals.at(fnum);
+                        vector3 v1 = face_normals.at(*fi);
+                        if (v0.fuz_eq(v1,0.001f)) 
                         {
                             drop_face = true;
                             break;
                         }
                     }
-                    if (!drop_face) f_array.PushBack(fnum);
+                    if (!drop_face) f_array.push_back(fnum);
                 }
             }
         }
-        connect_array.PushBack(f_array);
+        connect_array.push_back(f_array);
     }
 }
 
@@ -742,7 +742,7 @@ void build_connect_array(wfObject& src)
 public:
 void smooth(wfObject& src, wfObject& dst, float thresh_degree)
 {
-    float cos_ang = (float) cos((thresh_degree * PI) / 180.0f);
+    float cos_ang = (float) cos((thresh_degree * N_PI) / 180.0f);
 
     // build the connection and face normals database
     build_connect_array(src);
@@ -761,32 +761,32 @@ void smooth(wfObject& src, wfObject& dst, float thresh_degree)
     dst.f_array  = src.f_array;     // fix normal indices later...
 
     // for each face point...
-    nArray<wfFace>::iterator f_dst;
+    std::vector<wfFace>::iterator f_dst;
     int f_index;
-    for (f_index=0, f_dst=dst.f_array.Begin(); f_dst!=dst.f_array.End(); f_dst++, f_index++) 
+    for (f_index=0, f_dst=dst.f_array.begin(); f_dst!=dst.f_array.end(); f_dst++, f_index++) 
     {
-        nArray<wfPoint>::iterator p_dst;
-        for (p_dst=f_dst->points.Begin(); p_dst!=f_dst->points.End(); p_dst++) 
+        std::vector<wfPoint>::iterator p_dst;
+        for (p_dst=f_dst->points.begin(); p_dst!=f_dst->points.end(); p_dst++) 
         {
             // get the list of all faces which use this vertex coordinate
-            nArray<int> f_list = connect_array.At(p_dst->v_index);
+            std::vector<int> f_list = connect_array.at(p_dst->v_index);
 
             // generate a new averaged vertex normal, all face normals
             // within the threshold angle are added together and
             // renormalized
-            nArray<int>::iterator fi;
+            std::vector<int>::iterator fi;
 
             // get the base vector (the current point's face's normal)
-            vector3 v0 = face_normals.At(f_index);
+            vector3 v0 = face_normals.at(f_index);
 
             // initialize the average vector with the face normal
             // of the point's owner face
             vector3 avg = v0;
-            for (fi=f_list.Begin(); fi!=f_list.End(); fi++) 
+            for (fi=f_list.begin(); fi!=f_list.end(); fi++) 
             {
                 // don't add redundant normals!
-                vector3 v1 = face_normals.At(*fi);
-                if (!v0.isequal(v1,0.001f)) 
+                vector3 v1 = face_normals.at(*fi);
+                if (!v0.fuz_eq(v1,0.001f)) 
                 {
                     float dot  = v1 % v0;
                     if (dot > cos_ang) 
@@ -799,8 +799,8 @@ void smooth(wfObject& src, wfObject& dst, float thresh_degree)
             // normalize average normal, write to target object and
             // fix normal index in target point
             avg.norm();
-            dst.vn_array.PushBack(avg);
-            p_dst->vn_index = dst.vn_array.Size()-1;
+            dst.vn_array.push_back(avg);
+            p_dst->vn_index = dst.vn_array.size()-1;
         }
     }
 }
@@ -843,8 +843,8 @@ mapPlanar(wfObject& src, wfObject& dst, int texLayer, const vector4& uParams, co
         dst.vt3_array = src.vt3_array;
 
     // iterate through vertices and generate a corresponding uv coordinate
-    nArray<wfCoord>::iterator curCoord;
-    for (curCoord = src.v_array.Begin(); curCoord != src.v_array.End(); curCoord++)
+    std::vector<wfCoord>::iterator curCoord;
+    for (curCoord = src.v_array.begin(); curCoord != src.v_array.end(); curCoord++)
     {
         vector3 coord = curCoord->v;
         vector2 uv;
@@ -855,19 +855,19 @@ mapPlanar(wfObject& src, wfObject& dst, int texLayer, const vector4& uParams, co
         switch (texLayer)
         {
             case 0:
-                dst.vt_array.PushBack(uv);
+                dst.vt_array.push_back(uv);
                 break;
 
             case 1:
-                dst.vt1_array.PushBack(uv);
+                dst.vt1_array.push_back(uv);
                 break;
 
             case 2:
-                dst.vt2_array.PushBack(uv);
+                dst.vt2_array.push_back(uv);
                 break;
 
             case 3:
-                dst.vt3_array.PushBack(uv);
+                dst.vt3_array.push_back(uv);
                 break;
         }
     }
@@ -882,15 +882,15 @@ void
 genWingedEdges(wfObject& src)
 {
     // clear existing winged edge array if exists
-    src.we_array.Clear();
+    src.we_array.clear();
 
     // for each face, build 3 unique winged edge objects
-    nArray<wfFace>::iterator f;
-    for (f = src.f_array.Begin(); f != src.f_array.End(); f++)
+    std::vector<wfFace>::iterator f;
+    for (f = src.f_array.begin(); f != src.f_array.end(); f++)
     {
-        int p0i = f->points.At(0).v_index;
-        int p1i = f->points.At(1).v_index;
-        int p2i = f->points.At(2).v_index;
+        int p0i = f->points.at(0).v_index;
+        int p1i = f->points.at(1).v_index;
+        int p2i = f->points.at(2).v_index;
 
         wfWingedEdge we[3];
         we[0].set(p0i, p1i, p2i, -1);
@@ -900,24 +900,24 @@ genWingedEdges(wfObject& src)
         int i;
         for (i = 0; i < 3; i++)
         {
-            nArray<wfWingedEdge>::iterator cur_we;
+            std::vector<wfWingedEdge>::iterator cur_we;
             bool exists = false;
             bool merged = false;
-            for (cur_we = src.we_array.Begin(); cur_we != src.we_array.End(); cur_we++)
+            for (cur_we = src.we_array.begin(); cur_we != src.we_array.end(); cur_we++)
             {
                 // see if edge shared
-                vector3& cur_v0 = src.v_array.At(cur_we->v0).v;
-                vector3& cur_v1 = src.v_array.At(cur_we->v1).v;
-                vector3& v0     = src.v_array.At(we[i].v0).v;
-                vector3& v1     = src.v_array.At(we[i].v1).v;
-                if ((v0.isequal(cur_v0, 0.0001f) && v1.isequal(cur_v1, 0.0001f)) ||
-                    (v0.isequal(cur_v1, 0.0001f) && v1.isequal(cur_v0, 0.0001f)))
+                vector3& cur_v0 = src.v_array.at(cur_we->v0).v;
+                vector3& cur_v1 = src.v_array.at(cur_we->v1).v;
+                vector3& v0     = src.v_array.at(we[i].v0).v;
+                vector3& v1     = src.v_array.at(we[i].v1).v;
+                if ((v0.fuz_eq(cur_v0, 0.0001f) && v1.fuz_eq(cur_v1, 0.0001f)) ||
+                    (v0.fuz_eq(cur_v1, 0.0001f) && v1.fuz_eq(cur_v0, 0.0001f)))
                 {
                     // found a shared edge, now see if our new edge is somehow
                     // identical with with the existing edge (this shouldn't happen)
-                    vector3& cur_vp0 = src.v_array.At(cur_we->vp0).v;
-                    vector3& vp0     = src.v_array.At(we[i].vp0).v;
-                    if (vp0.isequal(cur_vp0, 0.0001f))
+                    vector3& cur_vp0 = src.v_array.at(cur_we->vp0).v;
+                    vector3& vp0     = src.v_array.at(we[i].vp0).v;
+                    if (vp0.fuz_eq(cur_vp0, 0.0001f))
                     {
                         exists = true;
                         break;
@@ -925,8 +925,8 @@ genWingedEdges(wfObject& src)
 
                     if (cur_we->vp1 != -1)
                     {
-                        vector3& cur_vp1 = src.v_array.At(cur_we->vp1).v;
-                        if (vp0.isequal(cur_vp1, 0.0001f))
+                        vector3& cur_vp1 = src.v_array.at(cur_we->vp1).v;
+                        if (vp0.fuz_eq(cur_vp1, 0.0001f))
                         {
                             exists = true;
                             break;
@@ -947,21 +947,21 @@ genWingedEdges(wfObject& src)
             // if the is a new winged edge, add it to the winged edge array
             if (!(exists || merged))
             {
-                src.we_array.PushBack(we[i]);
+                src.we_array.push_back(we[i]);
             }
         }
     }
 
     // Handle incomplete winged edges (edges which have a -1 vp1 member left),
     // this can be either real object edges (if the mesh is open), or some
-    // modeling artefact. We will just mirror the vp0 member into the vp1
+    // modeling artifact. We will just mirror the vp0 member into the vp1
     // member, this should give the desired results (at least for silhouette
     // finding)
 
     // final validity check on edges, remove coplanar edges, and fix 
     // "real" object edges if object surface is not closed
-    nArray<wfWingedEdge>::iterator cur_we;
-    for (cur_we = src.we_array.Begin(); cur_we != src.we_array.End();)
+    std::vector<wfWingedEdge>::iterator cur_we;
+    for (cur_we = src.we_array.begin(); cur_we != src.we_array.end();)
     {
         // a real edge?
         if (-1 == cur_we->vp1)

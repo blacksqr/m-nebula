@@ -75,6 +75,7 @@ ifeq ($(N_COMPILER),__VC__)
   NEB_LIBS =
   SYS_LIBS = 
   CFLAGS = $(INCDIR) /vmb /vms /W3 /GF /Gy /YX /FD /nologo /D"WIN32" /D"_WINDOWS" /D"NT_PLUGIN"
+
 #  CFLAGS = $(INCDIR) /vmb /vms /W3 /GF /nologo /D"WIN32" /D"_WINDOWS" /D"NT_PLUGIN"
   LFLAGS =  /NOLOGO
 

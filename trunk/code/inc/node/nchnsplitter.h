@@ -42,8 +42,8 @@ protected:
     nChnSplitterKey *keyarray;
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
+    
     nChnSplitter();
     virtual ~nChnSplitter();
 

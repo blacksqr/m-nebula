@@ -174,7 +174,8 @@ public:
 #define N_OCT_MAXRADIUS (199999.0f)
 
 class nGfxServer;
-class N_PUBLIC nOctree : public nRoot {
+class N_PUBLIC nOctree : public nRoot 
+{
 protected:
     enum {
         N_OCT_MAXNUMNODES   = 2048,     ///< max. number of elements in free_pool 
@@ -206,8 +207,7 @@ protected:
     vector4 clipPlanes[32];
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     nOctree();
     virtual ~nOctree();

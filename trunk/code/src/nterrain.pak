@@ -10,10 +10,9 @@
 #--------------------------------------------------------------------
 beginmodule nterrainnode
     setdir terrain
-    setfiles { nterrain_init nterrain_main nterrain_render nterrain_map
+    setfiles { nterrain_main nterrain_render nterrain_map
                nterrain_wavefront nterrain_cmds quadtree }
     setheaders nterrainnode
-    setversion nterrain_ver
 endmodule
 #--------------------------------------------------------------------
 begintarget nterrain

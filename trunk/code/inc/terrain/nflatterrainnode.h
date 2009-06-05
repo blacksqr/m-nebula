@@ -121,8 +121,7 @@ class N_DLLCLASS nFlatTerrainNode : public nVisNode {
     nDynVertexBuffer dyn_vb;
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     static nProfiler *p_update;
     static nProfiler *p_render;
@@ -131,6 +130,7 @@ public:
 	flatquadcornerdata *neighbors[4];
 
     nFlatTerrainNode();
+	virtual void Initialize();
     virtual ~nFlatTerrainNode();
     virtual bool Attach(nSceneGraph2 *);
     virtual void Compute(nSceneGraph2 *);

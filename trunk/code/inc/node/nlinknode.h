@@ -82,8 +82,7 @@ public:
         return this->ref_target.isvalid() ? this->ref_target.get() : 0;
     };
 
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
 protected:
     nDynAutoRef<nVisNode> ref_target;

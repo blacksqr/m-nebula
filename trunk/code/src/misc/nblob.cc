@@ -7,60 +7,8 @@
 #include "kernel/nkernelserver.h"
 #include "misc/nblob.h"
 
-nClass *nBlob::local_cl  = NULL;
-nKernelServer *nBlob::ks = NULL;
 
-extern char *nBlob_version;
-extern "C" bool N_EXPORT n_init(nClass *, nKernelServer *);
-extern "C" void N_EXPORT n_fini(void);
-extern "C" N_EXPORT void *n_create(void);
-extern "C" N_EXPORT char *n_version(void);
-
-//--------------------------------------------------------------------
-//  n_init()
-//--------------------------------------------------------------------
-bool N_EXPORT n_init(nClass *cl, nKernelServer *ks)
-{
-    nBlob::local_cl = cl;
-    nBlob::ks       = ks;
-    
-    // mit Superklasse verketten
-    nClass *super = ks->OpenClass("nroot");
-    if (super) super->AddSubClass(nBlob::local_cl);
-    else n_error("Could not open superclass nroot!");
-    return true;
-}
-
-//--------------------------------------------------------------------
-//  n_fini()
-//--------------------------------------------------------------------
-void N_EXPORT n_fini(void)
-{
-    // von Superklasse abkoppeln
-    nClass *super = nBlob::local_cl->GetSuperClass();
-    n_assert(super);
-    if (super) {
-        super->RemSubClass(nBlob::local_cl);
-        nBlob::ks->CloseClass(super);
-    }
-}
-
-//--------------------------------------------------------------------
-//  n_new()
-//--------------------------------------------------------------------
-N_EXPORT void *n_create(void)
-{
-    return new nBlob;
-}
-
-//--------------------------------------------------------------------
-//  n_version()
-//--------------------------------------------------------------------
-N_EXPORT char *n_version(void)
-{
-    return nBlob_version;
-}
-
+nNebulaClass(nBlob, "nroot");
 //--------------------------------------------------------------------
 /**
     - 07-Feb-99   floh    created

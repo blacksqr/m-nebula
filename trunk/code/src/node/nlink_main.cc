@@ -5,7 +5,9 @@
 //-------------------------------------------------------------------
 #include "node/nlinknode.h"
 
-nLinkNode::nLinkNode() : ref_target(ks,this) { };
+nNebulaScriptClass(nLinkNode, "nvisnode");
+
+nLinkNode::nLinkNode() : ref_target(kernelServer, this) { };
 
 //-------------------------------------------------------------------
 //  ~nLinkNode()

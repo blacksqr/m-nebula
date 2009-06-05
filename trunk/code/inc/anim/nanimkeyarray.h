@@ -16,8 +16,8 @@
 #include "kernel/ntypes.h"
 #endif
 
-#ifndef N_ARRAY_H
-#include "util/narray.h"
+#ifndef N_STL
+#include "util/nstl.h"
 #endif
 
 //------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ public:
 protected:
     TYPE curKey;
     int lastKeyIndex;
-    nArray<TYPE> keys;
+    std::vector<TYPE> keys;
 };
 
 //------------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 #include "gfx/nchannelset.h"
 #include "gfx/nchannelcontext.h"
 #include "node/nhypermixer2.h"
-
+nNebulaScriptClass(nHyperMixer2, "nvisnode");
 //------------------------------------------------------------------------------
 /**
 */
@@ -20,7 +20,7 @@ nHyperMixer2::nHyperMixer2() :
     int src;
     for (src = 0; src < MAXSOURCES; src++)
     {
-        this->sources[src].Initialize(ks, this);
+        this->sources[src].Initialize(kernelServer, this);
     }
     n_memset(this->tarObjPtrs, 0, sizeof(this->tarObjPtrs));
     n_memset(this->srcObjPtrs, 0, sizeof(this->srcObjPtrs));
@@ -41,7 +41,7 @@ void
 nHyperMixer2::Initialize()
 {
     nVisNode* parent = (nVisNode*) this->GetParent();
-    if (parent && parent->IsA(ks->FindClass("nvisnode")))
+    if (parent && parent->IsA(kernelServer->FindClass("nvisnode")))
     {
         parent->DependsOn(this);
     }
@@ -242,34 +242,34 @@ nHyperMixer2::LookupObjPointers()
     {
         // declare source object as current object
         nMixerSource* curSource = &(this->sources[src]);
-        ks->PushCwd(curSource->GetSource());
+        kernelServer->PushCwd(curSource->GetSource());
             
         for (cnc = 0; cnc < this->numConnects; cnc++)
         {
             nHyperMixerConnect* curConnect = &(this->connects[cnc]);
             const char* srcObjPath = curConnect->GetSrcObjPath();
-            this->srcObjPtrs[cnc][src] = (nVisNode*) ks->Lookup(srcObjPath);
+            this->srcObjPtrs[cnc][src] = (nVisNode*) kernelServer->Lookup(srcObjPath);
             if (!this->srcObjPtrs[cnc][src])
             {                
                 n_error("nHyperMixer2: object '%s/%s' does not exist!\n", 
                     curSource->GetSource()->GetFullName().c_str(), curConnect->GetSrcObjPath());
             }
         }
-        ks->PopCwd();
+        kernelServer->PopCwd();
     }
 
     // then the target object pointers
-    ks->PushCwd(this);
+    kernelServer->PushCwd(this);
     for (cnc = 0; cnc < this->numConnects; cnc++)
     {
         nHyperMixerConnect* curConnect = &(this->connects[cnc]);
-        this->tarObjPtrs[cnc] = (nVisNode*) ks->Lookup(curConnect->GetTarObjPath());
+        this->tarObjPtrs[cnc] = (nVisNode*) kernelServer->Lookup(curConnect->GetTarObjPath());
         if (!this->tarObjPtrs[cnc])
         {
             n_error("nHyperMixer2: object '%s' does not exist!\n", curConnect->GetTarObjPath());
         }
     }
-    ks->PopCwd();
+    kernelServer->PopCwd();
 
     // undirtify the flag
     this->objPtrsDirty = false;

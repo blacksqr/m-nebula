@@ -4,7 +4,9 @@
 //  (C) 2001 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "misc/nprofileserver.h"
+#include "kernel/nkernelserver.h"
 
+nNebulaScriptClass(nProfileServer, "nroot");
 //------------------------------------------------------------------------------
 /**
 */

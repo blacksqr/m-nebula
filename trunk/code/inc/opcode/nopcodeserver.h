@@ -45,8 +45,7 @@ public:
     /// create a collide shape object
     virtual nCollideShape* NewShape(const char* id);
 
-    /// contains this class' type information.
-    static nClass* clazz;
+public:    
     /// nKernelServer dependency.
     static nKernelServer* kernelServer;
 

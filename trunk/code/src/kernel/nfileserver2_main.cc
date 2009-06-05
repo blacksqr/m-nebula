@@ -515,14 +515,16 @@ void nFileServer2::initBinAssign(void)
     check if file exists, + 27-01-2003, Ilya Clockwise;
     @return     true or false
 */
-bool nFileServer2::FileExists(const char* path) {
+bool nFileServer2::FileExists(const char* path) 
+{
+	bool result = false;
     nFile* test = this->NewFileObject();
-    if (test->Exists(path)) {        
-        delete test;
-        return true;
+    if (test->Exists(path)) 
+	{          
+        result =  true;
     }
     delete test;
-    return false;
+    return result;
 }
 
 //------------------------------------------------------------------------------

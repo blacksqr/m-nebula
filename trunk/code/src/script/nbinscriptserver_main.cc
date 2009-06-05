@@ -170,11 +170,11 @@ nBinScriptServer::WriteSelect(nFile* file, nRoot* obj0, nRoot* obj1, nScriptServ
     {
         case SELCOMMAND:
             // get relative path from obj1 to obj0 and write select statement
-            char relPath[N_MAXPATH];
-            obj1->GetRelPath(obj0, relPath, sizeof(relPath));
-            
-            this->PutInt(file, '_sel');
-            this->PutString(file, relPath);
+			{
+				stl_string relpath;            
+				this->PutInt(file, '_sel');
+				this->PutString(file, obj1->GetRelPath(obj0, relpath));
+			}
             break;
 
         case NOSELCOMMAND:

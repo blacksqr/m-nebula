@@ -31,7 +31,8 @@
 //--------------------------------------------------------------------
 class nGfxServer;
 class nMathServer;
-class N_DLLCLASS nSpriteRender : public nPRender {
+class N_DLLCLASS nSpriteRender : public nPRender 
+{
     nAutoRef<nGfxServer>  ref_gs;
     nAutoRef<nMathServer> ref_math;
     
@@ -61,27 +62,10 @@ public:
     static vector3 refVertices[REFQUADS * 4];
     static vector3 tformedVertices[REFQUADS * 4];
     
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
-    nSpriteRender()
-        : ref_gs(ks,this),
-          ref_math(ks,this),
-          dyn_vb(ks,this),
-          cur_vb(NULL),
-          num_quads(0),
-          cur_quad(0),
-          coord(NULL),
-          color(NULL),
-          uv(NULL),
-          stride4(0),
-          bounce_key(0),
-          spinRef(0),
-          spinAccelRef(0)
-    {
-        ref_gs   = "/sys/servers/gfx";
-        ref_math = "/sys/servers/math";
-    };
+    nSpriteRender();
+	virtual void Initialize();
     virtual ~nSpriteRender();
     virtual bool Attach(nSceneGraph2* sceneGraph);
     virtual void Compute(nSceneGraph2* sceneGraph);

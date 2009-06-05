@@ -271,7 +271,7 @@ int nCollideContext::MovingSphereCheck(const vector3& p0,
                 
                     // compute the collide normal
                     vector3 d(c1-c0);
-                    if (d.len() > TINY) {
+                    if (d.len() > N_TINY) {
                         d.norm();
                     } else {
                         d.set(0.0f, 1.0f, 0.0f);
@@ -321,8 +321,8 @@ nCollideContext::LineCheck(const line3& line,
     // create a bounding box from the line
     bbox3 bbox;
     bbox.begin_grow();
-    bbox.grow(line.start());
-    bbox.grow(line.end());
+    bbox.grow(line.va());
+    bbox.grow(line.vb());
     const int ownId = 0xffff;
 
     // initialize collision report handler
@@ -373,7 +373,7 @@ nCollideContext::LineCheck(const line3& line,
     if (COLLTYPE_CONTACT == collType)
     {
         // get closest contact only
-        return this->checkReportHandler.GetClosestCollission(line.start(), crPtr);
+        return this->checkReportHandler.GetClosestCollission(line.va(), crPtr);
     }
     else
     {

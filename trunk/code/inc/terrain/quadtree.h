@@ -182,8 +182,8 @@ public:
     };
     quadsquare *qs_base;            // base pointer to array of quadsquare nodes
 
-    static float *sin_lookup;       // sinus-lookup-table
-    static float *cos_lookup;       // cosinus-lookup-table
+	static std::vector<float> sin_lookup;       // sinus-lookup-table
+    static std::vector<float> cos_lookup;       // cosinus-lookup-table
     enum {
         LOOKUP_SHIFT = 13,
         LOOKUP_ENTRIES = (1<<LOOKUP_SHIFT),

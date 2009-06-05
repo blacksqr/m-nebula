@@ -7,13 +7,8 @@
 #-------------------------------------------------------------------------------
 beginmodule nopcodeserver
     setdir opcode
-    setfiles {
-        nopcodeserver_init nopcodeserver_main nopcodeshape
-    }
-    setheaders {
-        nopcodeserver nopcodeshape
-    }
-    setversion nopcodeserver_ver
+    setfiles { nopcodeserver_main nopcodeshape }
+    setheaders { nopcodeserver nopcodeshape }    
 endmodule
 #-------------------------------------------------------------------------------
 begintarget nopcode

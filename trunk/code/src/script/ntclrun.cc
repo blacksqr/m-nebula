@@ -41,7 +41,8 @@ bool nTclServer::Run(const char *cmd_str, const char*& result)
     int errCode = Tcl_EvalEx(this->interp, (char *) cmd_str, -1, TCL_EVAL_DIRECT);
     Tcl_Obj *res = Tcl_GetObjResult(interp);
     result = Tcl_GetString(res);
-    if (errCode == TCL_ERROR) {
+    if (errCode == TCL_ERROR) 
+	{
         n_printf("*** Tcl error '%s'\n", Tcl_GetString(res));
         if (this->GetFailOnError()) {
             n_error("Aborting.");
@@ -50,6 +51,7 @@ bool nTclServer::Run(const char *cmd_str, const char*& result)
     }
     return true;
 }
+
 Tcl_Obj * NArg2TclObj(nArg *a) 
 {
     switch (a->GetType()) {
@@ -71,27 +73,6 @@ Tcl_Obj * NArg2TclObj(nArg *a)
             return Tcl_NewStringObj(a->GetC(), -1);
     }
     return NULL;
-}
-
-bool nTclServer::RunCommand(nCmd *c)
-{
-    c->Rewind();
-    int len = c->GetNumInArgs();
-    Tcl_Obj *tclCommand = Tcl_NewStringObj(c->In()->GetS(), -1);
-    for (int i = 0; i < len; i++) {
-        Tcl_AppendToObj(tclCommand, " ", 1);
-        Tcl_AppendObjToObj(tclCommand, NArg2TclObj(c->In()));
-    }
-    int errCode = Tcl_EvalObjEx(this->interp, tclCommand,  TCL_EVAL_DIRECT);
-    Tcl_Obj *res = Tcl_GetObjResult(interp);
-    if (errCode == TCL_ERROR) {
-        n_printf("*** Tcl error '%s'\n", Tcl_GetString(res));
-        if (this->GetFailOnError()) {
-            n_error("Aborting.");
-        }
-        return false;
-    }
-    return true;
 }
 
 //--------------------------------------------------------------------
@@ -135,8 +116,9 @@ bool nTclServer::RunScriptFS(const char *fname, const char*& result)
 bool nTclServer::RunScript(const char *fname, const char*& result)
 {  
     result = 0;
-    if (this->refFileServer.isvalid()) {
-    
+	bool fres = false;
+    if (this->refFileServer.isvalid()) 
+	{    
         nFile* file = this->refFileServer->NewFileObject();
         n_assert(file);
     
@@ -147,55 +129,49 @@ bool nTclServer::RunScript(const char *fname, const char*& result)
             file->Seek(0, nFile::END);
             long size = file->Tell();
             file->Seek(0, nFile::START);
+			if (size > 0)
+			{
+				script_buffer.resize(size);
 
-            script_buffer.resize(size);
+				file->Read(script_buffer.get_buffer(), size);
+				file->Close();            
+				
 
-            file->Read(script_buffer.get_buffer(), size);
-            file->Close();            
-            delete file;        
-		
-            this->print_error = true;
-            int errCode = Tcl_EvalEx(this->interp, script_buffer.get_buffer(), size, TCL_EVAL_DIRECT);
-            this->print_error = false;
-            Tcl_Obj *res = Tcl_GetObjResult(interp);
-            result = Tcl_GetString(res);
+				this->print_error = true;
+				int errCode = Tcl_EvalEx(this->interp, script_buffer.get_buffer(), size, TCL_EVAL_DIRECT);
+				this->print_error = false;
+				Tcl_Obj *res = Tcl_GetObjResult(interp);
+				result = Tcl_GetString(res);
 
-            if (errCode == TCL_ERROR) 
-            {               
-                n_printf("*** Tcl error '%s' in file %s line %d.\n", result, fname, this->interp->errorLine);
-                if (this->GetFailOnError())
-                {
-                    n_error("Aborting.");
-                }            
-                return false;
-            }            
-			
+				if (errCode == TCL_ERROR) 
+				{               
+					n_printf("*** Tcl error '%s' in file %s line %d.\n", result, fname, this->interp->errorLine);
+					if (this->GetFailOnError())
+					{
+						n_error("Aborting.");
+					}            					
+				}           
+				else
+				{
+					fres = true;
+				}
+			}
+			else
+			{
+				file->Close();
+			}			
         } 
 		else 
 		{
-            n_printf("file %s opening error \n", fname);
-			return false;
+            n_printf("file %s opening error \n", fname);			
         }    
+		delete file;
     } 
 	else 
 	{
-		stl_string path;		
-		this->print_error = true;
-		int errCode = Tcl_EvalFile(this->interp, kernelServer->GetFileServer2()->ManglePath(fname, path));
-		this->print_error = false;
-		Tcl_Obj *res = Tcl_GetObjResult(interp);
-		result = Tcl_GetString(res);
-		if (errCode == TCL_ERROR) 
-		{
-			n_printf("*** Tcl error '%s' in file %s line %d.\n", result, fname, this->interp->errorLine);
-			if (this->GetFailOnError())
-			{
-				n_error("Aborting.");
-			}
-			return false;
-		}             
+		return this->RunScriptFS(fname, result);
 	}
-		return true;
+	return fres;
 }
 
 //--------------------------------------------------------------------

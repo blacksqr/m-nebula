@@ -12,6 +12,8 @@
 #include "kernel/nscriptserver.h"
 #include "kernel/nloghandler.h"
 
+nNebulaScriptClass(nConServer, "nroot");
+
 // alle Tasten, die fuer die Konsole eine Bedeutung
 // haben und nicht weitergegeben werden duerfen...
 int key_killset[] = {
@@ -91,12 +93,12 @@ int key_killset[] = {
 */
 //-------------------------------------------------------------------
 nConServer::nConServer()
-          : ref_is(ks,this), ref_gs(ks,this), ref_ss(ks,this)
+          : ref_is(kernelServer,this), ref_gs(kernelServer,this), ref_ss(kernelServer,this)
 {
     this->ref_is = "/sys/servers/input";
     this->ref_gs = "/sys/servers/gfx";
     this->ref_ss = "/sys/servers/script";
-    this->cl_env = ks->FindClass("nenv");
+    this->cl_env = kernelServer->FindClass("nenv");
     this->con_open   = false;
     this->watch_open = false;
     this->max_screen_lines = 32;    // Gfx-Aufloesungs-abhaengig
@@ -209,7 +211,7 @@ void nConServer::renderConsole(int, int, int, int h, int f_height)
 
     if (f_height > 0) this->max_screen_lines = ((h*4)/5) / f_height;
 
-    num_lines = ks->GetDefaultLogHandler()->GetLineBuffer()->GetLines(line_array,512);
+    num_lines = kernelServer->GetDefaultLogHandler()->GetLineBuffer()->GetLines(line_array,512);
 
     first_line = this->max_screen_lines + this->scroll_offset;
     if (first_line >= num_lines) {
@@ -260,7 +262,7 @@ void nConServer::renderWatcher(int, int, int, int h, int f_height)
     n_assert(this->watch_open);
     n_assert(this->cl_env);
     
-    nRoot *vars = ks->Lookup("/sys/var");
+    nRoot *vars = kernelServer->Lookup("/sys/var");
     if (vars) {
         char line[N_MAXPATH];
         int act_buf_pos = 0;
