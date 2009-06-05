@@ -8,6 +8,7 @@
 #include "gfx/nchannelcontext.h"
 #include "node/nchnsplitter.h"
 
+nNebulaScriptClass(nChnSplitter, "nanimnode");
 //-------------------------------------------------------------------
 //  nChnSplitter()
 //  07-Jul-99   floh    created

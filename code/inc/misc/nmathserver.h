@@ -63,9 +63,11 @@ struct nVArray {
 };
 
 //--------------------------------------------------------------------
-class N_DLLCLASS nMathServer : public nRoot {
+class N_DLLCLASS nMathServer : public nRoot 
+{
 private:
-    enum {
+    enum 
+    {
         N_VREG_NUM = 4,         // 4 vector array registers
         N_RAND_NUM = 16*1024,   // random number buffer (64KB)
     };
@@ -77,8 +79,7 @@ private:
     float *rand_array;          // random number array (size is N_RAND_NUM)
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     nMathServer();
     virtual ~nMathServer();

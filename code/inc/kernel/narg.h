@@ -20,7 +20,7 @@
     This is used heavily by the scripting interface to transfer
     data between the Nebula C++ code and the native datatypes
     of each supported scripting language.  Each scripting
-    langauge server provides code to translate between nArg
+    language server provides code to translate between nArg
     objects and the native scripting language representations.
 */
 class nArg 
@@ -178,9 +178,11 @@ inline void nArg::Set(const nArg& arg)
                 this->l = 0;
                 this->listLen = 0;
             }
-            if(arg.l) {
+            if(arg.l) 
+			{
                 this->l = new nArg[arg.listLen];
-                for(int i = 0; i < arg.listLen; i++) {
+                for(int i = 0; i < arg.listLen; i++) 
+				{
                     this->l[i].Set(arg.l[i]);
                 }
                 this->listLen = arg.listLen;
@@ -207,8 +209,10 @@ inline nArg::nArg(const nArg& arg)
 //-----------------------------------------------------------------------------
 /**
 */
-inline nArg::~nArg() {
-	switch (this->type) {
+inline nArg::~nArg() 
+{
+	switch (this->type) 
+	{
     case ARGTYPE_USTRING:
     	if (this->u) n_free(this->u);
         break;
@@ -217,7 +221,8 @@ inline nArg::~nArg() {
         if (this->s) n_free(this->s);
 		break;
     case ARGTYPE_LIST:
-        if(this->l) {
+        if(this->l) 
+		{
             n_delete[] this->l;
             this->l = 0;
         }
@@ -415,7 +420,7 @@ inline void nArg::SetL(nArg* _l, int len)
 //-----------------------------------------------------------------------------
 /**
     Returns the argument type of the object, which is one of
-    ARGTYPE_VOID        - uninitialised
+    ARGTYPE_VOID        - uninitialized
     ARGTYPE_INT
     ARGTYPE_BOOL
     ARGTYPE_FLOAT

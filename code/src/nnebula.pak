@@ -59,6 +59,7 @@
 #   27-Jul-07  ilya      + nprogramshader
 #   27-Jul-07  ilya      + nshader
 #   16-Feb-09  ilya      + link against tcl8.5 libs
+#   15-May-09  ilya      + ver, init files final clean up   
 #--------------------------------------------------------------------
 beginmodule nnpkfileserver
     setdir file
@@ -228,37 +229,32 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nconserver
     setdir misc
-    setfiles { ncsrv_init ncsrv_main ncsrv_cmds }
+    setfiles { ncsrv_main ncsrv_cmds }
     setheaders { nconserver }
-    setversion ncsrv_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nmathserver
     setdir misc
-    setfiles { nmathserver nmath_main nmath_matrix nmath_varray nmath_dispatch }
+    setfiles { nmath_main nmath_matrix nmath_varray nmath_dispatch }
     setheaders { nmathserver }
-    setversion nmath_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nblob
     setdir misc
     setfiles { nblob }
     setheaders { nblob }
-    setversion nblob_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule noctree
     setdir misc
-    setfiles { noctree_init noctree_main noctree_collect noctree_cmds }
+    setfiles { noctree_main noctree_collect noctree_cmds }
     setheaders { noctree }
-    setversion noctree_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nobserver
     setdir misc
-    setfiles { nobs_init nobs_main nobs_input nobs_cmds }
+    setfiles { nobs_main nobs_input nobs_cmds }
     setheaders { nobserver }
-    setversion nobserver_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nvisnode
@@ -281,9 +277,8 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nanimnode
     setdir node
-    setfiles { nanim_init nanim_cmds }
+    setfiles { nanim_main nanim_cmds }
     setheaders { nanimnode }
-    setversion nanim_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule ncharacternode
@@ -294,9 +289,8 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nflipflop
     setdir node
-    setfiles { nflip_init nflip_main nflip_cmds }
+    setfiles { nflip_main nflip_cmds }
     setheaders { nflipflop }
-    setversion nflip_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nthreshnode
@@ -313,23 +307,20 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nchnsplitter
     setdir node
-    setfiles { nchnsplitter_init nchnsplitter_main nchnsplitter_cmds }
+    setfiles { nchnsplitter_main nchnsplitter_cmds }
     setheaders { nchnsplitter }
-    setversion nchnsplitter_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nchnmodulator
     setdir node
-    setfiles { nchnmod_init nchnmod_main nchnmod_cmds }
+    setfiles { nchnmod_main nchnmod_cmds }
     setheaders { nchnmodulator }
-    setversion nchnmod_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nchnreader
     setdir node
-    setfiles { nchnreader_init nchnreader_main nchnreader_cmds }
+    setfiles { nchnreader_main nchnreader_cmds }
     setheaders { nchnreader }
-    setversion nchnreader_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nlightnode
@@ -364,9 +355,8 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nmeshipol
     setdir node
-    setfiles { nmeshipol_init nmeshipol_main nmeshipol_cmds }
+    setfiles { nmeshipol_main nmeshipol_cmds }
     setheaders nmeshipol
-    setversion nmeshipol_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nmesheffect
@@ -383,37 +373,32 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nweighttree
     setdir node
-    setfiles { nwtree_init nwtree_main nwtree_cmds }
+    setfiles { nwtree_main nwtree_cmds }
     setheaders nweighttree
-    setversion nweighttree_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule njointanim
     setdir node
-    setfiles { njanim_init njanim_main njanim_joints njanim_states njanim_cmds }
+    setfiles { njanim_main njanim_joints njanim_states njanim_cmds }
     setheaders njointanim
-    setversion njanim_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nlinknode
     setdir node
-    setfiles { nlink_init nlink_main nlink_cmds }
+    setfiles { nlink_main nlink_cmds }
     setheaders nlinknode
-    setversion nlink_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nfognode
     setdir node
-    setfiles { nfog_init nfog_main nfog_cmds }
+    setfiles { nfog_main nfog_cmds }
     setheaders nfognode
-    setversion nfog_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nlenseflare
     setdir node
-    setfiles { nlenseflare_init nlenseflare_main nlenseflare_cmds }
+    setfiles { nlenseflare_main nlenseflare_cmds }
     setheaders nlenseflare
-    setversion nlenseflare_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule noverlayplane
@@ -424,9 +409,8 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nhypermixer2
     setdir node
-    setfiles { nhypermixer2_init nhypermixer2_main nhypermixer2_cmds }
+    setfiles { nhypermixer2_main nhypermixer2_cmds }
     setheaders nhypermixer2 
-    setversion nhypermixer2_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule nshadernode
@@ -455,9 +439,8 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nspecialfxserver
     setdir misc
-    setfiles { nsfx_init nsfx_main nsfx_cmds }
+    setfiles { nsfx_main nsfx_cmds }
     setheaders nspecialfxserver
-    setversion nsfx_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule naudioserver2
@@ -528,9 +511,8 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nprofileserver
     setdir misc
-    setfiles { nprofileserver_init nprofileserver_main nprofileserver_cmds }
+    setfiles { nprofileserver_main nprofileserver_cmds }
     setheaders { nprofileserver }
-    setversion nprofileserver_ver
 endmodule
 
 #----------------------------------------------------------------------

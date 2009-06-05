@@ -51,7 +51,8 @@ nFile::~nFile()
     + 27-Jan-2003   created, Ilya    Clockwise
 */
 bool nFile::Exists(const char* path) {
-    if (this->Open(path, "r")) {
+    if (this->Open(path, "r")) 
+	{
         this->Close();
         return true;
     }
@@ -325,6 +326,9 @@ bool
 nFile::PutS(const char* buffer)
 {
     n_assert(this->IsOpen());
+
+	if (!buffer || !strlen(buffer))
+		return true;
 
 #ifdef __WIN32__
 	int len = strlen(buffer);

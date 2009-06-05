@@ -7,14 +7,14 @@
 #include "node/n3dnode.h"
 #include "node/noverlayplane.h"
 #include "misc/nspecialfxserver.h"
-
+nNebulaScriptClass(nSpecialFxServer, "nroot");
 //-------------------------------------------------------------------
 /**
     - 09-May-00   floh    created
 */
 //-------------------------------------------------------------------
 nSpecialFxServer::nSpecialFxServer()
-: ref_root(ks,this)
+: ref_root(kernelServer,this)
 {
     this->ref_root = "/sys/servers/specialfx/root";
 

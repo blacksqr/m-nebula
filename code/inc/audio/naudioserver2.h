@@ -35,10 +35,6 @@
 #include "audio/nlistener2.h"
 #endif
 
-#ifndef N_ARRAY_H
-#include "util/narray.h"
-#endif
-
 #ifndef N_REF_H
 #include "kernel/nref.h"
 #endif

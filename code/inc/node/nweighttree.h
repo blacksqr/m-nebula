@@ -56,8 +56,7 @@ protected:
     nStrList wlist;         // Liste der WeightNodes
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     nWeightTree();
     virtual ~nWeightTree();

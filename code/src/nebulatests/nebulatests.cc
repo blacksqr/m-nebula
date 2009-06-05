@@ -7,7 +7,6 @@
 //-------------------------------------------------------------------
 #include "testsuite/ntestsuite.h"
 #include "nebulatests/nchannelservertest.h"
-#include "nebulatests/narraytest.h"
 #include "nebulatests/ndirectorytest.h"
 
 //-------------------------------------------------------------------
@@ -18,8 +17,6 @@ main(int /*argc*/, char* /*argv[]*/)
     nTestSuite testSuite("Nebula Test Cases");
 
     // add test cases here...
-    nArrayTest arrayTest("nArrayTest");
-    testSuite.AddTestCase(arrayTest);
 
     nChannelServerTest channelServerTest("nChannelServerTest");
     testSuite.AddTestCase(channelServerTest);

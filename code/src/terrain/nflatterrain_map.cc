@@ -299,7 +299,7 @@ bool nFlatTerrainNode::load_height_map(const char *abs_path)
 bool nFlatTerrainNode::load_tree_file(const char *abs_path)
 {
     // open tree file
-    nFile* file = ks->GetFileServer2()->NewFileObject();
+    nFile* file = kernelServer->GetFileServer2()->NewFileObject();
     if (file->Open(abs_path, "rb")) 
     {
 
@@ -406,7 +406,7 @@ bool nFlatTerrainNode::SaveTree(const char *fname)
     if (this->map_dirty) this->load_map();
     
     // save tree
-    nFile* file = ks->GetFileServer2()->NewFileObject();
+    nFile* file = kernelServer->GetFileServer2()->NewFileObject();
     if (file->Open(fname, "wb"))
     {
 		// Save Root Verts OR LOSE THEM FOREVER

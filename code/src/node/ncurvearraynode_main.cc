@@ -343,7 +343,7 @@ void
 nCurveArrayNode::Initialize()
 {
     nVisNode* p = (nVisNode*) this->GetParent();
-    if (p && (p->IsA(ks->FindClass("nvisnode"))))
+    if (p && (p->IsA(kernelServer->FindClass("nvisnode"))))
     {
         p->DependsOn(this);
     }

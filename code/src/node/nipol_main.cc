@@ -244,7 +244,8 @@ nIpol::Compute(nSceneGraph2 *sceneGraph)
             if (t1 > t0) l = (float) ((t-t0)/(t1-t0));
             else         l = 1.0f;
 
-            switch (this->ipol_type) {
+            switch (this->ipol_type) 
+			{
                 case N_STEP:
                     this->curval = k0.f;
                     break;

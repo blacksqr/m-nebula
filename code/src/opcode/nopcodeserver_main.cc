@@ -6,6 +6,7 @@
 #include "opcode/nopcodeserver.h"
 #include "opcode/nopcodeshape.h"
 
+nNebulaClass(nOpcodeServer, "ncollideserver");
 //------------------------------------------------------------------------------
 /**
 */

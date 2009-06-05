@@ -8,6 +8,7 @@
 #include "gfx/nchannelcontext.h"
 #include "node/nchnmodulator.h"
 
+nNebulaScriptClass(nChnModulator, "nvisnode");
 //-------------------------------------------------------------------
 //  nChnModulator()
 //  08-Jul-99   floh    created

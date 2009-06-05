@@ -31,8 +31,7 @@ protected:
     nObjectKey *keyarray;
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     nFlipFlop();
     virtual ~nFlipFlop();

@@ -368,7 +368,7 @@ public:
                             
                             // compute the collide normal
                             vector3 d(c1-c0);
-                            if (d.len() > TINY) {
+                            if (d.len() > N_TINY) {
                                 d.norm();
                             } else {
                                 d.set(0.0f, 1.0f, 0.0f);

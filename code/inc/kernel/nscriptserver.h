@@ -54,8 +54,6 @@ public:
     virtual ~nScriptServer();
     /// evaluate a script command
     virtual bool Run(const char *, const char*&); 
-    /// evaluate a nCmd object
-    virtual bool RunCommand(nCmd *);
     /// evaluate a script file
     virtual bool RunScript(const char *, const char*&);
 	/// evaluate a script file
@@ -76,6 +74,10 @@ public:
     virtual bool WriteEndObject(nFile* fp, nRoot *o, nRoot *owner);
     /// finish a persistent object file
     virtual bool EndWrite(nFile*);
+	/// get script command begin symbols
+	virtual const char* GetCmdBegin() const;
+	/// get script command end symbols
+	virtual const char* GetCmdEnd() const;
 	/// get script command parameters begin symbols
 	virtual const char* GetCmdParamBegin() const;
 	/// get script command parameters delimiter

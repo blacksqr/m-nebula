@@ -375,12 +375,12 @@ inline int n_frnd(ntype f)
 
 //------------------------------------------------------------------------------
 /**
-    Linearly interpolate between 2 values: ret = x + l * (y - x)
+    Linearly interpolate between 2 values: ret = x + l * (y - x); 
 */
 template<class vtype, class ntype>
-inline ntype n_lerp(const vtype& a, const vtype& b, const ntype& l)
+inline vtype n_lerp(const vtype& a, const vtype& b, const ntype& l)
 {
-    return a + l * (b - a);
+    return a*(NT_ONE - l) + b*l;
 }
 
 //------------------------------------------------------------------------------

@@ -3,7 +3,8 @@
 //  nsfx_cmds.cc
 //  (C) 2000 A.Weissflog
 //-------------------------------------------------------------------
-
+#include "kernel/npersistserver.h"
+#include "misc/nspecialfxserver.h"
 //------------------------------------------------------------------------------
 /**
     @scriptclass
@@ -41,6 +42,11 @@
          an object of class 'noverlayplane'
 */
 
+void n_initcmds(nClass *cl)
+{
+	cl->BeginCmds();
+	cl->EndCmds();
+}
 //-------------------------------------------------------------------
 //  EOF
 //-------------------------------------------------------------------

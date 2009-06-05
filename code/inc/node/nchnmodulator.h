@@ -50,8 +50,7 @@ protected:
     nChnModDef *defarray;
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     nChnModulator();
     virtual ~nChnModulator();

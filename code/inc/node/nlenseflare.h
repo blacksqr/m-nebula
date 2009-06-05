@@ -80,8 +80,7 @@ public:
     nLenseFlare();
    ~nLenseFlare();
 
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     virtual bool SaveCmds(nPersistServer*);
     virtual bool Attach(nSceneGraph2*);

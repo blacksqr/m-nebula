@@ -50,10 +50,10 @@
 class nInputServer;
 class nGfxServer;
 class nScriptServer;
-class N_DLLCLASS nConServer : public nRoot {
+class N_DLLCLASS nConServer : public nRoot 
+{
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 private:
     nAutoRef<nInputServer>  ref_is;
     nAutoRef<nGfxServer>    ref_gs;

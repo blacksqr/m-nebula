@@ -245,8 +245,7 @@ protected:
     nState   in_state;          // in welchen Begin()/End()?
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     nJointAnim();
     virtual ~nJointAnim();

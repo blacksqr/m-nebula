@@ -181,6 +181,28 @@ nScriptServer::EndWrite(nFile *)
 }
 
 //--------------------------------------------------------------------
+//  GetCmdBegin()
+//  27-May-09   Ilya    created
+//--------------------------------------------------------------------
+const char* 
+nScriptServer::GetCmdBegin() const
+{
+	n_error("nScriptServer::GetCmdParamBegin() pure virtual function called!");
+	return 0;
+}
+
+//--------------------------------------------------------------------
+//  GetCmdEnd()
+//  27-May-09   Ilya    created
+//--------------------------------------------------------------------
+const char* 
+nScriptServer::GetCmdEnd() const
+{
+	n_error("nScriptServer::GetCmdEnd() pure virtual function called!");
+	return 0;
+}
+
+//--------------------------------------------------------------------
 //  GetCmdParamBegin()
 //  17-Dec-07   Ilya    created
 //--------------------------------------------------------------------

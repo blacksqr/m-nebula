@@ -36,8 +36,7 @@ class N_DLLCLASS nSpecialFxServer : public nRoot {
     float ovr_red, ovr_green, ovr_blue, ovr_alpha;
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     nSpecialFxServer();
     virtual ~nSpecialFxServer();

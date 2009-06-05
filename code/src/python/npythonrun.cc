@@ -72,27 +72,6 @@ PyObject *NArg2PyObject(nArg *a)
 	return NULL;
 }
 
-bool nPythonServer::RunCommand(nCmd *c) 
-{
-	c->Rewind();
-	int len = c->GetNumInArgs();
-	PyObject *module_dict = PyModule_GetDict(this->nmodule);
-	PyObject *main_module_dict = PyModule_GetDict(this->main_module);
-	char *funcName = const_cast<char *>(c->In()->GetS());
-	PyObject *f = PyDict_GetItemString(main_module_dict, funcName);
-	if (f) {
-		PyObject *args = PyTuple_New(len-1);
-		for (int i = 0; i < len-1; i++) {
-			PyTuple_SET_ITEM(args, i, NArg2PyObject(c->In()));
-		}
-		if (PyObject_CallObject(f, args)) 
-			return true;
-	} else {
-		f = PyDict_GetItemString(module_dict, funcName);
-	}
-	return false;  
-}
-
 //--------------------------------------------------------------------
 //  Run(const char *cmd_str, const char *& result)
 //  Executes a given string as Python code

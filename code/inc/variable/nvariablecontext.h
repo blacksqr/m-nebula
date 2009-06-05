@@ -7,10 +7,6 @@
     
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_ARRAY_H
-#include "util/narray.h"
-#endif
-
 #ifndef N_VARIABLE_H
 #include "variable/nvariable.h"
 #endif

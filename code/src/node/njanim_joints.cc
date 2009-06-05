@@ -102,16 +102,16 @@ nJointAnim::lookupJointPointers()
     if (this->refJointRoot.getname())
     {
             
-        ks->PushCwd(this->refJointRoot.get());
+        kernelServer->PushCwd(this->refJointRoot.get());
     }
     else
     {
-        ks->PushCwd(this->GetParent());
+        kernelServer->PushCwd(this->GetParent());
     }
 
     for (i=0; i<this->num_joints; i++)
     {
-        if (!this->joint_array[i].LookupJoint(ks))
+        if (!this->joint_array[i].LookupJoint(kernelServer))
         {
             n_printf("Could not lookup nJoint '%s'!\n", this->joint_array[i].path);
             n_assert(false);
@@ -119,7 +119,7 @@ nJointAnim::lookupJointPointers()
     }
     this->jointPointersDirty = false;
     
-    ks->PopCwd();
+    kernelServer->PopCwd();
 }
 
 //--------------------------------------------------------------------

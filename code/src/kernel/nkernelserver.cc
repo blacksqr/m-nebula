@@ -142,39 +142,47 @@ nRoot *nKernelServer::_lookupPath(const char *path)
   - 24-Oct-99   floh    don't break on problems, instead return NULL
   - 10-Jun-02   zeev    add the ahead param flag to enable adding the node ahead of all others.
 */
-nRoot *nKernelServer::_checkCreatePath(const char *cl_name, const char *path, bool die_on_error, bool ahead)
-    {
-    nRoot *parent = NULL;
-    nRoot *child  = NULL;
-    char *cur_str, *next_str;
+nRoot* nKernelServer::_checkCreatePath(const char* cl_name, const char* path, bool die_on_error, bool ahead)
+{
+    nRoot* parent = 0;
+    nRoot* child  = 0;
+    char* cur_str, *next_str;
     char str_buf[512];
-    char *str = str_buf;
+    char* str = str_buf;
+
     strncpy(str_buf,path,sizeof(str_buf)); 
     str_buf[sizeof(str_buf)-1]=0;
     
     if (_isAbsPath(str)) parent = this->root;
     else                 parent = this->cwd;
+
     cur_str = strtok(str,"/");
-    if (cur_str) {
+
+    if (cur_str) 
+	{
         // for each directory path component
-        while ((next_str = strtok(NULL,"/"))) {
+        while ((next_str = strtok(NULL,"/"))) 
+		{
             child = parent->Find(cur_str);
-            if (!child) {
+            if (!child) 
+			{
                 // subdir doesn't exist, fill up
                 child = this->_newUnnamedObject("nroot");
-                if (child) {
+                if (child) 
+				{
                     child->SetName(cur_str);
                     if (ahead) // Add by Zeev Clockwise
                         parent->AddHead(child);
                     else
                     parent->AddTail(child);
                     child->Initialize();
-                    } 
-                else {
+				} 
+                else 
+				{
                     n_printf("ERROR: Couldn't create object '%s' in path '%s'.\n",
                              cur_str, path);
                     if (die_on_error) n_error("Aborting.\n");
-                    return NULL;
+                    return 0;
                 }
             }
             parent = child;
@@ -185,11 +193,13 @@ nRoot *nKernelServer::_checkCreatePath(const char *cl_name, const char *path, bo
         child = parent->Find(cur_str);
         
         // Add by Zeev 
-        // Check wether the found node is of the same cl_name 
+        // Check whether the found node is of the same cl_name 
         // if not remove and replace it by a new one. 
-        if ( child ) {
+        if ( child ) 
+		{
             nClass* cl = FindClass(cl_name);
-            if (!cl) {				
+            if (!cl) 
+			{
                 //n_printf("ERROR: Couldn't create object '%s' of class '%s'.\n",path,cl_name);
                 //if (die_on_error) n_error("Aborting.\n");
                 //return NULL;
@@ -197,9 +207,12 @@ nRoot *nKernelServer::_checkCreatePath(const char *cl_name, const char *path, bo
 				child->Remove();
                 child->Release();
                 child = 0;
-			} else if (child->IsA(cl))
-                return child ;
-            else {
+			} 
+			else 
+				if (child->IsA(cl))
+					return child ;
+            else 
+			{
                 child->Remove();
                 child->Release();
                 child = 0;
@@ -207,23 +220,29 @@ nRoot *nKernelServer::_checkCreatePath(const char *cl_name, const char *path, bo
 		}
 
 
-        if (!child) {
+        if (!child) 
+		{
             // create and link object
             child = (nRoot *) this->_newUnnamedObject(cl_name);
-            if (child) {
+            if (child) 
+			{
                 child->SetName(cur_str);
                 if (ahead) // Add by Zeev Clockwise
                     parent->AddHead(child);
                 else
 					parent->AddTail(child);
                 child->Initialize();
-			} else {
+			} 
+			else 
+			{
                 n_printf("ERROR: Couldn't create object '%s' of class '%s'.\n",path,cl_name);
                 if (die_on_error) n_error("Aborting.\n");
                 return NULL;
             }
         }
-	} else {
+	} 
+	else 
+	{
         n_warn("Path component is empty!");
     }
     return child;

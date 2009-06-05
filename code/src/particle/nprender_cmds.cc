@@ -213,8 +213,8 @@ static void n_setemitter(void *o, nCmd *cmd)
 static void n_getemitter(void *o, nCmd *cmd)
 {
     nPRender *self = (nPRender *) o;
-    char buf[N_MAXPATH];
-    cmd->Out()->SetS(self->GetEmitter(buf,sizeof(buf)));
+    stl_string buf;
+    cmd->Out()->SetS(self->GetEmitter(buf));
 }
 
 //------------------------------------------------------------------------------
@@ -361,8 +361,8 @@ bool nPRender::SaveCmds(nPersistServer *fs)
 
         //--- setemitter ---
         cmd = fs->GetCmd(this,'SEMT');
-        char buf[N_MAXPATH];
-        cmd->In()->SetS(this->GetEmitter(buf,sizeof(buf)));
+        stl_string buf;
+        cmd->In()->SetS(this->GetEmitter(buf));
         fs->PutCmd(cmd);
 
         //--- keyframes ---

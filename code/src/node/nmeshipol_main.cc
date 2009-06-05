@@ -11,6 +11,21 @@
 #include "gfx/nchannelcontext.h"
 #include "mathlib/bbox.h"
 
+nNebulaScriptClass(nMeshIpol, "nanimnode");
+//------------------------------------------------------------------------------
+/**
+*/
+nMeshIpol::nMeshIpol() :
+    update_flags(0),
+    num_keys(0),
+    key_array(0),
+    in_begin_keys(false),
+    dyn_vb(kernelServer, this)
+{
+    // make sure source meshes are saved before myself
+    this->SetFlags(N_FLAG_SAVEUPSIDEDOWN);
+}
+
 //------------------------------------------------------------------------------
 /**
 */

@@ -83,10 +83,6 @@
 #include <ode/ode.h>
 #endif
 
-//#ifndef N_ARRAY_H
-//#include "util/narray.h"
-//#endif
-
 #ifndef N_VECTOR_H
 #include "mathlib/vector.h"
 #endif

@@ -27,7 +27,7 @@ bool nFlatTerrainNode::SaveToWavefront(const char *fn)
     n_assert(this->root_node);
 
     // write the baby...
-    this->fp = ks->GetFileServer2()->NewFileObject();
+    this->fp = kernelServer->GetFileServer2()->NewFileObject();
     if (this->fp->Open(fn, "w"))
     {
         // run the update functions a few times over the

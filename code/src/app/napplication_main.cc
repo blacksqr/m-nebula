@@ -41,6 +41,9 @@ nApplication::nApplication() :
 	this->ext_script_map["ntcl"] = "ntclserver";
 	this->ext_script_map["npy"] = "npythonserver";
 	this->ext_script_map["py"] = "npythonserver";
+	this->ext_script_map["lisp"] = "neclserver";
+	this->ext_script_map["lsp"] = "neclserver";
+	this->ext_script_map["nlsp"] = "neclserver";
 }
 
 //------------------------------------------------------------------------------
@@ -91,14 +94,30 @@ bool nApplication::run_init_script()
 		init_dir += this->app_name;			
 		init_dir += '/';		
 		fs->SetAssign("appscript", init_dir.c_str());
-		if (!this->noinit && fs && fs->FileExists("appscript:init.tcl"))
-		{			
-			fs->PushCwd();
-			fs->ChangeDir(init_dir.c_str());				
-			n_printf("running init script 'appscript:init.tcl'\n");
-			this->Parse("appscript:init.tcl");
-			//this->refScript->RunScript(init_path.c_str(), res);
-			fs->PopCwd();			
+		fs->SetAssign("lib", "home:script/lib/");
+
+		if (!this->noinit && fs)			
+		{	
+			bool found = false;
+			stl_string init_file("appscript:init.");
+			for (strings_v::const_iterator i = this->refScript->GetExtensions().begin(); i != this->refScript->GetExtensions().end(); i++)
+			{
+				stl_string check_file(init_file + *i);
+				if (fs->FileExists(check_file.c_str()))
+				{
+					init_file = check_file;
+					found = true;
+				}
+			}
+			if (found)
+			{
+				fs->PushCwd();
+				fs->ChangeDir(init_dir.c_str());
+				n_printf("running init script '%s'\n", init_file.c_str());
+				const char* res;
+				this->refScript->RunScriptFS(init_file.c_str(), res);
+				fs->PopCwd();
+			}			
 		} 
 		else 
 		{
@@ -118,9 +137,15 @@ bool nApplication::run_startup_script()
 	{			
 		if (!this->startup_script.empty()) 
 		{				
-			const char* res;
+			const char* res = "ok";
 			n_printf("running startup script '%s'\n", this->startup_script.c_str());
-			this->refScript->RunScript(this->startup_script.c_str(), res);
+
+			nPathString startup_path(this->startup_script.c_str());
+
+			if (this->refScript->IsExtSupported(startup_path.GetExtension()))
+				this->refScript->RunScript(this->startup_script.c_str(), res);
+			else
+				this->Parse(this->startup_script.c_str());
 			if (res) 
 				n_printf("%s\n", res);
 		}
@@ -251,7 +276,7 @@ bool nApplication::process_command_line()
 			} 
 			else
 			{
-				n_printf("unknown arg: %s\n", _ks->GetArgv(i));
+				n_printf("nApp: unknown arg: %s\n", _ks->GetArgv(i));
 			}
 		}			
 	}	

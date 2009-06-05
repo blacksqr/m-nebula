@@ -9,13 +9,14 @@
 #include "gfx/nscenegraph2.h"
 #include "node/nlenseflare.h"
 
+nNebulaScriptClass(nLenseFlare, "nvisnode");
 //==============================================================================
 //  2001.01.09  jeremy    + port to ndynvertexbuffer
 //------------------------------------------------------------------------------
 nLenseFlare::nLenseFlare() :
-    ref_gs(ks,this),
-    ref_dynvbuf(ks,this),
-    ref_fx(ks,this),
+    ref_gs(kernelServer,this),
+    ref_dynvbuf(kernelServer,this),
+    ref_fx(kernelServer,this),
     aFlares(0),
     iNumberOfFlares(0),
     bBegun(false),

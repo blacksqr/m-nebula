@@ -488,7 +488,7 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
                 break;
 
             case nArg::ARGTYPE_LIST:
-                Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
+                Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp, arg));
                 break;
 
             case nArg::ARGTYPE_VOID:
@@ -728,87 +728,108 @@ static void tcl_objcmderror(Tcl_Interp *interp,
 int tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST *objv)
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer *) cdata;
-        char *obj_name;
-        char *cmd_name;
-        char *dot;
-        char cmd[N_MAXPATH];
-        nRoot *o;
-        bool has_dot = false;
+    nTclServer* tcl = (nTclServer *) cdata;
+	char* obj_name = 0;
+	char* cmd_name = 0;
+	char* dot = 0;
+	char cmd[N_MAXPATH];
+	nRoot* o = 0;
+	bool has_dot = false;
 
-        // extract object name and cmd name
-        n_strncpy2(cmd,Tcl_GetString(objv[1]),sizeof(cmd));
-        dot = strchr(cmd,'.');
+	// extract object name and cmd name
+	n_strncpy2(cmd, Tcl_GetString(objv[1]),sizeof(cmd));
+	dot = strchr(cmd,'.');
+	
+	// special case handle path components
+	while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot = strchr(++dot, '.'); 
+	if (dot) 
+	{
+		has_dot = true;
+		*dot = 0;
+		obj_name = cmd;
+		if (obj_name == dot) obj_name = 0;
+		cmd_name = dot+1;
+	} 
+	else 
+	{
+		obj_name = 0;
+		cmd_name = cmd;
+	}
+	if (*cmd_name == 0) cmd_name = 0;
 
-        // special case handle path components
-        while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot=strchr(++dot,'.'); 
-        if (dot) {
-            has_dot = true;
-            *dot = 0;
-            obj_name = cmd;
-            if (obj_name == dot) obj_name = NULL;
-            cmd_name = dot+1;
-        } else {
-            obj_name = NULL;
-            cmd_name = cmd;
-        }
-        if (*cmd_name == 0) cmd_name = NULL;
+	// find object to invoke command on
+	if (obj_name) o = nTclServer::kernelServer->Lookup(obj_name);
+	else          o = nTclServer::kernelServer->GetCwd();	
 
-        // find object to invoke command on
-        if (obj_name) o = nTclServer::kernelServer->Lookup(obj_name);
-        else          o = nTclServer::kernelServer->GetCwd();
-        if (!o) {
-            tcl_unknownObject(interp, tcl->print_error, obj_name);
+	if (o) 
+	{
+		if (cmd_name)
+		{
+			// invoke command
+			nClass* cl = o->GetClass();
+			nCmdProto* cmd_proto = (nCmdProto *) cl->FindCmdByName(cmd_name);
+			if (cmd_proto) 
+			{	            
+				nCmd* cmd = cmd_proto->NewCmd();
+				n_assert(cmd);
+
+				// retrieve input args (skip the 'unknown' and cmd statement)		
+				if (_getInArgs(interp, cmd, objc - 2, objv + 2)) 
+				{
+					// let object handle the command
+					if (o->Dispatch(cmd)) 
+					{
+						retval = TCL_OK;
+						_putOutArgs(interp, cmd);
+					} 
+					else 
+					{
+						tcl_objcmderror(interp,tcl,"Dispatch error, object '%s', command '%s'", o, cmd_name);
+					}
+					cmd_proto->RelCmd(cmd);
+				}
+				else // (!_getInArgs(interp, cmd, objc - 2, objv + 2)) 
+				{
+					tcl_objcmderror(interp,tcl,"Broken input args, object '%s', command '%s'", o, cmd_name);
+					cmd_proto->RelCmd(cmd);
+					retval = TCL_ERROR;
+				}	            
+			} 
+			else 
+			{
+				// exception, the object doesn't know about the command!
+				// if there was a dot in the command name, we know that
+				// it was supposed to be a Nebula command statement,
+				// so we will just barf.
+				if (has_dot) 
+				{
+					// this is not very critical...
+					tcl_objcmderror(interp, tcl, "Object '%s' doesn't accept command '%s'", o, cmd_name);
+					retval = TCL_OK;
+				} 
+				else 
+				{
+					// otherwise, let's see if the original unknown command
+					// knows what to do...
+					retval = tcl_pipe_command(interp, "tcl_unknown", objc, objv);
+				}
+			}
+		}
+		else //(!cmd_name)
+		{
+			tcl_staticError(interp, tcl->print_error, "No command.");
+			retval = TCL_ERROR;
+		}
+	}
+	else //(!o)
+	{	
+		tcl_unknownObject(interp, tcl->print_error, obj_name);
 #if defined(_RUNANYWAY) || defined(_DEBUG)
-            return TCL_OK;
-#endif
-            return TCL_ERROR;
-        }
-        if (!cmd_name) {
-            tcl_staticError(interp, tcl->print_error, "No command.");
-            return TCL_ERROR;
-        }
-
-        // invoke command
-        nClass *cl = o->GetClass();
-        nCmdProto *cmd_proto = (nCmdProto *) cl->FindCmdByName(cmd_name);
-        if (cmd_proto) {
-            
-            nCmd *cmd = cmd_proto->NewCmd();
-            n_assert(cmd);
-
-            // retrieve input args (skip the 'unknown' and cmd statement)            
-            if (!_getInArgs(interp,cmd,objc-2,objv+2)) {
-                tcl_objcmderror(interp,tcl,"Broken input args, object '%s', command '%s'",o,cmd_name);
-                cmd_proto->RelCmd(cmd);
-                return TCL_ERROR;
-            }
-
-            // let object handle the command
-            if (o->Dispatch(cmd)) {
-                retval = TCL_OK;
-                _putOutArgs(interp,cmd);
-            } else {
-                tcl_objcmderror(interp,tcl,"Dispatch error, object '%s', command '%s'",o,cmd_name);
-            }
-            cmd_proto->RelCmd(cmd);
-            
-        } else {
-
-            // exception, the object doesn't know about the command!
-            // if there was a dot in the command name, we know that
-            // it was supposed to be a Nebula command statement,
-            // so we will just barf.
-            if (has_dot) {
-                // this is not very critical...
-                tcl_objcmderror(interp,tcl,"Object '%s' doesn't accept command '%s'",o,cmd_name);
-                retval = TCL_OK;
-            } else {
-                // otherwise, let's see if the original unknown command
-                // knows what to do...
-                retval = tcl_pipe_command(interp,"tcl_unknown",objc,objv);
-            }
-        }
+		retval = TCL_OK;
+#else
+		retval = TCL_ERROR;
+#endif		
+	}
     return retval;
 }
 

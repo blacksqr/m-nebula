@@ -7,12 +7,13 @@
 #include "gfx/nscenegraph2.h"
 #include "node/nfognode.h"
 
+nNebulaScriptClass(nFogNode, "nvisnode");
 //-------------------------------------------------------------------
 //  nFogNode()
 //  23-Mar-00   floh    created
 //-------------------------------------------------------------------
 nFogNode::nFogNode()
-: ref_gs(ks,this)
+: ref_gs(kernelServer,this)
 {
     this->ref_gs = "/sys/servers/gfx";
     this->fog_mode    = N_FOGMODE_LINEAR;

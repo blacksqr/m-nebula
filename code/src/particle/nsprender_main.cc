@@ -10,6 +10,53 @@
 #include "particle/npemitter.h"
 #include "particle/nspriterender.h"
 
+nNebulaScriptClass(nSpriteRender, "nprender");
+
+vector3 nSpriteRender::refVertices[nSpriteRender::REFQUADS * 4];
+vector3 nSpriteRender::tformedVertices[nSpriteRender::REFQUADS * 4];
+
+nSpriteRender::nSpriteRender() : ref_gs(kernelServer,this),
+				  ref_math(kernelServer,this),
+				  dyn_vb(kernelServer,this),
+				  cur_vb(0),
+				  num_quads(0),
+				  cur_quad(0),
+				  coord(),
+				  color(0),
+				  uv(0),
+				  stride4(0),
+				  bounce_key(0),
+				  spinRef(0),
+				  spinAccelRef(0)
+{
+	ref_gs   = "/sys/servers/gfx";
+	ref_math = "/sys/servers/math";
+}
+
+
+void nSpriteRender::Initialize()
+{	
+	if (this->GetClass()->GetRef() == 1)
+	{
+		// initialize untransformed reference quads
+		vector3 v0(-0.5f, -0.5f, 0.0f);
+		vector3 v1(+0.5f, -0.5f, 0.0f);
+		vector3 v2(+0.5f,  0.5f, 0.0f);
+		vector3 v3(-0.5f,  0.5f, 0.0f);
+		matrix33 tform;
+		int i;
+		for (i = 0; i < nSpriteRender::REFQUADS; i++)
+		{
+			float rad = (float(i) / float(nSpriteRender::REFQUADS)) * 2.0f * (nReal)N_PI;
+			tform.ident();
+			tform.rotate_z(rad);
+			nSpriteRender::refVertices[i*4 + 0] = tform * v0;
+			nSpriteRender::refVertices[i*4 + 1] = tform * v1;
+			nSpriteRender::refVertices[i*4 + 2] = tform * v2;
+			nSpriteRender::refVertices[i*4 + 3] = tform * v3;
+		}		
+	}
+}
 //-------------------------------------------------------------------
 //  ~nSpriteRender()
 //  20-Mar-00   floh    created

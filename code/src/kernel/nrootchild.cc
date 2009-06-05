@@ -114,6 +114,7 @@ void nRoot::Remove(void)
 void nRoot::SetName(const char *str)
 {
     nHashNode::SetName(str);
+	this->fullname.clear();
 }
 
 //--------------------------------------------------------------------
@@ -128,7 +129,8 @@ nRoot *nRoot::Find(const char *str)
 {
     n_assert(str);
     nRoot *n = NULL;
-    if (str[0]=='.') {
+    if (str[0]=='.') 
+	{
         if (str[1]==0) return this;
         else if ((str[1]=='.') && (str[2]==0)) return this->parent;
     }
@@ -158,24 +160,31 @@ int child_cmp(const void *e0, const void *e1)
 
     - 18-May-99   floh    created
 */
-//--------------------------------------------------------------------
 void nRoot::Sort(void)
 {
-    int num,i;
-    nRoot *c;
-    for (num=0,c=this->GetHead(); c; c=c->GetSucc(),num++);
-    if (num > 0) {
-        nRoot **c_array = (nRoot **) n_malloc(num*sizeof(nRoot *));
-        if (!c_array) n_error("Out of mem!");
-        for (i=0,c=this->GetHead(); c; c=c->GetSucc(),i++) {
+    size_t num = 0;
+    nRoot* c = 0;
+
+    for (c = this->GetHead(); c; c = c->GetSucc(), num++);
+
+    if (num > 0) 
+	{
+		std::vector<nRoot*> c_array(num);
+        if (c_array.size() != num) n_error("Out of mem!");
+
+		size_t i = 0;
+        for (i = 0, c = this->GetHead(); c; c=c->GetSucc(), i++) 
+		{
             c_array[i] = c;
         }
-        qsort(c_array,num,sizeof(nRoot *),child_cmp);
-        for (i=0; i<num; i++) {
+
+        qsort(&c_array.front(), num, sizeof(nRoot *), child_cmp);
+
+        for (i = 0; i < num; i++) 
+		{
             c_array[i]->Remove();
             this->AddHead(c_array[i]);
         }
-        n_free(c_array);
     }
 }
 

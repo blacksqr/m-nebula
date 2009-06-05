@@ -1,0 +1,22 @@
+#--------------------------------------------------------------------
+#    necl.pak
+#    ============
+#    nEclServer class package definition
+#    (C) 2009 Ilya Kliot
+#--------------------------------------------------------------------
+beginmodule neclserver
+    setdir ecl
+    setfiles { neclserver neclrun neclcmds  }
+    setheaders { neclserver }    
+endmodule
+#--------------------------------------------------------------------
+begintarget necl
+    settype package
+    setmods       { neclserver }
+    setdepends    { nnebula }
+    setlibs_win32 { nkernel.lib nnebula.lib kernel32.lib user32.lib ecl.lib }
+    setlibs_unix  { nkernel nnebula ecl util }
+endtarget
+#--------------------------------------------------------------------
+# EOF
+#--------------------------------------------------------------------

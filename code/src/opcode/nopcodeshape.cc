@@ -235,8 +235,8 @@ nOpcodeShape::Collide(nCollType ctype,
             // test triangle 1 lines against triangle 0
             for (j = 0; j < 3; j++) 
             {
-                intersects[0][j] = t[1].intersect_both_sides(l[0][j], ipos[0][j]);
-                intersects[1][j] = t[0].intersect_both_sides(l[1][j], ipos[1][j]);
+                intersects[0][j] = t[1].intersect(l[0][j], ipos[0][j]);
+                intersects[1][j] = t[0].intersect(l[1][j], ipos[1][j]);
             }
 
             // get averaged intersection position, we use this as the contact point
@@ -254,7 +254,7 @@ nOpcodeShape::Collide(nCollType ctype,
                     }
           else
           {
-            contact += l[j][k].start();
+            contact += l[j][k].va();
             numIsects++;
           }
                 }

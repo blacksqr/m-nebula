@@ -329,8 +329,10 @@ inline bool nCheckGlError(void)
 {
     GLenum error;
 	bool res = false;
-    while ((error = glGetError()) != GL_NO_ERROR) {
+    while ((error = glGetError()) != GL_NO_ERROR)
+	{
         n_printf("gl error: %s\n", gluErrorString(error));
+		_flushall();
 		res = true;
     }
 	return res;
@@ -435,6 +437,14 @@ inline GLenum nGetGlCmp(nRStateParam nCmp/*, GLenum def = GL_LESS*/)
 	//return glCmp;
 }
 
+inline void nDisableTexArrays(int n) 
+{
+	for (int i = 0; i < n; i++)
+	{
+  		glClientActiveTextureARB(GLenum(GL_TEXTURE0_ARB + i));
+  		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+}
 
 inline void nSwitchGlCapsOff() 
 {

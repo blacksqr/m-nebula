@@ -41,7 +41,7 @@ void launch(const char *script)
     nScriptServer* ss = (nScriptServer *) ks->New("ntclserver","/sys/servers/script");
     n_assert(ss);
     const char* result;
-    ss->RunScript(script, result);
+    ss->RunScriptFS(script, result);
     ss->Release();
 #ifdef __WIN32__
     ks->RemoveLogHandler(lh);

@@ -116,13 +116,14 @@ class N_PUBLIC nTerrainNode : public nVisNode {
     nDynVertexBuffer dyn_vb;
 
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     static nProfiler *p_update;
     static nProfiler *p_render;
 
     nTerrainNode();
+	virtual void Initialize();
+
     virtual ~nTerrainNode();
     virtual bool Attach(nSceneGraph2*);
     virtual void Compute(nSceneGraph2*);

@@ -59,9 +59,8 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nspriterender
     setdir particle
-    setfiles { nsprender_init nsprender_main nsprender_cmds }
+    setfiles { nsprender_main nsprender_cmds }
     setheaders nspriterender
-    setversion nsprender_ver
 endmodule
 #--------------------------------------------------------------------
 beginmodule ntrailrender

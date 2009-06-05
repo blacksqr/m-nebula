@@ -405,7 +405,9 @@ void nTimeServer::Trigger(void)
 			if (this->refScriptServer.isvalid()) 
 			{
 				nScriptServer* script = this->refScriptServer.get();
-				stl_string cmd(tm->command);
+				stl_string cmd("");
+				cmd += script->GetCmdBegin();
+				cmd += tm->command;
 				cmd += script->GetCmdParamBegin();
 				cmd += "\"";
 				cmd += tm->GetName();
@@ -415,6 +417,7 @@ void nTimeServer::Trigger(void)
 				cmd += tm->param;
 				cmd += "\"";
 				cmd += script->GetCmdParamEnd();
+				cmd += script->GetCmdEnd();
 				nTimer* old = tm;
 				tm = (nTimer*)tm->GetSucc();
 				this->ReleaseTimer(old);

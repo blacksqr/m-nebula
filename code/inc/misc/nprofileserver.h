@@ -36,7 +36,6 @@ public:
     /// get current profiling state
     bool IsProfiling();
 
-    static nClass* clazz;
     static nKernelServer* kernelServer;
 
 private:

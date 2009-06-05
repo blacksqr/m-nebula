@@ -442,13 +442,13 @@ writeAttenuation(wfObject& /*src*/, wfObject& dst, float /*dist*/)
 void
 removeInnerParticles(wfObject& obj, float maxDist)
 {
-    nArray<wfCoord>::iterator curCoord = obj.v_array.Begin();
-    nArray<vector2>::iterator curVt0   = obj.vt_array.Begin();
-    nArray<vector2>::iterator curVt1   = obj.vt1_array.Begin();
-    nArray<vector2>::iterator curVt2   = obj.vt2_array.Begin();
-    nArray<vector2>::iterator curVt3   = obj.vt3_array.Begin();
+    std::vector<wfCoord>::iterator curCoord = obj.v_array.std::vector;
+    std::vector<vector2>::iterator curVt0   = obj.vt_array.std::vector;
+    std::vector<vector2>::iterator curVt1   = obj.vt1_array.std::vector;
+    std::vector<vector2>::iterator curVt2   = obj.vt2_array.std::vector;
+    std::vector<vector2>::iterator curVt3   = obj.vt3_array.std::vector;
 
-    for (; curCoord < obj.v_array.End();)
+    for (; curCoord < obj.v_array.end();)
     {
         vector2& att01 = *curVt1;
         vector2& att23 = *curVt2;

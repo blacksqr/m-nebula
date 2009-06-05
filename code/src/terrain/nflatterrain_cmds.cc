@@ -437,8 +437,8 @@ static void n_weld(void *o, nCmd *cmd)
     {
         const char *arg0 = cmd->In()->GetS();
         const char *arg1 = cmd->In()->GetS();
-        nRoot *south = self->ks->Lookup(arg0);
-		nRoot *east  = self->ks->Lookup(arg1);
+        nRoot *south = self->kernelServer->Lookup(arg0);
+		nRoot *east  = self->kernelServer->Lookup(arg1);
 
 		// Set failure if neither can be found - or else continue
         if ( south || east ) cmd->Out()->SetB(self->Weld( south, east ));

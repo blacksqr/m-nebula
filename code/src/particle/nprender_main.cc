@@ -117,14 +117,10 @@ void nPRender::SetEmitter(const char *n)
 //  GetEmitter()
 //  20-Mar-00   floh    created
 //-------------------------------------------------------------------
-char *nPRender::GetEmitter(char *buf, int buf_size)
+const char* nPRender::GetEmitter(stl_string& relpath)
 {
-    if (this->ref_emitter.isvalid()) {
-        this->GetRelPath((nRoot *)this->ref_emitter.get(),buf,buf_size);
-        return buf;
-    } else {
-        return NULL;
-    }
+	return this->ref_emitter.isvalid() ? 
+		this->GetRelPath((nRoot *)this->ref_emitter.get(), relpath) : 0;    
 }
 
 //-------------------------------------------------------------------

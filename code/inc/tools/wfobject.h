@@ -10,17 +10,15 @@
 */
 //-------------------------------------------------------------------
 
-#ifndef N_VECTOR_H
-#include "mathlib/vector.h"
-#endif
-
-#ifndef N_ARRAY_H
-#include "util/narray.h"
-#endif
-
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+
+#ifndef N_VECTOR_H
+#include "mathlib/vector.h"
+#endif
+#include "kernel/ntypes.h"
+#include "util/nstl.h"
 
 //-------------------------------------------------------------------
 //  A 3d coordinate with optional associated weight and joint index
@@ -77,7 +75,7 @@ public:
     {
         assert((_i>=0) && (_i<4));
         assert(_jn);
-        jn[_i] = strdup(_jn);
+        jn[_i] = _strdup(_jn);
         w[_i]  = _w;
     };
 
@@ -127,7 +125,7 @@ public:
                     jn[j-1] = 0;
                 }
                 w[i]   = _w;
-                jn[i] = strdup(_jn);
+                jn[i] = _strdup(_jn);
                 break;
             }
         }
@@ -285,22 +283,22 @@ public:
 class wfFace 
 {
 public:    
-    nArray<wfPoint> points;
+	typedef std::vector<wfPoint> wfpoints_v;
+	wfpoints_v points;
     int validUVsets;
 
     wfFace() : 
-        points(4,4),
         validUVsets(1)
-    {}
+    {points.resize(4);}
 
     // save face definition to file
     void save(FILE *fp) 
     {
-        nArray<wfPoint>::iterator cur;
+        wfpoints_v::iterator cur;
         if (validUVsets > 1) 
         {
             fprintf(fp,"fx");
-            for (cur = points.Begin(); cur != points.End(); cur++) 
+            for (cur = points.begin(); cur != points.end(); cur++) 
             {
                 fprintf(fp, " ");
                 cur->save2(fp);
@@ -309,7 +307,7 @@ public:
         else 
         {
             fprintf(fp,"f");
-            for (cur=points.Begin(); cur!=points.End(); cur++) 
+            for (cur=points.begin(); cur!=points.end(); cur++) 
             {
                 fprintf(fp," ");
                 cur->save(fp);
@@ -362,31 +360,31 @@ public:
 //-------------------------------------------------------------------
 class wfObject {
 public:
-    nArray<wfCoord> v_array;        // vertex coordinates
-    nArray<vector3> vn_array;       // vertex normals
-    nArray<vector4> c_array;        // vertex colors
-    nArray<vector2> vt_array;       // uv coordinates
-    nArray<vector2> vt1_array;      // uv coordinates layer 1
-    nArray<vector2> vt2_array;      // uv coordinates layer 2
-    nArray<vector2> vt3_array;      // uv coordinates layer 3
-    nArray<vector3> tangent_array;  // pervertex tangent-vector for pixel lighting
+	std::vector<wfCoord> v_array;        // vertex coordinates
+    std::vector<vector3> vn_array;       // vertex normals
+    std::vector<vector4> c_array;        // vertex colors
+    std::vector<vector2> vt_array;       // uv coordinates
+    std::vector<vector2> vt1_array;      // uv coordinates layer 1
+    std::vector<vector2> vt2_array;      // uv coordinates layer 2
+    std::vector<vector2> vt3_array;      // uv coordinates layer 3
+    std::vector<vector3> tangent_array;  // pervertex tangent-vector for pixel lighting
 
-    nArray<wfFace>  f_array;        // face definitions
+    std::vector<wfFace>  f_array;        // face definitions
 
-    nArray<wfWingedEdge> we_array;  // optional winged edges
+    std::vector<wfWingedEdge> we_array;  // optional winged edges
     
     //--- constructor ---
     wfObject() :
-        v_array(5000, 5000),
-        vn_array(5000, 5000),
-        c_array(5000, 5000),
-        vt_array(5000, 5000),
-        vt1_array(5000, 5000),
-        vt2_array(5000, 5000),
-        vt3_array(5000, 5000),
-        tangent_array(5000, 5000),
-        f_array(5000, 5000),
-        we_array(5000, 5000)
+        v_array(5000),
+        vn_array(5000),
+        c_array(5000),
+        vt_array(5000),
+        vt1_array(5000),
+        vt2_array(5000),
+        vt3_array(5000),
+        tangent_array(5000),
+        f_array(5000),
+        we_array(5000)
     {
         // empty
     }
@@ -415,7 +413,7 @@ public:
                         float y = (float) atof(ys);
                         float z = (float) atof(zs);
                         wfCoord v(x,y,z);
-                        v_array.PushBack(v);
+                        v_array.push_back(v);
                     } else {
                         fprintf(stderr,"line %d: broken 'v' statement\n",act_line);
                         fclose(fp); return false;
@@ -432,7 +430,7 @@ public:
                         float y = (float) atof(ys);
                         float z = (float) atof(zs);
                         vector3 v(x,y,z);
-                        vn_array.PushBack(v);
+                        vn_array.push_back(v);
                     } 
                     else 
                     {
@@ -451,7 +449,7 @@ public:
                         float y = (float) atof(ys);
                         float z = (float) atof(zs);
                         vector3 v(x, y, z);
-                        tangent_array.PushBack(v);
+                        tangent_array.push_back(v);
                     }
                     else
                     {
@@ -468,7 +466,7 @@ public:
                         float x = (float) atof(xs);
                         float y = (float) atof(ys);
                         vector2 v(x,y);
-                        vt_array.PushBack(v);
+                        vt_array.push_back(v);
                     } 
                     else 
                     {
@@ -485,7 +483,7 @@ public:
                         float x = (float) atof(xs);
                         float y = (float) atof(ys);
                         vector2 v(x,y);
-                        vt1_array.PushBack(v);
+                        vt1_array.push_back(v);
                     } 
                     else 
                     {
@@ -502,7 +500,7 @@ public:
                         float x = (float) atof(xs);
                         float y = (float) atof(ys);
                         vector2 v(x,y);
-                        vt2_array.PushBack(v);
+                        vt2_array.push_back(v);
                     } 
                     else 
                     {
@@ -519,7 +517,7 @@ public:
                         float x = (float) atof(xs);
                         float y = (float) atof(ys);
                         vector2 v(x,y);
-                        vt3_array.PushBack(v);
+                        vt3_array.push_back(v);
                     } 
                     else 
                     {
@@ -540,7 +538,7 @@ public:
                         float b = (float) atof(bs);
                         float a = (float) atof(as);
                         vector4 v(r,g,b,a);
-                        c_array.PushBack(v);
+                        c_array.push_back(v);
                     } 
                     else 
                     {
@@ -556,8 +554,8 @@ public:
                     {
                         int j0  = atoi(j0s);
                         float w0 = (float) atof(w0s);
-                        assert(act_jw < int(this->v_array.Size()));
-                        wfCoord& v = this->v_array.At(act_jw++);
+                        assert(act_jw < int(this->v_array.size()));
+                        wfCoord& v = this->v_array.at(act_jw++);
                         v.setJointIndexWeight(0,j0,w0);
                     }
                 } 
@@ -573,8 +571,8 @@ public:
                         float w0 = (float) atof(w0s);
                         int j1   = atoi(j1s);
                         float w1 = (float) atof(w1s);
-                        assert(act_jw < int(this->v_array.Size()));
-                        wfCoord& v = this->v_array.At(act_jw++);
+                        assert(act_jw < int(this->v_array.size()));
+                        wfCoord& v = this->v_array.at(act_jw++);
                         v.setJointIndexWeight(0,j0,w0);
                         v.setJointIndexWeight(1,j1,w1);
                     }
@@ -595,8 +593,8 @@ public:
                         float w1 = (float) atof(w1s);
                         int j2   = atoi(j2s);
                         float w2 = (float) atof(w2s);
-                        assert(act_jw < int(this->v_array.Size()));
-                        wfCoord& v = this->v_array.At(act_jw++);
+                        assert(act_jw < int(this->v_array.size()));
+                        wfCoord& v = this->v_array.at(act_jw++);
                         v.setJointIndexWeight(0,j0,w0);
                         v.setJointIndexWeight(1,j1,w1);
                         v.setJointIndexWeight(2,j2,w2);
@@ -622,8 +620,8 @@ public:
                         float w2 = (float) atof(w2s);
                         int j3   = atoi(j3s);
                         float w3 = (float) atof(w3s);
-                        assert(act_jw < int(this->v_array.Size()));
-                        wfCoord& v = this->v_array.At(act_jw++);
+                        assert(act_jw < int(this->v_array.size()));
+                        wfCoord& v = this->v_array.at(act_jw++);
                         v.setJointIndexWeight(0,j0,w0);
                         v.setJointIndexWeight(1,j1,w1);
                         v.setJointIndexWeight(2,j2,w2);
@@ -649,10 +647,10 @@ public:
                             p_str = slash+1;
                         } while (slash && (act_i<4));
                         wfPoint p(i[0],i[1],i[2],i[3]);
-                        f.points.PushBack(p);
+                        f.points.push_back(p);
                         
                     }
-                    f_array.PushBack(f);
+                    f_array.push_back(f);
                     }
                 else if (strcmp(kw, "fx") == 0) 
                 {
@@ -673,10 +671,10 @@ public:
                         value[0] = atoi(token) - 1;
                         wfPoint point(value[0], value[1], value[2], value[3], value[4],
                             value[5], value[6]);
-                        face.points.PushBack(point);
+                        face.points.push_back(point);
                     }
                     face.validUVsets = 4;
-                    f_array.PushBack(face);
+                    f_array.push_back(face);
                 } 
                 else if (strcmp(kw, "we") == 0) 
                 {
@@ -691,7 +689,7 @@ public:
                         int vp0 = atoi(vp0s);
                         int vp1 = atoi(vp1s);
                         wfWingedEdge we(v0, v1, vp0, vp1);
-                        we_array.PushBack(we);
+                        we_array.push_back(we);
                     }
                     else
                     {
@@ -709,8 +707,8 @@ public:
     void save_v(FILE *fp) 
     {
         assert(fp);
-        nArray<wfCoord>::iterator cur;
-        for (cur=this->v_array.Begin(); cur!=this->v_array.End(); cur++) 
+        std::vector<wfCoord>::iterator cur;
+        for (cur=this->v_array.begin(); cur!=this->v_array.end(); cur++) 
         {
             cur->save(fp);
         }
@@ -718,8 +716,8 @@ public:
     void save_vn(FILE *fp) 
     {
         assert(fp);
-        nArray<vector3>::iterator cur;
-        for (cur=this->vn_array.Begin(); cur!=this->vn_array.End(); cur++) 
+        std::vector<vector3>::iterator cur;
+        for (cur=this->vn_array.begin(); cur!=this->vn_array.end(); cur++) 
         {
             fprintf(fp,"vn %f %f %f\n",cur->x,cur->y,cur->z);
         }
@@ -727,8 +725,8 @@ public:
     void save_tangent(FILE* fp)
     {
         n_assert(fp);
-        nArray<vector3>::iterator cur;
-        for (cur = this->tangent_array.Begin(); cur != this->tangent_array.End(); cur++)
+        std::vector<vector3>::iterator cur;
+        for (cur = this->tangent_array.begin(); cur != this->tangent_array.end(); cur++)
         {
             fprintf(fp, "tangent %f %f %f\n", cur->x, cur->y, cur->z);
         }
@@ -736,8 +734,8 @@ public:
     void save_vt(FILE *fp) 
     {
         assert(fp);
-        nArray<vector2>::iterator cur;
-        for (cur=this->vt_array.Begin(); cur!=this->vt_array.End(); cur++) 
+        std::vector<vector2>::iterator cur;
+        for (cur=this->vt_array.begin(); cur!=this->vt_array.end(); cur++) 
         {
             fprintf(fp,"vt %f %f\n",cur->x,cur->y);
         }
@@ -745,8 +743,8 @@ public:
     void save_vt1(FILE *fp) 
     {
         assert(fp);
-        nArray<vector2>::iterator cur;
-        for (cur=this->vt1_array.Begin(); cur!=this->vt1_array.End(); cur++) 
+        std::vector<vector2>::iterator cur;
+        for (cur=this->vt1_array.begin(); cur!=this->vt1_array.end(); cur++) 
         {
             fprintf(fp,"vt1 %f %f\n",cur->x,cur->y);
         }
@@ -754,8 +752,8 @@ public:
     void save_vt2(FILE *fp) 
     {
         assert(fp);
-        nArray<vector2>::iterator cur;
-        for (cur=this->vt2_array.Begin(); cur!=this->vt2_array.End(); cur++) 
+        std::vector<vector2>::iterator cur;
+        for (cur=this->vt2_array.begin(); cur!=this->vt2_array.end(); cur++) 
         {
             fprintf(fp,"vt2 %f %f\n",cur->x,cur->y);
         }
@@ -763,8 +761,8 @@ public:
     void save_vt3(FILE *fp) 
     {
         assert(fp);
-        nArray<vector2>::iterator cur;
-        for (cur=this->vt3_array.Begin(); cur!=this->vt3_array.End(); cur++) 
+        std::vector<vector2>::iterator cur;
+        for (cur=this->vt3_array.begin(); cur!=this->vt3_array.end(); cur++) 
         {
             fprintf(fp,"vt3 %f %f\n",cur->x,cur->y);
         }
@@ -772,8 +770,8 @@ public:
     void save_rgba(FILE *fp) 
     {
         assert(fp);
-        nArray<vector4>::iterator cur;
-        for (cur=this->c_array.Begin(); cur!=this->c_array.End(); cur++) 
+        std::vector<vector4>::iterator cur;
+        for (cur=this->c_array.begin(); cur!=this->c_array.end(); cur++) 
         {
             fprintf(fp,"rgba %f %f %f %f\n",cur->x,cur->y,cur->z,cur->w);
         }
@@ -781,8 +779,8 @@ public:
     void save_we(FILE* fp)
     {
         assert(fp);
-        nArray<wfWingedEdge>::iterator cur;
-        for (cur = this->we_array.Begin(); cur != this->we_array.End(); cur++)
+        std::vector<wfWingedEdge>::iterator cur;
+        for (cur = this->we_array.begin(); cur != this->we_array.end(); cur++)
         {
             fprintf(fp, "we %i %i %i %i\n", cur->v0, cur->v1, cur->vp0, cur->vp1);
         }
@@ -792,8 +790,8 @@ public:
     void save_faces(FILE *fp) 
     {
         assert(fp);
-        nArray<wfFace>::iterator cur;
-        for (cur=this->f_array.Begin(); cur!=this->f_array.End(); cur++) 
+        std::vector<wfFace>::iterator cur;
+        for (cur=this->f_array.begin(); cur!=this->f_array.end(); cur++) 
         {
             cur->save(fp);
         }

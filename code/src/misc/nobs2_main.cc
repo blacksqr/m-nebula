@@ -23,28 +23,28 @@
 
 // Uncomment if you are using the java server
 // #include "script/njavaserver.h"
-
+nNebulaScriptClass(nObserver2, "nroot");
 //-------------------------------------------------------------------
 //  nObserver2()
 //  20-Jul-99   floh    created
 //-------------------------------------------------------------------
 nObserver2::nObserver2()
-         :  ref_gs(ks, this),
-            ref_is(ks, this),
-            ref_ss(ks, this),
-            ref_sg(ks, this),
-            ref_chn(ks, this),
-            ref_fx(ks, this),
-            ref_con(ks, this),
-            ref_ps(ks, this),
-            ref_scene(ks, this),
-            ref_camera(ks, this),
-            ref_lookat(ks, this),
-			ref_gui(ks, this),
-			ref_pz(ks, this )
+         :  ref_gs(kernelServer, this),
+            ref_is(kernelServer, this),
+            ref_ss(kernelServer, this),
+            ref_sg(kernelServer, this),
+            ref_chn(kernelServer, this),
+            ref_fx(kernelServer, this),
+            ref_con(kernelServer, this),
+            ref_ps(kernelServer, this),
+            ref_scene(kernelServer, this),
+            ref_camera(kernelServer, this),
+            ref_lookat(kernelServer, this),
+			ref_gui(kernelServer, this),
+			ref_pz(kernelServer, this )
 // Uncomment if you are using the java server
 // #include "script/njavaserver.h"
-			//,ref_java(ks, this)
+			//,ref_java(kernelServer, this)
 {
     this->ref_gs     = "/sys/servers/gfx";
     this->ref_is     = "/sys/servers/input";
@@ -155,8 +155,8 @@ bool nObserver2::GetGrid(void)
 //-------------------------------------------------------------------
 bool nObserver2::Start(void)
 {
-    ks->ts->EnableFrameTime();
-    ks->ts->ResetTime();
+    kernelServer->ts->EnableFrameTime();
+    kernelServer->ts->ResetTime();
 
     this->timeChannel       = this->ref_chn->GenChannel("time");
     this->globalTimeChannel = this->ref_chn->GenChannel("gtime");
@@ -174,7 +174,7 @@ bool nObserver2::Start(void)
 void nObserver2::Stop(void)
 {
     this->stop_requested = true;
-    ks->ts->DisableFrameTime();
+    kernelServer->ts->DisableFrameTime();
 }
 
 //-------------------------------------------------------------------
@@ -183,7 +183,7 @@ void nObserver2::Stop(void)
 //-------------------------------------------------------------------
 void nObserver2::StartSingleStep(void)
 {
-    ks->ts->ResetTime();
+    kernelServer->ts->ResetTime();
 
     this->timeChannel       = this->ref_chn->GenChannel("time");
     this->globalTimeChannel = this->ref_chn->GenChannel("gtime");
@@ -323,10 +323,10 @@ bool nObserver2::trigger(void)
     if (this->stop_requested)     return false;
     if (!this->ref_gs->Trigger()) return false;
     if (!this->ref_ss->Trigger()) return false;
-    float time = (float) ks->ts->GetFrameTime();
+    float time = (float) kernelServer->ts->GetFrameTime();
 
-    ks->Trigger();
-    ks->ts->Trigger();
+    kernelServer->Trigger();
+    kernelServer->ts->Trigger();
     this->ref_is->Trigger(time);
 	
 	// Trigger java to process the previous inputs

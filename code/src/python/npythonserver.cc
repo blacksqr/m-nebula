@@ -235,7 +235,7 @@ nPythonServer::BeginWrite(const char* filename, nRoot* obj)
 		file->PutS(buf);
 		file->PutS("# ---\n");
 
-		file->PutS("\n__NDobj = sel('.')\n");
+		file->PutS("\nnd_obj = sel('.')\n");
 
 		return file;
 	}
@@ -256,29 +256,13 @@ nPythonServer::EndWrite(nFile* file)
 {
 	n_assert(file);
 
-	file->PutS("del __NDobj\n\n");
+	file->PutS("del nd_obj\n\n");
 	file->PutS("# ---\n");
 	file->PutS("# Eof\n");
 
 	file->Close();
 	delete file;
 	return (this->indent_level == 0);
-}
-
-//--------------------------------------------------------------------
-//  _indent()
-//
-// TODO: Refactor indent logic as part of the object API wrapping phase.
-//       For now, simply zero out any indention.
-//--------------------------------------------------------------------
-static void _indent(long /*i*/, stl_string& buf)
-{
-	//long j;
-
-	buf.clear();  // Cancel out the indent buffer
-
-	//buf[0] = 0;
-	//for (j=0; j<i; j++) strcat(buf,"  ");
 }
 
 //--------------------------------------------------------------------
@@ -305,13 +289,13 @@ void nPythonServer::write_select_statement(nFile* file, nRoot* o, nRoot* owner)
 
 		case SELCOMMAND:
 			// get relative path from owner to o and write select statement
-			char relpath[N_MAXPATH];
-			_indent(++this->indent_level, this->indent_buf);
-			owner->GetRelPath(o, relpath, sizeof(relpath));
-			file->PutS(this->indent_buf.c_str());
-			file->PutS("__NDobj = sel('");
-			file->PutS(relpath);
+			{
+				stl_string relpath;
+				this->indent_level++;				
+				file->PutS("nd_obj = sel('");
+				file->PutS(owner->GetRelPath(o, relpath));
 			file->PutS("')\n");
+			}			
 			break;
 
 		case NOSELCOMMAND:
@@ -331,11 +315,10 @@ bool nPythonServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
 
 	// write generic 'new' statement
 	const char *o_class = o->GetClass()->GetName();
-	_indent(this->indent_level,this->indent_buf);
 
 	// NOTE: Generated in the form of a function call
 	char buf[N_MAXPATH];
-	sprintf(buf, "\n%s__NDobj = new('%s','%s')\n#sel(__NDobj)\n", this->indent_buf.c_str(), o_class, o_name);
+	sprintf(buf, "\nnd_obj = new('%s','%s')\n#sel(nd_obj)\n", o_class, o_name);
 	file->PutS(buf);
 
 	// write select object statement
@@ -386,12 +369,10 @@ bool nPythonServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
 	n_assert(o);
 
 	// get relative path from owner to o and write select statement
-	char relpath[N_MAXPATH];
-	_indent(--this->indent_level, this->indent_buf);
-	o->GetRelPath(owner, relpath, sizeof(relpath));
-	file->PutS(this->indent_buf.c_str());
-	file->PutS("__NDobj = sel('");
-	file->PutS(relpath);
+	stl_string relpath;
+	this->indent_level--;
+	file->PutS("nd_obj = sel('");
+	file->PutS(o->GetRelPath(owner, relpath));
 	file->PutS("')\n");
 
 	return true;
@@ -408,7 +389,7 @@ bool nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
 	n_assert(name);
 	nArg *arg;
 	char buf[N_MAXPATH];
-	sprintf(buf,"%s__NDobj.%s(", this->indent_buf.c_str(), name);
+	sprintf(buf,"nd_obj.%s(", name);
 	file->PutS(buf);
 
 	cmd->Rewind();

@@ -111,13 +111,12 @@ inline nCmd::nCmd(nCmdProto *p, int num_out_args, int num_in_args)
 */
 inline nCmd::nCmd(nCmd *c)
 {
-    int i;
     this->proto         = c->proto;
     this->num_args      = c->num_args;
     this->first_in_arg  = c->first_in_arg;
     this->in_arg_index  = this->first_in_arg;
     this->out_arg_index = 0;
-    for (i=0; i<this->num_args; i++) this->args[i].Set(c->args[i]);
+    for (int i = 0; i < this->num_args; i++) this->args[i].Set(c->args[i]);
 }
 //--------------------------------------------------------------------
 inline nCmd::~nCmd() 

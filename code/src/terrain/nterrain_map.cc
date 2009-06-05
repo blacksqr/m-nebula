@@ -263,7 +263,7 @@ nTerrainNode::SetFloatArrayHeightMap(int width, int height, float* floatPointer)
 bool nTerrainNode::load_tree_file(const char *abs_path)
 {
     // open tree file
-    nFile* file = ks->GetFileServer2()->NewFileObject();
+    nFile* file = kernelServer->GetFileServer2()->NewFileObject();
     if (file->Open(abs_path, "rb"))
     {
 
@@ -350,7 +350,7 @@ bool nTerrainNode::SaveTree(const char *fname)
     if (this->map_dirty) this->load_map();
     
     // save tree
-    nFile* file = ks->GetFileServer2()->NewFileObject();
+    nFile* file = kernelServer->GetFileServer2()->NewFileObject();
     if (file->Open(fname, "wb"))
     {
         this->root_node->Save(this,this->root_corner_data,file);

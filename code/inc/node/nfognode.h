@@ -39,8 +39,7 @@ class nFogNode : public nVisNode {
     float fog_color[4];
     
 public:
-    static nClass *local_cl;
-    static nKernelServer *ks;
+    static nKernelServer* kernelServer;
 
     nFogNode();
     virtual ~nFogNode();

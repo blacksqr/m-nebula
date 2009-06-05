@@ -115,8 +115,7 @@ public:
     /// uv set 3 interpolation enabled?
     bool GetUpdateUv3();
 
-    static nClass* local_cl;
-    static nKernelServer* ks;
+    static nKernelServer* kernelServer;
 
 private:
     enum {
@@ -137,21 +136,6 @@ private:
 
     void interpolate(nSceneGraph2* sceneGraph, float l, nVertexBuffer *vb0, nVertexBuffer *vb1);
 };
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nMeshIpol::nMeshIpol() :
-    update_flags(0),
-    num_keys(0),
-    key_array(0),
-    in_begin_keys(false),
-    dyn_vb(ks, this)
-{
-    // make sure source meshes are saved before myself
-    this->SetFlags(N_FLAG_SAVEUPSIDEDOWN);
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -188,7 +172,7 @@ nMeshIpol::BeginKeys(int num)
     int i;
     for (i=0; i<num; i++) 
     {
-        this->key_array[i].ref_source.initialize(ks,this);
+        this->key_array[i].ref_source.initialize(kernelServer,this);
     };
 }
 

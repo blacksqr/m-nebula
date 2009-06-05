@@ -57,7 +57,6 @@ public:
     virtual bool Run(const char *, const char*&);
     virtual bool Run(const char *, int mode, const char*&);
     virtual bool RunScript(const char *, const char*&);
-    virtual bool RunCommand(nCmd *);
     virtual char* Prompt(char *, int);
  
     virtual nFile* BeginWrite(const char* filename, nRoot* obj);  
@@ -69,6 +68,10 @@ public:
     virtual bool WriteEndObject(nFile *, nRoot *, nRoot *);
     virtual bool EndWrite(nFile *);
 
+	/// get script command begin symbols
+	virtual const char* GetCmdBegin() const {return ""; }
+	/// get script command end symbols
+	virtual const char* GetCmdEnd() const {return ""; }
 	/// get script command parameters begin symbols
 	virtual const char* GetCmdParamBegin() const { return "("; }
 	/// get script command parameters delimiter

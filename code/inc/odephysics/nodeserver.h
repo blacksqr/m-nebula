@@ -167,7 +167,6 @@ class N_PUBLIC nOdeServer : public nRoot
     bool inBeginSurfaces;
     bool inBeginMaterials;
     bool inBeginSurfaceRelations;
-    //nArray<nOdeSurface> surfaceArray;
     nOdeSurface* surfaceArray;
     int numSurfaces;
     int* surfaceRelationArray;

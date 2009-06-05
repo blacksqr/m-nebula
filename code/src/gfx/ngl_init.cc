@@ -53,22 +53,29 @@ void nGlServer::initExtensions(void)
 {
 	::initExtensions();
     #ifdef GL_ARB_texture_compression
-    if (this->hasExtension("GL_ARB_texture_compression")) {
-        if (this->hasExtension("GL_EXT_texture_compression_s3tc")) {
+    if (this->hasExtension("GL_ARB_texture_compression")) 
+	{
+        if (this->hasExtension("GL_EXT_texture_compression_s3tc")) 
+		{
             this->ext_texture_compression = true;
             n_printf("using GL_ARB_texture_compression\n");
             #ifdef __WIN32__
           //  this->glCompressedTexImage2DARB = (PFNGLCOMPRESSEDTEXIMAGE2DARBPROC)wglGetProcAddress("glCompressedTexImage2DARB");
-            if (glCompressedTexImage2DARB == NULL) {
+            if (glCompressedTexImage2DARB == NULL) 
+			{
                 n_printf("failed to obtain proc address for GL_ARB_texture_compression()\n");
                 this->ext_texture_compression = false;
             }
             #endif
-        } else {
+        } 
+		else 
+		{
             this->ext_texture_compression = false;
         n_printf("no support for GL_EXT_texture_compression_s3tc\n");
         }
-    } else {
+    } 
+	else 
+	{
         this->ext_texture_compression = false;
         n_printf("no support for GL_ARB_texture_compression\n");
     }
@@ -76,10 +83,13 @@ void nGlServer::initExtensions(void)
     #error "GL_ARB_texture_compression or GL_EXT_texture_compression_s3tc not supported by build environment"
     #endif
 	#ifdef GL_SGIS_texture_edge_clamp
-	if (this->hasExtension("GL_EXT_texture_edge_clamp")) {
+	if (this->hasExtension("GL_EXT_texture_edge_clamp")) 
+	{
         this->ext_clamp_to_edge = true;		
         n_printf("using GL_EXT_texture_edge_clamp\n");
-    } else {
+    } 
+	else 
+	{
         this->ext_clamp_to_edge = false;
         n_printf("no support for GL_EXT_texture_edge_clamp\n");
     }
@@ -87,11 +97,14 @@ void nGlServer::initExtensions(void)
 
 
 	#ifdef GL_EXT_texture_filter_anisotropic
-	if (this->hasExtension("GL_EXT_texture_filter_anisotropic")) {
+	if (this->hasExtension("GL_EXT_texture_filter_anisotropic")) 
+	{
         this->ext_filter_anisotropic = true;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &this->max_anisotropy);
+  		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &this->max_anisotropy);
         n_printf("using GL_EXT_texture_filter_anisotropic\n");
-    } else {
+    } 
+	else 
+	{
         this->ext_filter_anisotropic = false;
         n_printf("no support for GL_EXT_texture_filter_anisotropic\n");
     }
@@ -100,10 +113,13 @@ void nGlServer::initExtensions(void)
 	#endif
 
 	#ifdef GL_ARB_texture_non_power_of_two
-	if (this->hasExtension("GL_ARB_texture_non_power_of_two")) {
+	if (this->hasExtension("GL_ARB_texture_non_power_of_two")) 
+	{
         this->non_power_of2 = true;		
         n_printf("using GL_ARB_texture_non_power_of_two\n");
-    } else {
+    } 
+	else 
+	{
         this->non_power_of2 = false;
         n_printf("no support for GL_ARB_texture_non_power_of_two\n");
     }
@@ -128,10 +144,13 @@ void nGlServer::initExtensions(void)
 
     // EXT_clip_volume_hint
     #ifdef GL_EXT_clip_volume_hint
-    if (this->hasExtension("GL_EXT_clip_volume_hint")) {
+    if (this->hasExtension("GL_EXT_clip_volume_hint")) 
+	{
         this->ext_clip_volume_hint = true;
         n_printf("using GL_EXT_clip_volume_hint\n");
-    } else {
+    } 
+	else 
+	{
         this->ext_clip_volume_hint = false;
         n_printf("no support for GL_EXT_clip_volume_hint\n");
     }    
@@ -155,13 +174,18 @@ void nGlServer::initExtensions(void)
 
     // EXT_texture_env_combine
     #if defined(GL_EXT_texture_env_combine) || defined(GL_ARB_texture_env_combine)
-    if (this->hasExtension("GL_EXT_texture_env_combine")) {
+    if (this->hasExtension("GL_EXT_texture_env_combine")) 
+	{
         this->ext_texture_env_combine = true;
         n_printf("using GL_EXT_texture_env_combine\n");
-    } else if (this->hasExtension("GL_ARB_texture_env_combine")) {
+    } 
+	else if (this->hasExtension("GL_ARB_texture_env_combine")) 
+	{
         this->ext_texture_env_combine = true;
         n_printf("using GL_ARB_texture_env_combine\n");
-    } else {
+    } 
+	else 
+	{
         this->ext_texture_env_combine = false;
         n_printf("no support for GL_EXT_texture_env_combine\n");
     }
@@ -171,13 +195,18 @@ void nGlServer::initExtensions(void)
 
     // EXT_texture_env_add
     #if defined(GL_EXT_texture_env_add) || defined(GL_ARB_texture_env_add)
-    if (this->hasExtension("GL_EXT_texture_env_add")) {
+    if (this->hasExtension("GL_EXT_texture_env_add")) 
+	{
         this->ext_texture_env_add = true;
         n_printf("using GL_EXT_texture_env_add\n");
-    } else if (this->hasExtension("GL_ARB_texture_env_add")) {
+    } 
+	else if (this->hasExtension("GL_ARB_texture_env_add")) 
+	{
         this->ext_texture_env_add = true;
         n_printf("using GL_ARB_texture_env_add\n");
-    } else {
+    } 
+	else 
+	{
         this->ext_texture_env_add = false;
         n_printf("no support for GL_EXT_texture_env_add\n");
     }
@@ -187,13 +216,18 @@ void nGlServer::initExtensions(void)
 
     // EXT_texture_env_dot3
     #if defined(GL_EXT_texture_env_dot3) || defined(GL_ARB_texture_env_dot3)
-    if (this->hasExtension("GL_EXT_texture_env_dot3")) {
+    if (this->hasExtension("GL_EXT_texture_env_dot3")) 
+	{
         this->ext_texture_env_dot3 = true;
         n_printf("using GL_EXT_texture_env_dot3\n");
-    } else if (this->hasExtension("GL_ARB_texture_env_dot3")) {
+    } 
+	else if (this->hasExtension("GL_ARB_texture_env_dot3")) 
+	{
         this->ext_texture_env_dot3 = true;
         n_printf("using GL_ARB_texture_env_dot3\n");
-    } else {
+    } 
+	else 
+	{
         this->ext_texture_env_dot3 = false;
         n_printf("no support for GL_EXT_texture_env_dot3\n");
     }
@@ -203,10 +237,13 @@ void nGlServer::initExtensions(void)
 
     // EXT_blend_color
     #ifdef GL_EXT_blend_color
-    if (this->hasExtension("GL_EXT_blend_color")) {
+    if (this->hasExtension("GL_EXT_blend_color")) 
+	{
         this->ext_blend_color = true;
         n_printf("using GL_EXT_blend_color\n");        
-    } else {
+    } 
+	else 
+	{
         this->ext_blend_color = false;
         n_printf("no support for GL_EXT_blend_color\n");
     }
@@ -230,7 +267,7 @@ void nGlServer::initExtensions(void)
     #error "GL_EXT_bgra not support by build environment"
     #endif
 }    
-
+//#define VERBOSE_EXTENSIONS
 //-------------------------------------------------------------------
 //  initGl()
 //  Initialisiert frisch erzeugten GL-Kontext.
@@ -244,7 +281,7 @@ void nGlServer::initExtensions(void)
 //  18-Mar-01   floh    + initialize OpenIL stuff
 //-------------------------------------------------------------------
 void nGlServer::initGl(void)
-{   
+{    
     char buf[N_MAXPATH];    
     
 	 // fill display database
@@ -254,8 +291,9 @@ void nGlServer::initGl(void)
 
     env = (nEnv *) kernelServer->New("nenv","desc");
     env->SetS((const char *) glGetString(GL_VERSION));
+	const char* ext = (const char *)glGetString(GL_EXTENSIONS);
     env = (nEnv *) kernelServer->New("nenv","extensions");
-    env->SetS((const char *) glGetString(GL_EXTENSIONS));
+    env->SetS(ext);
     kernelServer->PopCwd();
     
     // Versions-Info schreiben
@@ -264,12 +302,12 @@ void nGlServer::initGl(void)
     n_printf("gl_version:  %s\n", glGetString(GL_VERSION));
 	n_printf("glsl_version:  %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION_ARB));
 	
-	glGetIntegerv(GL_AUX_BUFFERS, &this->aux_buff_num);
+  	glGetIntegerv(GL_AUX_BUFFERS, &this->aux_buff_num);
 	n_printf("number of aux buffers: %d\n", this->aux_buff_num);
 	n_printf("number of sample buffers: %d\n", this->disp_samples);
-	
+#ifdef VERBOSE_EXTENSIONS
     n_printf("gl_extensions:\n");
-    const char* ext = (const char *)glGetString(GL_EXTENSIONS);
+    
     int i = 0;
 	int cnt = 1;
 	int lncnt = 1;
@@ -299,7 +337,7 @@ void nGlServer::initGl(void)
             i = 0;
         } else buf[i++] = c;
     } while (c);
-
+#endif
     // initialize extensions
     this->initExtensions();
 
@@ -307,7 +345,7 @@ void nGlServer::initGl(void)
     #ifdef GL_ARB_multitexture
 	if (glActiveTextureARB) {
 		GLint num_tus;
-		glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,&num_tus);
+  		glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB,&num_tus);
 		if (num_tus > N_MAXNUM_TEXSTAGES) {
 			n_printf("max texture units: %d\n", num_tus);
 			num_tus = N_MAXNUM_TEXSTAGES;
@@ -322,7 +360,7 @@ void nGlServer::initGl(void)
     #endif
 
 	
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &this->max_texture_dim);
+  	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &this->max_texture_dim);
 	n_printf("using max texture dimension: %d\n", this->max_texture_dim);
 		
     n_printf("using max texture units: %d\n", this->num_texture_units);
@@ -343,7 +381,7 @@ void nGlServer::initGl(void)
 
 
 	int max_samples;
-	glGetIntegerv(GL_SAMPLE_BUFFERS_ARB, &max_samples);
+  	glGetIntegerv(GL_SAMPLE_BUFFERS_ARB, &max_samples);
 
 	n_printf("max samples %d\n", max_samples);
 
@@ -359,7 +397,6 @@ void nGlServer::initGl(void)
 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-	_glDBG
 }
 
 //-------------------------------------------------------------------

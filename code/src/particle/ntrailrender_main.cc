@@ -57,7 +57,7 @@ nTrailRender::InitBuffers()
 
     // get the number of vertices in the dynamic vertex buffer,
     // and compute the number of triangles which will fit in there
-    numQuads = dynVBuf.GetNumVertices() / 4;
+    numQuads = (ushort)(dynVBuf.GetNumVertices() / 4);
 
     // create and initialize a shared index buffer (all instances
     // of nTrailRender will share one index buffer)

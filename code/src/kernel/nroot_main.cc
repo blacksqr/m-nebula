@@ -56,7 +56,8 @@ nRoot::~nRoot(void)
     if (this->import_file) n_free(this->import_file);
 
     // verhindern, dass Cwd ungueltig wird...
-    if (this==ks->GetCwd()) {
+    if (this == ks->GetCwd()) 
+	{
         n_printf("WARNING: Cwd orphaned, setting cwd to '/'\n");
         ks->SetCwd((nRoot*)NULL);
     }
@@ -64,13 +65,13 @@ nRoot::~nRoot(void)
 	ks->ReplaceCwdInStack(this);
 
     // alle Child-Objects freigeben
-    nRoot *child;
-    while ((child = this->GetHead())) {
+    nRoot* child = 0;
+    while ((child = this->GetHead())) 
+	{
         child->Remove();         
 		if (!child->Release()) 
 		{			
-			n_printf("nRoot::~nRoot(void), Child %s has %d refs\n", 
-				this->GetName(), child->GetRefCount());
+			n_printf("nRoot::~nRoot(void), Child %s has %d refs\n", this->GetName(), child->GetRefCount());
 		}	
     }
 
@@ -84,35 +85,12 @@ nRoot::~nRoot(void)
     this->instance_cl->DelObject(this);
 
     // Child-List-Objekt killen
-    if (this->child_list) {
+    if (this->child_list) 
+	{
         n_delete this->child_list;
-        this->child_list = NULL;
+        this->child_list = 0;
     }
     ks->num_objects--;
-}
-
-//--------------------------------------------------------------------
-/**
-    @brief Will be called by the kernel after the object has been
-    constructed and linked into the name space.
-
-    - 13-Nov-00   floh    created
-*/
-//--------------------------------------------------------------------
-void nRoot::Initialize(void) {
-
-}
-
-//--------------------------------------------------------------------
-/**
-    @brief Increment the reference count.
-
-    - 08-Oct-98   floh    created
-*/
-//--------------------------------------------------------------------
-long nRoot::AddRef(void)
-{
-    return ++this->ref_count;
 }
 
 //--------------------------------------------------------------------
@@ -141,7 +119,8 @@ bool nRoot::Release(void)
 {
     bool retval = false;
     this->ref_count--;
-    if (this->ref_count == 0) {
+    if (this->ref_count == 0) 
+	{
         n_delete this;
         retval = true;
     }
@@ -230,7 +209,8 @@ nClass *nRoot::GetClass(void)
 bool nRoot::IsA(nClass *cls)
 {
     nClass *act_cl = this->instance_cl;
-    do {
+    do 
+	{
         if (act_cl == cls) return true;
     } while ((act_cl = act_cl->GetSuperClass()));
     return false;
@@ -349,83 +329,86 @@ const stl_string& nRoot::GetFullName()
     - 06-Mar-00   floh    created
 */
 //--------------------------------------------------------------------
-char *nRoot::GetRelPath(nRoot *other, char *buf, long sizeof_buf)
+const char* nRoot::GetRelPath(nRoot* other, stl_string& rel_path)
 {
     n_assert(other);
-    n_assert(other != this);
-    n_assert(buf);
-    n_assert(sizeof_buf > 0);
+    n_assert(other != this);    
 
-    buf[0] = 0;
-    if (other == this->GetParent()) 
-	{
+    rel_path.clear();
 
-        // special case optimize: other is parent of this
-        n_strcat(buf,"..",sizeof_buf);
-
+    if (other == this->GetParent()) // special case optimize: other is parent of this
+	{        
+		rel_path = "..";
     } 
-	else if (other->GetParent() == this) 
+	else if (other->GetParent() == this) // special case optimize: this is parent of other
 	{
-
-        // special case optimize: this is parent of other
-        n_strcat(buf,other->GetName(),sizeof_buf);
-
+		rel_path = other->GetName();
     } 
 	else 
 	{
-
         // normal case
         nList this_hier;
         nList other_hier;
-        nRoot *o;
-
-        // for both objects, create lists of all parents up to root 
-        o = this;
-        do {
+		
+		// for both objects, create lists of all parents up to root         
+        nRoot* o = this;        
+        do 
+		{
             nNode *n = n_new nNode(o);
             this_hier.AddHead(n);
-        } while ((o=o->GetParent()));
-        o = other;
-        do {
+        } 
+		while ((o=o->GetParent()));
+        
+		o = other;
+        do 
+		{
             nNode *n = n_new nNode(o);
             other_hier.AddHead(n);
-        } while ((o=o->GetParent()));
+        } 
+		while ((o=o->GetParent()));
 
         // remove identical parents
         bool running = true;
-        do {
+        do 
+		{
             nNode *n0 = this_hier.GetHead();
             nNode *n1 = other_hier.GetHead();
-            if (n0 && n1) {
-                if (n0->GetPtr() == n1->GetPtr()) {
+            if (n0 && n1) 
+			{
+                if (n0->GetPtr() == n1->GetPtr()) 
+				{
                     n0->Remove();
                     n1->Remove();
                     n_delete n0;
                     n_delete n1;
-                } else running = false;
-            } else running = false;
-        } while (running);
+                } 
+				else 
+					running = false;
+            } 
+			else 
+				running = false;
+        } 
+		while (running);
 
         // create path leading upward from this to the identical parent
-        nNode *n;
-        while ((n=this_hier.RemTail())) {
+        nNode* n;
+        while ((n=this_hier.RemTail())) 
+		{
             n_delete n;
-            n_strcat(buf,"../",sizeof_buf);
+			rel_path += "../";            
         }
         // create path leading downward from parent to 'other'
-        while ((n=other_hier.RemHead())) {
+        while ((n=other_hier.RemHead())) 
+		{
             o = (nRoot *) n->GetPtr();
             n_delete n;
-            n_strcat(buf,o->GetName(),sizeof_buf);
-            n_strcat(buf,"/",sizeof_buf);
-        }
-
-        // eliminate trailing '/'
-        buf[strlen(buf)-1] = 0;
+            rel_path += o->GetName();
+            rel_path += "/";
+        }        
     }
 
     // done
-    return buf;
+    return rel_path.c_str();
 }
 
 //--------------------------------------------------------------------
@@ -468,15 +451,14 @@ void nRoot::GetCmdProtos(nHashList *cmd_list)
 {
     // for each superclass attach it's command proto names
     // to the list
-    nClass *cl = this->instance_cl;
+    nClass* cl = this->instance_cl;
     
     // for each superclass...
-    do {
-        nHashList *cl_cmdprotos = cl->GetCmdList();
-        nCmdProto *cmd_proto;
-        for (cmd_proto=(nCmdProto *) cl_cmdprotos->GetHead(); 
+    do 
+	{        
+        for (nCmdProto* cmd_proto = (nCmdProto*)cl->GetCmdList()->GetHead(); 
              cmd_proto; 
-             cmd_proto=(nCmdProto *) cmd_proto->GetSucc()) 
+             cmd_proto = (nCmdProto*) cmd_proto->GetSucc()) 
         {
             nHashNode* node = new nHashNode(cmd_proto->GetName());
             node->SetPtr((void*)cmd_proto);
