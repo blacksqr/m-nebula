@@ -68,12 +68,8 @@ bool nEclServer::Run(const char* cmd_str, const char*& result)
 bool nEclServer::RunScriptFS(const char* fname, const char*& result)
 {
 	stl_string path;	
-	this->refFileServer->ManglePath(fname, path);
 
-	char cpath[N_MAXPATH];
-	strcpy_s(cpath, N_MAXPATH, path.c_str());
-
-	cl_object cl_result = cl_load(1, make_simple_base_string(cpath));	
+	cl_object cl_result = cl_load(1, make_base_string_copy(this->refFileServer->ManglePath(fname, path)));	
 
 	stl_string error_msg;
 	if (this->is_error(cl_result, &error_msg))

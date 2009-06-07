@@ -143,7 +143,7 @@ bool nApplication::run_startup_script()
 			nPathString startup_path(this->startup_script.c_str());
 
 			if (this->refScript->IsExtSupported(startup_path.GetExtension()))
-				this->refScript->RunScript(this->startup_script.c_str(), res);
+				this->refScript->RunScriptFS(this->startup_script.c_str(), res);
 			else
 				this->Parse(this->startup_script.c_str());
 			if (res) 
