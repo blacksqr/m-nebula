@@ -586,9 +586,15 @@ begintarget nnebula
         nchnsplitter nchnmodulator nchnreader nlenseflare nflipflop
         nhypermixer2 nsoundnode nlistenernode nthreshnode nobserver
         nspecialfxserver naudioserver2 nscriptlet ntclscriptlet
-        nstream nwavstream 
-        nshadowserver nsbufshadowserver nshadowcaster nshadowcontrol
-        nprofileserver nbumpmeshnode nbinscriptserver
+        nstream 
+		nwavstream 
+        nshadowserver 
+		nsbufshadowserver 
+		nshadowcaster 
+		nshadowcontrol
+        nprofileserver 
+		nbumpmeshnode 
+		nbinscriptserver
         nvariableserver
         nprimitiveserver
         nHUD
