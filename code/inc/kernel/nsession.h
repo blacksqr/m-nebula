@@ -151,7 +151,7 @@ protected:
 inline
 int nSession::check_arrival() 
 {	
-	if (this->transfer_socket != INVALID_SOCKET)
+	if (this->connected())
 	{
 		u_long arrived_size = 0;
 		int n_errno = 0;
@@ -279,7 +279,7 @@ bool nSession::set(SOCKET s)
 inline
 int nSession::receive_data(int size, char* buffer, int buf_size)
 {	
-	if (this->transfer_socket != INVALID_SOCKET) 
+	if (this->connected()) 
 	{
 		if (!buffer) 
 		{
@@ -387,7 +387,7 @@ int nSession::receive_string(bool block)
 inline
 int nSession::send_data(const char* buffer, int buf_size)
 {
-	if (this->transfer_socket != INVALID_SOCKET)
+	if (this->connected())
 	{
 		int res = send(this->transfer_socket, buffer, buf_size, 0);
 		this->last_converasion = this->get_milli();
@@ -529,7 +529,7 @@ int nSession::check_error(int skip)
 inline
 void nSession::set_block_mode(bool block) 
 {
-	if (this->transfer_socket != INVALID_SOCKET)
+	if (this->connected())
 	{	
 		// put the socket into non-blocking mode
 #if defined(WIN32) || defined(__WIN32__)
