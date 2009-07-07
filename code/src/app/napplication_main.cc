@@ -88,13 +88,16 @@ bool nApplication::run_init_script()
 	{		
 		nFileServer2* fs = this->kernelServer->GetFileServer2();	
 
-		stl_string init_dir;		
-		fs->MakeAbsoluteMangled("home:script", init_dir);
+		stl_string script_dir;		
+		fs->MakeAbsoluteMangled("home:script", script_dir);
+		stl_string init_dir(script_dir);		
 		init_dir += '/';
 		init_dir += this->app_name;			
 		init_dir += '/';		
 		fs->SetAssign("appscript", init_dir.c_str());
-		fs->SetAssign("lib", "home:script/lib/");
+		stl_string lib_dir(script_dir);
+		lib_dir += "/lib/";
+		fs->SetAssign("lib", lib_dir.c_str());
 
 		if (!this->noinit && fs)			
 		{	

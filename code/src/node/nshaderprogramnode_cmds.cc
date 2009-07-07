@@ -651,10 +651,13 @@ nShaderProgramNode::SaveCmds(nPersistServer* ps)
     if (nShaderNode::SaveCmds(ps))
     {		
 		nCmd *cmd;
+		if (!(this->vertexFilename.empty() && this->fragmentFilename.empty()))
+		{			
 		cmd = ps->GetCmd(this,'LDSH');			
 		cmd->In()->SetS(this->vertexFilename.c_str());
 		cmd->In()->SetS(this->fragmentFilename.c_str());
 		ps->PutCmd(cmd);           
+		}
 		{
 			tNamedParamList<int>* il = 0;
 			this->GetUniformList(il);

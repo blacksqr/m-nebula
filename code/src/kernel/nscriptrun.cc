@@ -30,8 +30,8 @@ bool nScriptServer::WriteComment(nFile*, const char*)
 //--------------------------------------------------------------------
 char *nScriptServer::Prompt(char *, int)
 {
-    n_error("pure virtual function called!");
-    return NULL;
+    n_error("nScriptServer::Prompt pure virtual function called!");
+    return 0;
 }
 
 //--------------------------------------------------------------------

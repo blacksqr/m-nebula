@@ -91,7 +91,7 @@ nCmdProto::nCmdProto(const char *_proto_def)
                                     this->num_in_args);
     char *str;
     char c;
-    // Input-Argument-Typen initialisieren
+    // Input-Argument-Type initializers
     str = this->in_args;
     while ((c = *str++)) {
         nCmd *cmd = this->cmd_template;
@@ -107,7 +107,7 @@ nCmdProto::nCmdProto(const char *_proto_def)
             default:    break;
        } 
     }
-    // Output-Argument-Typen initialisieren
+    // Output-Argument-Type initializers
     str = this->out_args;
     while ((c = *str++)) {
         nCmd *cmd = this->cmd_template;

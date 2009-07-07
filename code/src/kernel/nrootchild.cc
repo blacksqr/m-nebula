@@ -152,6 +152,21 @@ int child_cmp(const void *e0, const void *e1)
     return strcmp(r1->GetName(),r0->GetName());
 }
 
+int rev_child_cmp(const void* e0, const void* e1)
+{
+	nRoot* r0 = *((nRoot **)e0);
+	nRoot* r1 = *((nRoot **)e1);
+	return strcmp(r0->GetName(), r1->GetName());
+}
+
+
+// Return whether first element is greater than the second
+bool greater( nRoot* e0, nRoot* e1 )
+{
+	return strcmp(e1->GetName(), e0->GetName()) >= 0;
+}
+
+
 //--------------------------------------------------------------------
 /**
     @brief Sort children objects alphabetically.
@@ -160,7 +175,7 @@ int child_cmp(const void *e0, const void *e1)
 
     - 18-May-99   floh    created
 */
-void nRoot::Sort(void)
+void nRoot::Sort(bool reverse)
 {
     size_t num = 0;
     nRoot* c = 0;
@@ -178,7 +193,11 @@ void nRoot::Sort(void)
             c_array[i] = c;
         }
 
-        qsort(&c_array.front(), num, sizeof(nRoot *), child_cmp);
+		std::sort(c_array.begin(), c_array.end(), greater);
+		//if (!reverse)
+		//	qsort(&c_array.front(), num, sizeof(nRoot *), child_cmp);
+		//else
+		//	qsort(&c_array.front(), num, sizeof(nRoot *), rev_child_cmp);
 
         for (i = 0; i < num; i++) 
 		{

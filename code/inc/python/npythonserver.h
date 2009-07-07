@@ -57,6 +57,7 @@ public:
     virtual bool Run(const char *, const char*&);
     virtual bool Run(const char *, int mode, const char*&);
     virtual bool RunScript(const char *, const char*&);
+	virtual bool RunScriptFS(const char* fname, const char*& res ) { return this->RunScript(fname, res); } //@#
     virtual char* Prompt(char *, int);
  
     virtual nFile* BeginWrite(const char* filename, nRoot* obj);  

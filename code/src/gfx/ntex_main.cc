@@ -230,7 +230,7 @@ void nTexture::EndLoad(void)
 //-------------------------------------------------------------------
 bool nTexture::Load(void)
 {
-    n_error("pure virtual function called");
+    n_error("nTexture::Load pure virtual function called");
     return false;
 }
 
@@ -267,7 +267,7 @@ bool nTexture::SetTexture( void* p, unsigned long size, long maxw , long maxh ) 
     - 28-Jul-2002   Ilya    created
 */
 bool nTexture::loadFromMem(void* p, unsigned long size, long maxw, long maxh) {
-    n_error("pure virtual function called");
+    n_error("nTexture::loadFromMem pure virtual function called");
     return false;
 }
 
@@ -278,7 +278,7 @@ bool nTexture::loadFromMem(void* p, unsigned long size, long maxw, long maxh) {
 //-------------------------------------------------------------------
 void nTexture::Unload(void)
 {
-    n_error("pure virtual function called");
+    n_error("nTexture::Unload pure virtual function called");
 }
 #pragma warning( pop )
 //------------------------------------------------------------------------------

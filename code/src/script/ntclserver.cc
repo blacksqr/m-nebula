@@ -133,8 +133,8 @@ nTclServer::nTclServer() :
 {
     this->refFileServer     = "/sys/servers/file2";
     this->print_error       = false;
-    this->is_standalone_tcl = true;    
-//*
+    this->is_standalone_tcl = true;
+
     // initialize data internal to TCL to make encodings work.
     stl_string path;
     kernelServer->GetFileServer2()->ManglePath("home:bin/tcl/tcl8.5", path);
@@ -143,9 +143,7 @@ nTclServer::nTclServer() :
         std::replace(path.begin(), path.end(), '/', '\\');
     #endif
     Tcl_FindExecutable(path.c_str());
-/*/
-	Tcl_FindExecutable(kernelServer->GetArgv(0));
-//*/
+
     // create interpreter
     this->interp  = Tcl_CreateInterp();
     n_assert(this->interp);
