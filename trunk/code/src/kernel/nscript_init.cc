@@ -84,7 +84,7 @@ nScriptServer::nScriptServer() :
 //--------------------------------------------------------------------
 bool nScriptServer::Run(const char *, const char*&)
 {
-    n_error("pure virtual function called!");
+    n_error("nScriptServer::Run pure virtual function called!");
     return false;
 }
 
@@ -94,7 +94,7 @@ bool nScriptServer::Run(const char *, const char*&)
 //--------------------------------------------------------------------
 bool nScriptServer::RunScript(const char *, const char*&)
 {
-    n_error("pure virtual function called!");
+    n_error("nScriptServer::RunScript pure virtual function called!");
     return false;
 }
 
@@ -104,7 +104,7 @@ bool nScriptServer::RunScript(const char *, const char*&)
 //--------------------------------------------------------------------
 bool nScriptServer::RunScriptFS(const char *, const char*&)
 {
-	n_error("pure virtual function called!");
+	n_error("nScriptServer::RunScriptFS pure virtual function called!");
 	return false;
 }
 
@@ -114,7 +114,7 @@ bool nScriptServer::RunScriptFS(const char *, const char*&)
 nFile*
 nScriptServer::BeginWrite(const char * /*filename */, nRoot * /* obj */)
 {
-    n_error("pure virtual function called!");
+	n_error("nScriptServer::BeginWrite pure virtual function called!");
     return false;
 }
 
@@ -125,7 +125,7 @@ nScriptServer::BeginWrite(const char * /*filename */, nRoot * /* obj */)
 //--------------------------------------------------------------------
 bool nScriptServer::WriteBeginNewObject(nFile *, nRoot *, nRoot *)
 {
-    n_error("pure virtual function called!");
+    n_error("nScriptServer::WriteBeginNewObject pure virtual function called!");
     return false;
 }
 
@@ -135,7 +135,7 @@ bool nScriptServer::WriteBeginNewObject(nFile *, nRoot *, nRoot *)
 //--------------------------------------------------------------------
 bool nScriptServer::WriteBeginNewObjectCmd(nFile *, nRoot *, nRoot *, nCmd *)
 {
-    n_error("pure virtual function called!");
+    n_error("nScriptServer::WriteBeginNewObjectCmd pure virtual function called!");
     return false;
 }
 
@@ -145,7 +145,7 @@ bool nScriptServer::WriteBeginNewObjectCmd(nFile *, nRoot *, nRoot *, nCmd *)
 //--------------------------------------------------------------------
 bool nScriptServer::WriteBeginSelObject(nFile *, nRoot *, nRoot *)
 {
-    n_error("pure virtual function called!");
+    n_error("nScriptServer::WriteBeginSelObject pure virtual function called!");
     return false;
 }
 
@@ -155,7 +155,7 @@ bool nScriptServer::WriteBeginSelObject(nFile *, nRoot *, nRoot *)
 //--------------------------------------------------------------------
 bool nScriptServer::WriteCmd(nFile *, nCmd *)
 {
-    n_error("pure virtual function called!");
+    n_error("nScriptServer::WriteCmd pure virtual function called!");
     return false;
 }
 
@@ -165,7 +165,7 @@ bool nScriptServer::WriteCmd(nFile *, nCmd *)
 //--------------------------------------------------------------------
 bool nScriptServer::WriteEndObject(nFile *, nRoot *, nRoot *)
 {
-    n_error("pure virtual function called!");
+    n_error("nScriptServer::WriteEndObject pure virtual function called!");
     return false;
 }
 
@@ -176,7 +176,7 @@ bool nScriptServer::WriteEndObject(nFile *, nRoot *, nRoot *)
 bool
 nScriptServer::EndWrite(nFile *)
 {
-    n_error("pure virtual function called!");
+    n_error("nScriptServer::EndWrite pure virtual function called!");
     return false;
 }
 

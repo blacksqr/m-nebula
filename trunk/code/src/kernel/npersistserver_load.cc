@@ -234,14 +234,17 @@ bool nPersistServer::ParseFile(nRoot *o, const char *fname)
     
     // versteht das Objekt die Kommandos?
     cl = ks->FindClass(obj_class);
-    if (cl && (o->IsA(cl))) {
+    if (cl && (o->IsA(cl))) 
+	{
         // Backup vom Cwd
         const char* result;
         ks->PushCwd(o);
         this->GetLoader(parser_buf)->RunScript(fname, result);
         ks->PopCwd();
         return true;
-    } else {
+    } 
+	else 
+	{
         n_printf("Object of class '%s' doesn't accept cmds of class '%s'\n",
                  o->GetClass()->GetName(), obj_class);
         return false;

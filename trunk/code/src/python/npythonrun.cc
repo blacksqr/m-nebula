@@ -159,7 +159,8 @@ bool nPythonServer::RunScript(const char *fname, const char*& result)
 	file2->ManglePath(fname, path);
 	nFile* file = file2->NewFileObject();
 
-	if (file->Open(path.c_str(), "r")) {
+	if (file->Open(path.c_str(), "r")) 
+	{
 		// We only opened this to be able to report the error ourselves.
 		// So, go on, close it now.
 		file->Close();

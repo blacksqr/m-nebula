@@ -123,6 +123,6 @@ bool nRenderApp::process_command_line()
 */
 nRenderApp::~nRenderApp()
 {
-	this->refScene->Release();
+	release_ref(this->refScene);
 }
 

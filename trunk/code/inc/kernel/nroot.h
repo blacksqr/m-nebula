@@ -160,7 +160,7 @@ public:
     nRoot *RemTail(void);
     void Remove(void);
 	void RemoveChildren();
-    void Sort(void);
+    void Sort(bool reverse = false);
 
     // inline for speed
     nRoot* GetParent(void) const;
@@ -209,12 +209,12 @@ nRoot::GetParent(void) const
     return this->parent;
 }
 
+//--------------------------------------------------------------------
 /**
   @brief Returns the first child object in hierarchical namespace
 
   - 22-Jan-01   floh    created
 */
-//--------------------------------------------------------------------
 inline
 nRoot*
 nRoot::GetHead() const
@@ -229,12 +229,12 @@ nRoot::GetHead() const
     }
 }
 
+//--------------------------------------------------------------------
 /**
   @brief Returns the last child object in hierarchical namespace
 
   - 22-Jan-01   floh    created
 */
-//--------------------------------------------------------------------
 inline
 nRoot*
 nRoot::GetTail() const
@@ -248,12 +248,12 @@ nRoot::GetTail() const
     }
 }
 
+//--------------------------------------------------------------------
 /**
   @brief Returns the succeeding object in hierarchical namespace
   
   - 22-Jan-01   floh    created
 */
-//--------------------------------------------------------------------
 inline
 nRoot*
 nRoot::GetSucc() const
@@ -261,12 +261,12 @@ nRoot::GetSucc() const
     return (nRoot *) nHashNode::GetSucc();
 }
 
+//--------------------------------------------------------------------
 /**
   @brief Returns the preceding object in hierarchical namespace
   
   - 22-Jan-01   floh    created
 */
-//--------------------------------------------------------------------
 inline
 nRoot*
 nRoot::GetPred() const
@@ -274,12 +274,12 @@ nRoot::GetPred() const
     return (nRoot *) nHashNode::GetPred();
 }
 
+//--------------------------------------------------------------------
 /**
   @brief Returns the name of the object in hierarchical namespace
   
   - 22-Jan-01   floh    created
 */
-//--------------------------------------------------------------------
 inline
 const char*
 nRoot::GetName(void) const
