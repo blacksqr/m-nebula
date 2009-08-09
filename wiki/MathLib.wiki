@@ -1,0 +1,46 @@
+Math library
+basic template's
+ 
+I. mathlib/nmath.h - base constants and functions. Many of templates has an optimized type specific implementations.
+typedef float nReal
+ 
+constants:
+N_PI, N_HALF_PI, N_DOUBLE_PI, N_LN_2 ...
+ 
+comparisons, relations, fuzzy:
+n_max(a, b)/n_min(a, b), n_max3(a, b, c)/n_min3(a, b, c)
+
+n_abs(f), ///< float and double versions has optimized implementation
+n_swap(a, b)
+n_half(a) ///< integer types has optimized implementation
+n_eqz(x, tol = def)/n_neqz(x, tol = def), n_eq(a, b, tol = def)/n_neq(a, b, tol = def)
+n_sgn(f , tol = def) 
+n_inv( f)
+ 
+ranges:
+
+n_inrange(a, lower, upper, tol = def)
+n_in1(a, tol = def)
+n_clamp(a, lower, upper)
+n_saturate(a) 
+n_lerp(a, b, l) ///< interpolation
+ 
+trigonometric and basic math. :
+n_deg2rad(d), n_rad2deg(r)
+n_sin(x), n_cos(x), n_tan(x), n_atan(x), n_atan2(x)
+n_acos(x), n_asin(x) ///< clamping x
+
+n_exp(x), n_floor(x),n_ceil(x), n_pow(x)
+n_log2(x), n_sqrt(x), n_sqr(x)
+n_smooth(new, last, max_d)
+n_rand() ///< random in [0,1]
+n_rand(min, max) ///< random in [min, max]
+long n_ftol(float) ///< fast
+long n_ftol(double)///< fast
+ 
+II. mathlib/vector.h -  2,3,4 component vector templates, used mostly for the vertex coordinates
+III. mathlib/line.h -  vector based line and derivatives like ray, segment etc.
+IV. mathlib/plane.h -  2,3,4 component vector, used mostly for the vertex coordinates
+V. mathlib/triangle.h -  2,3,4 component vector, used mostly for the vertex coordinates
+VI. mathlib/quaternion.h -  2,3,4 component vector, used mostly for the vertex coordinates
+VII. mathlib/matrix.h -  2,3,4 component vector, used mostly for the vertex coordinates
