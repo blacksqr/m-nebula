@@ -3,7 +3,7 @@
 <font color='midnightblue'>
 *Main changes:*
  * All classes and functions turned to templates
- * Intermediate computations removed, in all possible cases.<br> For instance:<br> Previously the *line* was defined as vector *a* and vector *e*. Vector *e* was computed as vector's *b* - *a* difference (*a* and *b* are original ends of the segment).<br> Hence, in case it was used as a segment, *a + e* was computed to get second end of the segment. Now *line* keeps both *a* and *b* to avoid this computation and resulted floating point fluctuations. Those fluctuations are result of the conversion of 32/64-bit values to Intel CPU FPU's 80 bit registers.
+ * Intermediate computations removed, in all possible cases.<br> For instance:<br> Previously the *line* was defined as vector *a* and vector *e*. Vector *e* was computed as vector's *b* - *a* difference (*a* and *b* are original ends of the segment).<br> Hence, in case it was used as a segment, *a + e* was computed to get second end of the segment. Now *line* keeps both *a* and *b* to avoid this computation and resulted floating point fluctuations. Those fluctuations are result of the conversion of float/double 32/64-bit values to Intel CPU FPU's 80 bit registers.
  * Comparisons of vector's are firm, *memcmp* is used.
  * The triangle's edges always used in 
 
